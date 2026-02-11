@@ -1,5 +1,6 @@
 
 import './App.css'
+import Navbar from './components/navbar';
 import ProductCard from './components/productCard'
 import type { Product } from './types/product.types'
 function App() {
@@ -18,7 +19,10 @@ function App() {
     <>
 
       <div>
+        <Navbar />
+      </div>
 
+      <div>
         <ProductCard key={MOCK_PRODUCTS[0].id} product={MOCK_PRODUCTS[0]} />
       </div>
     </>
