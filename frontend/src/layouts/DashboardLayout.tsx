@@ -23,9 +23,9 @@ const navigation = [
 ];
 
 const userNavigation = [
-    { name: "Your profile", href: "#" },
-    { name: "Settings", href: "#" },
-    { name: "Sign out", href: "#" },
+    { name: "Mi perfil", href: "#" },
+    { name: "Configuración", href: "#" },
+    { name: "Cerrar sesión", href: "#" },
 ];
 
 function classNames(...classes: string[]) {
@@ -40,7 +40,7 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Navbar */}
-            <Disclosure as="nav" className="bg-gray-800/50 dark:bg-gray-700/30">
+            <Disclosure as="nav" className="bg-gray-800/50 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
                         <div className="flex items-center">
@@ -95,7 +95,7 @@ export default function DashboardLayout({
 
                                 {/* Profile dropdown */}
                                 <Menu as="div" className="relative ml-3">
-                                    <MenuButton className="relative flex max-w-xs items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                    <MenuButton className="relative flex max-w-xs items-center rounded-full hover:ring-2 hover:ring-white/20 transition">
                                         <span className="absolute -inset-1.5" />
                                         <span className="sr-only">
                                             Open user menu
@@ -109,13 +109,13 @@ export default function DashboardLayout({
 
                                     <MenuItems
                                         transition
-                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 dark:bg-gray-800 dark:shadow-none dark:outline-white/10"
+                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg outline-1 outline-white/10"
                                     >
                                         {userNavigation.map((item) => (
                                             <MenuItem key={item.name}>
                                                 <a
                                                     href={item.href}
-                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5"
+                                                    className="block rounded-md px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 transition"
                                                 >
                                                     {item.name}
                                                 </a>
@@ -163,7 +163,68 @@ export default function DashboardLayout({
                             </DisclosureButton>
                         ))}
                     </div>
-                    <div className="border-t border-white/10 pt-4 pb-3">
+                    <div className="border-t border-white/10 pt-4 pb-3 px-2">
+                        <Disclosure>
+                            {({ open }) => (
+                                <>
+                                    {/* Botón Mi cuenta */}
+                                    <DisclosureButton className="flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium text-white/90 hover:text-white hover:bg-white/5 transition">
+                                        <span>Mi cuenta</span>
+
+                                        <svg
+                                            className={`h-4 w-4 transition-transform duration-200 ${
+                                                open ? "rotate-180" : ""
+                                            }`}
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                    </DisclosureButton>
+
+                                    {/* PANEL */}
+                                    <DisclosurePanel className="mt-3 space-y-3">
+                                        {/* Usuario */}
+                                        <div className="flex items-center px-3">
+                                            <img
+                                                src={user.imageUrl}
+                                                className="size-9 rounded-full"
+                                            />
+                                            <div className="ml-3">
+                                                <div className="text-sm font-medium text-white">
+                                                    {user.name}
+                                                </div>
+                                                <div className="text-xs text-gray-400">
+                                                    {user.email}
+                                                </div>
+                                            </div>
+
+                                            <BellIcon className="ml-auto size-5 text-gray-400 hover:text-white transition" />
+                                        </div>
+
+                                        {/* Opciones */}
+                                        <div className="space-y-1">
+                                            {userNavigation.map((item) => (
+                                                <a
+                                                    key={item.name}
+                                                    href={item.href}
+                                                    className="block rounded-md px-4 py-2.5 text-sm text-white/80 hover:text-white hover:bg-white/5 transition"
+                                                >
+                                                    {item.name}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </DisclosurePanel>
+                                </>
+                            )}
+                        </Disclosure>
+                    </div>
+
+                    {/* <div className="border-t border-white/10 pt-4 pb-3">
                         <div className="flex items-center px-5">
                             <div className="shrink-0">
                                 <img
@@ -206,7 +267,7 @@ export default function DashboardLayout({
                                 </DisclosureButton>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                 </DisclosurePanel>
             </Disclosure>
 

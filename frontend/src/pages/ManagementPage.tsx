@@ -1,45 +1,59 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { ProductsTable, Product } from "../components/ProductsTable";
+import { ProductsTable } from "../components/ProductsTable";
+import { Product } from "@/types/product.types";
 import Pagination from "../components/Pagination";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
+import SearchBar from "../components/SearchBar";
 
-/* Simulación de datos */
+/* Datos de prueba */
 const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
     name: `Producto Apple ${i + 1}`,
-    color: i % 2 === 0 ? "Red" : "Silver",
-    category: "Gadgets",
+    color: i % 2 === 0 ? "Rojo" : "Plateado",
+    category: i % 3 === 0 ? "Gadgets" : "Accesorios",
     price: `$${(i + 1) * 100}`,
 }));
 
 export default function ManagementPage() {
     const [currentPage, setCurrentPage] = useState(1);
+    const [query, setQuery] = useState("");
     const itemsPerPage = useItemsPerpage();
 
-    /* Aca se hacen los calculos de paginacion */
+    // Filtrado solo por búsqueda
+    const filteredProducts = DATA_PRUEBA.filter((p) =>
+        p.name.toLowerCase().includes(query.toLowerCase()),
+    );
+
+    // Paginación
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
-    const currentProducts = DATA_PRUEBA.slice(firstIndex, lastIndex);
+    const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
 
-
-    /* se va a ejecutar por cada cambio de itemsPerPage asi se actualiza cada vez que haya un cambio de tamaño, y no quedan los numeros de la paginacion por cualquier lado */
+    // Resetear página al cambiar itemsPerPage o query
     useEffect(() => {
-        setCurrentPage(1)
-    }, [itemsPerPage]);
+        setCurrentPage(1);
+    }, [itemsPerPage, query]);
 
     return (
         <DashboardLayout>
             <div className="space-y-4">
-                {/* Le pasamos 5 productos nomas */}
+                {/* SEARCH BAR */}
+                <SearchBar
+                    value={query}
+                    onChange={setQuery}
+                    placeholder="Buscar productos"
+                />
+
+                {/* PRODUCTS TABLE */}
                 <ProductsTable products={currentProducts} />
 
-                {/* Le pasamos los controles */}
+                {/* PAGINATION */}
                 <Pagination
-                    totalItems={DATA_PRUEBA.length}
+                    totalItems={filteredProducts.length}
                     itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
-                    onPageChange={(page) => setCurrentPage(page)}
+                    onPageChange={setCurrentPage}
                 />
             </div>
         </DashboardLayout>
