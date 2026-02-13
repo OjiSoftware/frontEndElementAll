@@ -4,8 +4,11 @@ import ManagementPage from "./pages/ManagementPage";
 
 export function App() {
     return (
-        <DashboardLayout>
-            <ManagementPage />
-        </DashboardLayout>
+
+        <ManagementPage />
+
+
+
+
     );
 }
