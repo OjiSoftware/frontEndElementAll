@@ -12,6 +12,26 @@ export default function Pagination({ totalItems, itemsPerPage, currentPage, onPa
 
     return (
         <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
+
+            {/* tamaño de clular: Solo los botones de Prev/Next */}
+            <div className="flex flex-1 justify-between sm:hidden">
+                <button
+                    onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center rounded-md border border-gray-700 bg-transparent px-4 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 disabled:opacity-50"
+                >
+                    Anterior
+                </button>
+                <button
+                    onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="relative ml-3 inline-flex items-center rounded-md border border-gray-700 bg-transparent px-4 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 disabled:opacity-50"
+                >
+                    Siguiente
+                </button>
+            </div>
+
+            {/* Tamaño de Escritorio o tablet*/}
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                     <p className="text-sm text-gray-300">
@@ -21,7 +41,7 @@ export default function Pagination({ totalItems, itemsPerPage, currentPage, onPa
                     </p>
                 </div>
                 <div>
-                    <nav className="isolate inline-flex -space-x-px rounded-md">
+                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
                         <button
                             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                             className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-700 hover:bg-white/5 disabled:opacity-50"
@@ -29,6 +49,7 @@ export default function Pagination({ totalItems, itemsPerPage, currentPage, onPa
                         >
                             <ChevronLeftIcon className="size-5" />
                         </button>
+
 
                         {[...Array(totalPages)].map((_, i) => (
                             <button

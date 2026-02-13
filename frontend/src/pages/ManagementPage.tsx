@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { ProductsTable, Product } from "../components/ProductsTable";
 import Pagination from "../components/Pagination";
+import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 
 /* Simulación de datos */
 const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
@@ -14,12 +15,18 @@ const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
 
 export default function ManagementPage() {
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 7;
+    const itemsPerPage = useItemsPerpage();
 
     /* Aca se hacen los calculos de paginacion */
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentProducts = DATA_PRUEBA.slice(firstIndex, lastIndex);
+
+
+    /* se va a ejecutar por cada cambio de itemsPerPage asi se actualiza cada vez que haya un cambio de tamaño, y no quedan los numeros de la paginacion por cualquier lado */
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage]);
 
     return (
         <DashboardLayout>
