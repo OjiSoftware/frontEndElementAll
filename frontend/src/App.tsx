@@ -1,19 +1,11 @@
-import { Divider } from './components/divider'
+// src/App.tsx
+import DashboardLayout from "./layouts/DashboardLayout";
+import ManagementPage from "./pages/ManagementPage";
 
 export function App() {
-  return (
-    <>
-      <div className="bg-blue-600 min-h-screen text-white">
-
-        <div>
-          <p>Sección 1</p>
-
-          <Divider className="my-6 w-full" />
-
-          <p>Sección 2</p>
-        </div>
-      </div>
-
-    </>
-  )
+    return (
+        <DashboardLayout>
+            <ManagementPage />
+        </DashboardLayout>
+    );
 }
