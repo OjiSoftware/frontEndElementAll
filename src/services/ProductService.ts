@@ -33,5 +33,11 @@ export const productApi = {
         const response = await fetch(`${BASE_URL}/subcategories`);
         if (!response.ok) throw new Error('Errot al traer llas subcategorias');
         return response.json();
+    },
+
+    getAllProducts: async () => {
+        const response = await fetch(`${BASE_URL}/products`);
+        if (!response.ok) throw new Error('Error al traer los productos');
+        return response.json()
     }
 };

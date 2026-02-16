@@ -91,16 +91,16 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 onClick={() => handleSort("name")}
                             >
                                 <div className={headerClass}>
-                                    Product name {renderSortArrow("name")}
+                                    Nombre {renderSortArrow("name")}
                                 </div>
                             </TableHeadCell>
 
                             <TableHeadCell
                                 className="hidden md:table-cell! cursor-pointer"
-                                onClick={() => handleSort("color")}
+                                onClick={() => handleSort("brand")}
                             >
                                 <div className={headerClass}>
-                                    Color {renderSortArrow("color")}
+                                    Marca {renderSortArrow("brand")}
                                 </div>
                             </TableHeadCell>
 
@@ -109,7 +109,7 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 onClick={() => handleSort("category")}
                             >
                                 <div className={headerClass}>
-                                    Category {renderSortArrow("category")}
+                                    Categoria {renderSortArrow("category")}
                                 </div>
                             </TableHeadCell>
 
@@ -139,13 +139,13 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     {product.name}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-left">
-                                    {product.color}
+                                    {product.brand?.name || "sin marca"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-left">
-                                    {product.category}
+                                    {product.category?.name || "sin categoria"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-center">
-                                    {product.price}
+                                    {`$${product.price}`}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-3">

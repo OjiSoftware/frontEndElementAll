@@ -5,23 +5,25 @@ import { Product } from "@/types/product.types";
 import Pagination from "../components/Pagination";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 import SearchBar from "../components/SearchBar";
+import { productApi } from "@/services/ProductService";
 
 /* Datos de prueba */
-const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
+/* const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
     name: `Producto Apple ${i + 1}`,
     color: i % 2 === 0 ? "Rojo" : "Plateado",
     category: i % 3 === 0 ? "Gadgets" : "Accesorios",
     price: `$${(i + 1) * 100}`,
-}));
+})); */
 
 export default function ManagementPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState("");
     const itemsPerPage = useItemsPerpage();
+    const [products, setProducts] = useState<Product[]>([])
 
     // Filtrado solo por búsqueda
-    const filteredProducts = DATA_PRUEBA.filter((p) =>
+    const filteredProducts = products.filter((p) =>
         p.name.toLowerCase().includes(query.toLowerCase()),
     );
 
@@ -29,6 +31,27 @@ export default function ManagementPage() {
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
+
+
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+
+            try {
+
+                const data = await productApi.getAllProducts()
+                console.log("PRODUCTOS DESDE LA API:", data[0]);
+                setProducts(data)
+
+            } catch (error) {
+                console.log("Error cargando productos", error)
+            }
+
+        }
+
+        fetchProducts()
+    }, [])
+
 
     // Resetear página al cambiar itemsPerPage o query
     useEffect(() => {
