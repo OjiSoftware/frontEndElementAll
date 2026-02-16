@@ -9,6 +9,8 @@ import {
 } from "flowbite-react";
 import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { Product } from "@/types/product.types";
+import { Link } from 'react-router-dom';
+
 
 type SortColumn = keyof Product;
 
@@ -41,9 +43,8 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         if (sortColumn !== column) return null;
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-transform ${
-                    sortDirection === "desc" ? "rotate-180" : ""
-                }`}
+                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-transform ${sortDirection === "desc" ? "rotate-180" : ""
+                    }`}
             />
         );
     };
@@ -148,12 +149,13 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-3">
-                                        <button
+                                        <Link
+                                            to={`/edit/${product.id}`}
                                             title="Editar producto"
                                             className="text-blue-500 hover:text-blue-400 transition cursor-pointer"
                                         >
                                             <PencilIcon className="size-5" />
-                                        </button>
+                                        </Link>
                                         <button
                                             title="Eliminar producto"
                                             className="text-red-500 hover:text-red-400 transition cursor-pointer"

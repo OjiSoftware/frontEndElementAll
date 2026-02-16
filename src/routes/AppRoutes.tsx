@@ -9,7 +9,9 @@ export const AppRoutes = () => {
             <Routes>
                 <Route path='/' element={<ManagementPage />} />
                 <Route path='/management' element={<ManagementPage />} />
+                <Route path='/edit' element={<ManagementPage />} />
                 <Route path='/edit/:id' element={<EditProductPage />} />
+
             </Routes>
         </BrowserRouter>
     );
