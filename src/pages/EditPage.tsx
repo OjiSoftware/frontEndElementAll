@@ -11,6 +11,7 @@ interface ProductEdit {
     subcategoryId: number;
     price: number;
     description: string;
+    imageUrl: string;
 }
 
 
@@ -22,6 +23,7 @@ interface Category {
 interface SubCategory {
     id: number;
     name: string;
+    categoryId: number;
 }
 
 interface Brand {
@@ -38,6 +40,7 @@ export default function EditProductPage() {
         subcategoryId: 0,
         price: 0,
         description: "",
+        imageUrl: "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0",
     });
 
     const { id } = useParams(); /* -> esto basicamente obtiene el id, que le viene por la url */
@@ -82,6 +85,7 @@ export default function EditProductPage() {
 
                 setCategories(categoriesData);
                 setSubCategories(subcategoriesData)
+                console.log("SUBCATEGORIAS QUE LLEGAN DEL BACKEND:", subcategoriesData);
                 setBrands(brandsData);
             } catch (error) {
                 console.error("Error al cargar datos:", error);
@@ -98,12 +102,25 @@ export default function EditProductPage() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            /* Convertir a número si el campo es el precio */
-            [name]: name === "price" || name === "brandId" || name === "categoryId" || name === "subcategoryId" ? parseFloat(value) || 0 : value,
 
-        }));
+
+        const isNumeric = ["price", "brandId", "categoryId", "subcategoryId"].includes(name);
+
+
+        const finalValue = isNumeric ? parseFloat(value) || 0 : value;
+
+        setFormData((prev) => {
+            const newState = {
+                ...prev,
+                [name]: finalValue,
+            };
+
+            if (name === "categoryId") {
+                newState.subcategoryId = 0;
+            }
+
+            return newState;
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -122,12 +139,44 @@ export default function EditProductPage() {
         }
     };
 
+
+    //!Cuando se arregle el producto en el backend hay que usar este handleSubmit en lugar del anterior
+    /* const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+        await productApi.update(id!, formData); // id! asegura a TS que el id existe
+        alert("¡Producto actualizado con éxito!");
+        navigate('/management'); // Redirigir al listado tras el éxito
+    } catch (error) {
+        console.error("Error al actualizar:", error);
+        alert("Hubo un error al guardar los cambios.");
+    } finally {
+        setLoading(false);
+    }
+}; */
+
+    //!----------------------------------------------------------------------------------------------
+
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white">Editar Producto</h1>
-                    <p className="text-gray-400 mt-2">Los cambios se sincronizarán con la base de datos.</p>
+                </div>
+
+                <div className="flex items-center gap-6 mb-8 bg-slate-900/30 p-6 rounded-2xl border border-white/5">
+                    <div className="w-24 h-24 rounded-xl overflow-hidden border-2 border-indigo-500/50 bg-slate-800 shrink-0">
+                        <img
+                            src={/* formData.imageUrl */ "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0"}
+                            alt={formData.name}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-white">{formData.name || "Sin nombre"}</h2>
+                        <p className="text-indigo-400 font-medium">ID del Producto: #{id}</p>
+                    </div>
                 </div>
 
                 <div className="bg-slate-900/50 border border-white/10 p-8 rounded-2xl shadow-xl backdrop-blur-md">
@@ -188,7 +237,7 @@ export default function EditProductPage() {
 
                         {/* SUBCATEGORY */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Categoría</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Subctegoría</label>
                             <select
                                 name="subcategoryId"
                                 value={formData.subcategoryId}
@@ -197,11 +246,14 @@ export default function EditProductPage() {
                             >
                                 <option value="">Seleccione una sub categoria</option>
 
-                                {subCategories.map((subCat) => (
-                                    <option key={subCat.id} value={subCat.id}>
-                                        {subCat.name}
-                                    </option>
-                                ))}
+                                {subCategories
+                                    .filter(sub => sub.categoryId === formData.categoryId)
+                                    .map((subCat) => (
+                                        <option key={subCat.id} value={subCat.id}>
+                                            {subCat.name}
+                                        </option>
+                                    ))
+                                }
                             </select>
                         </div>
 
