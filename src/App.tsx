@@ -1,14 +1,10 @@
-// src/App.tsx
-import DashboardLayout from "./layouts/DashboardLayout";
-import ManagementPage from "./pages/ManagementPage";
+import { AppRoutes } from './routes/AppRoutes';
 
-export function App() {
+function App() {
     return (
-
-        <ManagementPage />
-
-
-
-
+        // Aquí podrías tener Proveedores de Contexto si los usas
+        <AppRoutes />
     );
 }
+
+export default App;

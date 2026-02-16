@@ -11,7 +11,7 @@ export const useItemsPerpage = () => {
         } else if (actualWidth < 1024) {
             setItemsPerPage(5);
         } else {
-            setItemsPerPage(7);
+            setItemsPerPage(6);
         }
 
     }
