@@ -4,10 +4,16 @@ export interface Product {
     description: string;
     price: number;
     imageUrl: string;
-    category?: {
+    subCategory: {
+        category: {
+            id: number;
+            name: string;
+        }
+    }
+/*     category?: {
         id: number;
         name: string;
-    };
+    }; */
     brand?: {
         id: number;
         name: string;

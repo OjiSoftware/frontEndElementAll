@@ -12,7 +12,8 @@ import { Product } from "@/types/product.types";
 import { Link } from 'react-router-dom';
 
 
-type SortColumn = keyof Product;
+// Dentro de tu archivo de la tabla
+type SortColumn = keyof Product | "brand.name" | "subCategory.category.name";
 
 interface ProductsTableProps {
     products: Product[];
@@ -26,6 +27,9 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         null,
     );
 
+
+
+    
     // ---------------- Sort ----------------
     const handleSort = (column: SortColumn) => {
         if (sortColumn !== column) {
@@ -50,26 +54,38 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     };
 
     // ---------------- Sorted Products ----------------
-    const sortedProducts = useMemo(() => {
-        if (!sortColumn) return products;
+const sortedProducts = useMemo(() => {
+    if (!sortColumn) return products;
 
-        return [...products].sort((a, b) => {
-            const aValue = a[sortColumn];
-            const bValue = b[sortColumn];
+    return [...products].sort((a, b) => {
+        let aValue: any;
+        let bValue: any;
 
-            if (sortColumn === "id") {
-                return sortDirection === "asc"
-                    ? (aValue as number) - (bValue as number)
-                    : (bValue as number) - (aValue as number);
-            }
+        if (sortColumn === "brand.name" || (sortColumn as string) === "brand") {
+            aValue = a.brand?.name || "";
+            bValue = b.brand?.name || "";
+        } else if (sortColumn === "subCategory.category.name" || (sortColumn as string) === "subCategory.category") {
+            aValue = a.subCategory?.category?.name || "";
+            bValue = b.subCategory?.category?.name || "";
+        } else {
+            aValue = a[sortColumn as keyof Product];
+            bValue = b[sortColumn as keyof Product];
+        }
 
-            const aStr = String(aValue).toLowerCase();
-            const bStr = String(bValue).toLowerCase();
-            if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
-            if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
-            return 0;
-        });
-    }, [products, sortColumn, sortDirection]);
+        if (sortColumn === "id" || typeof aValue === "number") {
+            return sortDirection === "asc" 
+                ? Number(aValue) - Number(bValue) 
+                : Number(bValue) - Number(aValue);
+        }
+
+        const aStr = String(aValue).toLowerCase();
+        const bStr = String(bValue).toLowerCase();
+        
+        if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
+        if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+    });
+}, [products, sortColumn, sortDirection]);
 
     const headerClass = "cursor-pointer select-none flex items-center gap-1";
 
@@ -106,10 +122,10 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
 
                             <TableHeadCell
                                 className="hidden md:table-cell! cursor-pointer"
-                                onClick={() => handleSort("category")}
+                                onClick={() => handleSort("subCategory.category.name")}
                             >
                                 <div className={headerClass}>
-                                    Categoria {renderSortArrow("category")}
+                                    Categoria {renderSortArrow("subCategory.category.name")}
                                 </div>
                             </TableHeadCell>
 
@@ -142,7 +158,7 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     {product.brand?.name || "sin marca"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-left">
-                                    {product.category?.name || "sin categoria"}
+                                    {product.subCategory?.category?.name || "sin categoria"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-center">
                                     {`$${product.price}`}
