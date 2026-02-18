@@ -8,6 +8,7 @@ import { SubCategory } from "@/types/subcategory.types";
 import { productApi } from "@/services/ProductService";
 import toast from "react-hot-toast";
 import { useProductEdit } from "@/hooks/useProductEdit";
+import { SquarePen } from "lucide-react";
 
 export default function EditProductPage() {
     const navigate = useNavigate();
@@ -88,11 +89,15 @@ export default function EditProductPage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-3xl mx-auto px-1 xl:px-0">
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white">
+                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                        <SquarePen className="text-indigo-400" size={32} />
                         Editar producto
                     </h1>
+                    <p className="text-slate-400 mt-2">
+                        Complete la información para editar el producto
+                    </p>
                 </div>
 
                 {/* Card de producto */}
