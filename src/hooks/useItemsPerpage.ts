@@ -13,21 +13,15 @@ export const useItemsPerpage = () => {
         } else {
             setItemsPerPage(6);
         }
-
-    }
+    };
 
     useEffect(() => {
         updateItems();
 
-        window.addEventListener('resize', updateItems)
+        window.addEventListener("resize", updateItems);
 
-        return () => window.removeEventListener('resize', updateItems)
-
-    }, [])
-
-
+        return () => window.removeEventListener("resize", updateItems);
+    }, []);
 
     return itemsPerPage;
-}
-
-
+};

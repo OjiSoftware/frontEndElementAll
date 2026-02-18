@@ -104,7 +104,7 @@ export default function Pagination({
                             page === "..." ? (
                                 <span
                                     key={`dots-${i}`}
-                                    className="relative inline-flex items-center px-4 py-2 text-sm text-gray-500 ring-1 ring-inset ring-gray-700"
+                                    className="relative inline-flex items-center px-4 py-2 text-sm text-gray-500"
                                 >
                                     ...
                                 </span>
@@ -112,11 +112,12 @@ export default function Pagination({
                                 <button
                                     key={`page-${page}-${i}`}
                                     onClick={() => onPageChange(page)}
-                                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold cursor-pointer ${
-                                        currentPage === page
-                                            ? "z-10 bg-indigo-500 text-white"
-                                            : "text-gray-200 ring-1 ring-inset ring-gray-700 hover:bg-white/5"
-                                    }`}
+                                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold cursor-pointer transition-all duration-300
+                ${
+                    currentPage === page
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                        : "bg-slate-700/90 text-gray-200 hover:bg-indigo-500/20"
+                }`}
                                 >
                                     {page}
                                 </button>

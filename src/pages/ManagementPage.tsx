@@ -5,58 +5,46 @@ import { Product } from "@/types/product.types";
 import Pagination from "../components/Pagination";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 import SearchBar from "../components/SearchBar";
+import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
+import { useDisableProduct } from "@/hooks/useDisableProduct";
 import { productApi } from "@/services/ProductService";
-
-/* Datos de prueba */
-/* const DATA_PRUEBA: Product[] = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    name: `Producto Apple ${i + 1}`,
-    color: i % 2 === 0 ? "Rojo" : "Plateado",
-    category: i % 3 === 0 ? "Gadgets" : "Accesorios",
-    price: `$${(i + 1) * 100}`,
-})); */
 
 export default function ManagementPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState("");
-    const itemsPerPage = useItemsPerpage();
-    const [products, setProducts] = useState<Product[]>([])
-
-    // Filtrado solo por búsqueda
-    const filteredProducts = products.filter((p) =>
-        p.name.toLowerCase().includes(query.toLowerCase()),
+    const [products, setProducts] = useState<Product[]>([]);
+    const [productToDelete, setProductToDelete] = useState<Product | null>(
+        null,
     );
 
-    // Paginación
+    const itemsPerPage = useItemsPerpage();
+    const { disableProduct, loading } = useDisableProduct(setProducts);
+
+    // ---------------- Filtrado ----------------
+    const filteredProducts = products
+        .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
+        .filter((p) => p.status);
+
+    // ---------------- Paginación ----------------
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
 
-
-
+    // ---------------- Fetch ----------------
     useEffect(() => {
         const fetchProducts = async () => {
-
             try {
-
-                const data = await productApi.getAllProducts()
-                console.log("PRODUCTOS DESDE LA API:", data[0]);
-                setProducts(data)
-
+                const data = await productApi.getAllProducts();
+                setProducts(data);
             } catch (error) {
-                console.log("Error cargando productos", error)
+                console.error("Error cargando productos", error);
             }
-
-        }
-
-        fetchProducts()
-    }, [])
-
+        };
+        fetchProducts();
+    }, []);
 
     // Resetear página al cambiar itemsPerPage o query
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [itemsPerPage, query]);
+    useEffect(() => setCurrentPage(1), [itemsPerPage, query]);
 
     return (
         <DashboardLayout>
@@ -69,7 +57,10 @@ export default function ManagementPage() {
                 />
 
                 {/* PRODUCTS TABLE */}
-                <ProductsTable products={currentProducts} />
+                <ProductsTable
+                    products={currentProducts}
+                    onDelete={(product) => setProductToDelete(product)}
+                />
 
                 {/* PAGINATION */}
                 <Pagination
@@ -78,6 +69,20 @@ export default function ManagementPage() {
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
                 />
+
+                {/* MODAL DE CONFIRMACIÓN */}
+                {productToDelete && (
+                    <ConfirmDeleteModal
+                        isOpen={true}
+                        itemName={productToDelete.name}
+                        isLoading={loading}
+                        onCancel={() => setProductToDelete(null)}
+                        onConfirm={async () => {
+                            await disableProduct(productToDelete.id);
+                            setProductToDelete(null);
+                        }}
+                    />
+                )}
             </div>
         </DashboardLayout>
     );

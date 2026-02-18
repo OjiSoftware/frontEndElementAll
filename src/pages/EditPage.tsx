@@ -1,283 +1,289 @@
-import React, { useEffect, useState } from "react"
-import DashboardLayout from "@/layouts/DashboardLayout"
-import { useNavigate, useParams } from "react-router-dom";
-import { H1Icon } from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import { useNavigate } from "react-router-dom";
+import { ConfirmModal } from "../components/ConfirmModal";
+import { Brand } from "@/types/brand.types";
+import { Category } from "@/types/category.types";
+import { SubCategory } from "@/types/subcategory.types";
 import { productApi } from "@/services/ProductService";
-
-interface ProductEdit {
-    name: string;
-    brandId: number;
-    categoryId: number;
-    subcategoryId: number;
-    price: number;
-    description: string;
-    imageUrl: string;
-}
-
-
-interface Category {
-    id: number;
-    name: string;
-}
-
-interface SubCategory {
-    id: number;
-    name: string;
-    categoryId: number;
-}
-
-interface Brand {
-    id: number;
-    name: string;
-}
+import toast from "react-hot-toast";
+import { useProductEdit } from "@/hooks/useProductEdit";
 
 export default function EditProductPage() {
-    /* Estado base del formulario */
-    const [formData, setFormData] = useState<ProductEdit>({
-        name: "",
-        brandId: 0,
-        categoryId: 0,
-        subcategoryId: 0,
-        price: 0,
-        description: "",
-        imageUrl: "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0",
-    });
+    const navigate = useNavigate();
+    const {
+        id,
+        formData,
+        setFormData,
+        priceInput,
+        setPriceInput,
+        categories,
+        brands,
+        subCategories,
+        isLoading,
+    } = useProductEdit();
 
-    const { id } = useParams(); /* -> esto basicamente obtiene el id, que le viene por la url */
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    const [categories, setCategories] = useState<Category[]>([])
-    const [brands, setBrands] = useState<Brand[]>([])
-    const [subCategories, setSubCategories] = useState<SubCategory[]>([])
+    if (!id)
+        return (
+            <div>
+                <h1>Producto no encontrado</h1>
+                <button
+                    onClick={() => navigate("/management")}
+                    className="px-4 py-2 bg-gray-700 text-white rounded-lg"
+                >
+                    Volver
+                </button>
+            </div>
+        );
 
-
-    console.log('Anduvo el id = ', id)
-
-    const [isLoading, setLoading] = useState(false)
-
-    const navigate = useNavigate()
-
-    /* Aca ponemos el fetch api despues con el id */
-
-
-
-    useEffect(() => {
-        const loadData = async () => {
-            if (!id) return;
-            setLoading(true);
-            try {
-
-                const [productData, categoriesData, brandsData, subcategoriesData] = await Promise.all([
-                    productApi.getById(id),
-                    productApi.getAllCategories(),
-                    productApi.getAllBrands(),
-                    productApi.getAllSubcategories()
-                ]);
-
-                const data = await productApi.getById(id);
-                console.log("DATOS QUE LLEGAN DEL BACKEND:", data); // <--- ESTO ES CLAVE
-
-                setFormData({
-                    ...productData,
-                    categoryId: productData.category?.id || 0,
-                    brandId: productData.brand?.id || 0,
-                    subcategoryId: productData.subcategory?.id || 0
-                });
-
-                setCategories(categoriesData);
-                setSubCategories(subcategoriesData)
-                console.log("SUBCATEGORIAS QUE LLEGAN DEL BACKEND:", subcategoriesData);
-                setBrands(brandsData);
-            } catch (error) {
-                console.error("Error al cargar datos:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadData();
-
-
-    }, [id]);
-
-    if (!id) return <div><h1>Producto no encontrado</h1> <button onClick={() => navigate('/management')}>Volver</button></div>
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    // ---------------- Handlers ----------------
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    ) => {
         const { name, value } = e.target;
-
-
-        const isNumeric = ["price", "brandId", "categoryId", "subcategoryId"].includes(name);
-
-
+        const isNumeric = ["brandId", "categoryId", "subCategoryId"].includes(
+            name,
+        );
         const finalValue = isNumeric ? parseFloat(value) || 0 : value;
 
         setFormData((prev) => {
-            const newState = {
-                ...prev,
-                [name]: finalValue,
-            };
-
-            if (name === "categoryId") {
-                newState.subcategoryId = 0;
-            }
-
+            const newState = { ...prev, [name]: finalValue };
+            if (name === "categoryId" && prev.categoryId !== finalValue)
+                newState.subCategoryId = 0;
             return newState;
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+    const handleSubmit = async () => {
+        setShowConfirmModal(false);
+        const loadingToast = toast.loading("Guardando producto...");
 
         try {
-            // Aca se hace la conexion:
-            // await axios.put(`/api/products/${id}`, formData);
-            console.log("Enviando al Backend:", formData);
-            alert("Enviando datos al servidor...");
+            await productApi.update(id, {
+                name: formData.name,
+                description: formData.description,
+                price: formData.price,
+                imageUrl: formData.imageUrl,
+                brandId: formData.brandId,
+                subCategoryId: formData.subCategoryId,
+            });
+
+            toast.success("¡Producto actualizado con éxito!", {
+                id: loadingToast,
+            });
+            navigate("/management");
         } catch (error) {
-            console.error("Error al conectar con el backend", error);
-        } finally {
-            setLoading(false);
+            console.error("Error al actualizar:", error);
+            toast.error("Hubo un error al guardar los cambios.", {
+                id: loadingToast,
+            });
         }
     };
 
-
-    //!Cuando se arregle el producto en el backend hay que usar este handleSubmit en lugar del anterior
-    /* const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-        await productApi.update(id!, formData); // id! asegura a TS que el id existe
-        alert("¡Producto actualizado con éxito!");
-        navigate('/management'); // Redirigir al listado tras el éxito
-    } catch (error) {
-        console.error("Error al actualizar:", error);
-        alert("Hubo un error al guardar los cambios.");
-    } finally {
-        setLoading(false);
-    }
-}; */
-
-    //!----------------------------------------------------------------------------------------------
+    const filteredSubCategories: SubCategory[] = subCategories.filter(
+        (sub) => sub.categoryId === formData.categoryId,
+    );
 
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white">Editar Producto</h1>
+                    <h1 className="text-3xl font-bold text-white">
+                        Editar producto
+                    </h1>
                 </div>
 
-                <div className="flex items-center gap-6 mb-8 bg-slate-900/30 p-6 rounded-2xl border border-white/5">
-                    <div className="w-24 h-24 rounded-xl overflow-hidden border-2 border-indigo-500/50 bg-slate-800 shrink-0">
-                        <img
-                            src={/* formData.imageUrl */ "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0"}
-                            alt={formData.name}
-                            className="w-full h-full object-cover"
-                        />
+                {/* Card de producto */}
+                <div className="flex items-center gap-6 mb-8 bg-slate-800/30 p-6 rounded-2xl border border-white/20 shadow-lg">
+                    <div className="w-28 h-28 rounded-xl bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
+                        <div className="w-full h-full rounded-xl overflow-hidden bg-slate-700">
+                            <img
+                                src={formData.imageUrl}
+                                alt={formData.name}
+                                title={formData.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white">{formData.name || "Sin nombre"}</h2>
-                        <p className="text-indigo-400 font-medium">ID del Producto: #{id}</p>
+                        <h2 className="text-2xl font-bold text-white">
+                            {formData.name || "Sin nombre"}
+                        </h2>
+                        <p className="text-indigo-400 font-medium">
+                            ID del Producto: #{id}
+                        </p>
                     </div>
                 </div>
 
-                <div className="bg-slate-900/50 border border-white/10 p-8 rounded-2xl shadow-xl backdrop-blur-md">
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-
-                        {/* BRAND SELECT */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Marca</label>
-                            <select
-                                name="brandId"
-                                value={formData.brandId}
-                                onChange={handleChange}
-                                className="w-full bg-slate-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none"
-                                required
-                            >
-                                <option value="">Seleccione una marca</option>
-                                {brands.map((brand) => (
-                                    <option key={brand.id} value={brand.id}>
-                                        {brand.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* PRICE */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Precio ($)</label>
+                {/* Formulario */}
+                <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            setShowConfirmModal(true);
+                        }}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    >
+                        {/* Nombre del producto */}
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Nombre del producto
+                            </label>
                             <input
-                                type="number"
-                                name="price"
-                                value={formData.price}
+                                type="text"
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
-                                placeholder="0.00"
-                                className="w-full bg-slate-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                placeholder="Ingrese el nombre del producto"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                 required
                             />
                         </div>
 
-                        {/* CATEGORY SELECT */}
+                        {/* Marca */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Categoría</label>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Marca
+                            </label>
                             <select
-                                name="categoryId" // Usamos el ID para el backend
-                                value={formData.categoryId}
+                                name="brandId"
+                                value={formData.brandId}
                                 onChange={handleChange}
-                                className="w-full bg-slate-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
+                                required
                             >
-                                <option value="">Seleccione una categoría</option>
-                                {/* Aquí mapearás las categorías que traigas del backend */}
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
+                                <option value={0}>Seleccione una marca</option>
+                                {brands.map((b: Brand) => (
+                                    <option key={b.id} value={b.id}>
+                                        {b.name}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
-                        {/* SUBCATEGORY */}
+                        {/* Precio */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Subctegoría</label>
-                            <select
-                                name="subcategoryId"
-                                value={formData.subcategoryId}
-                                onChange={handleChange}
-                                className="w-full bg-slate-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none"
-                            >
-                                <option value="">Seleccione una sub categoria</option>
-
-                                {subCategories
-                                    .filter(sub => sub.categoryId === formData.categoryId)
-                                    .map((subCat) => (
-                                        <option key={subCat.id} value={subCat.id}>
-                                            {subCat.name}
-                                        </option>
-                                    ))
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Precio ($)
+                            </label>
+                            <input
+                                type="text"
+                                name="price"
+                                value={priceInput}
+                                onChange={(e) => {
+                                    const raw = e.target.value;
+                                    setPriceInput(raw);
+                                    const numericValue = parseFloat(
+                                        raw
+                                            .replace(/\./g, "")
+                                            .replace(",", "."),
+                                    );
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        price: isNaN(numericValue)
+                                            ? 0
+                                            : numericValue,
+                                    }));
+                                }}
+                                onBlur={() =>
+                                    setPriceInput(
+                                        formData.price.toLocaleString("es-AR", {
+                                            minimumFractionDigits: 2,
+                                        }),
+                                    )
                                 }
+                                placeholder="0,00"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                required
+                            />
+                        </div>
+
+                        {/* Categoría */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Categoría
+                            </label>
+                            <select
+                                name="categoryId"
+                                value={formData.categoryId}
+                                onChange={handleChange}
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
+                            >
+                                <option value={0}>
+                                    Seleccione una categoría
+                                </option>
+                                {categories.map((c: Category) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
-                        {/* BOTONES */}
-                        <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/5">
+                        {/* Subcategoría */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Subcategoría
+                            </label>
+                            <select
+                                name="subCategoryId"
+                                value={formData.subCategoryId}
+                                onChange={handleChange}
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
+                            >
+                                <option value={0}>
+                                    Seleccione una subcategoría
+                                </option>
+                                {filteredSubCategories.map(
+                                    (sub: SubCategory) => (
+                                        <option key={sub.id} value={sub.id}>
+                                            {sub.name}
+                                        </option>
+                                    ),
+                                )}
+                            </select>
+                        </div>
+
+                        {/* Botones */}
+                        <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/20">
                             <button
                                 type="button"
-                                className="px-6 py-3 rounded-xl text-gray-300 hover:bg-white/5 transition-colors"
-                                onClick={() => navigate('/management')}
+                                onClick={() => navigate("/management")}
+                                className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
                             >
                                 Cancelar
                             </button>
+
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-5 py-3 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? "Guardando..." : "Guardar Cambios"}
+                                {isLoading ? "Guardando..." : "Guardar cambios"}
                             </button>
                         </div>
                     </form>
                 </div>
+
+                {/* Modal */}
+                <ConfirmModal
+                    isOpen={showConfirmModal}
+                    title="Guardar cambios"
+                    message={
+                        <>
+                            ¿Seguro que querés guardar los cambios de{" "}
+                            <b>{formData.name}</b>?
+                        </>
+                    }
+                    isLoading={isLoading}
+                    onCancel={() => setShowConfirmModal(false)}
+                    onConfirm={handleSubmit}
+                    confirmText="Guardar"
+                    cancelText="Cancelar"
+                />
             </div>
         </DashboardLayout>
     );
 }
-
