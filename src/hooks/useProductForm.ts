@@ -8,11 +8,11 @@ import { productApi } from "@/services/ProductService";
 export const useProductForm = () => {
     const [formData, setFormData] = useState({
         name: "",
-        price: 0,
+        price: "",
         categoryId: 0,
         subCategoryId: 0,
         brandId: 0,
-        stock: 0,
+        stock: "",
         description: "",
         imageUrl: "",
         unit: "",
@@ -93,11 +93,11 @@ export const useProductForm = () => {
             setFormData({
                 name: "",
                 description: "",
-                price: 0,
+                price: "",
                 categoryId: 0,
                 subCategoryId: 0,
                 brandId: 0,
-                stock: 0,
+                stock: "",
                 imageUrl: "",
                 unit: ""
             });
