@@ -99,15 +99,15 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
 
     return (
         <>
-            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 select-none">
+            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                 <Table hoverable>
                     <TableHead>
                         <TableRow>
                             <TableHeadCell
-                                className="px-4 w-14 cursor-pointer select-none"
+                                className="px-4 w-14 text-center cursor-pointer select-none"
                                 onClick={() => handleSort("id")}
                             >
-                                <div className="flex items-center justify-start md:justify-center gap-1">
+                                <div className="flex items-center justify-center gap-1">
                                     <span>#</span>
                                     {renderSortArrow("id")}
                                 </div>
@@ -146,15 +146,17 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                             </TableHeadCell>
 
                             <TableHeadCell
-                                className="hidden md:table-cell! cursor-pointer text-center"
+                                className="hidden md:table-cell!  cursor-pointer"
                                 onClick={() => handleSort("price")}
                             >
                                 <div className={headerClass}>
-                                    Price {renderSortArrow("price")}
+                                    Precio {renderSortArrow("price")}
                                 </div>
                             </TableHeadCell>
 
-                            <TableHeadCell>Acciones</TableHeadCell>
+                            <TableHeadCell className="select-none">
+                                Acciones
+                            </TableHeadCell>
                         </TableRow>
                     </TableHead>
 
@@ -164,12 +166,14 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 key={product.id}
                                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
                             >
-                                <TableCell className="px-4 text-left! md:text-center! text-gray-500">
+                                <TableCell className="px-4 text-left! text-gray-500">
                                     {product.id}
                                 </TableCell>
+
                                 <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white text-left">
                                     {product.name}
                                 </TableCell>
+
                                 <TableCell className="hidden md:table-cell! text-left">
                                     {product.brand?.name || "sin marca"}
                                 </TableCell>
@@ -177,9 +181,11 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     {product.subCategory?.category?.name ||
                                         "sin categoria"}
                                 </TableCell>
-                                <TableCell className="hidden md:table-cell! text-center">
+
+                                <TableCell className="hidden md:table-cell! text-left">
                                     {`$${product.price}`}
                                 </TableCell>
+
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <Link
