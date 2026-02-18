@@ -9,8 +9,7 @@ import {
 } from "flowbite-react";
 import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { Product } from "@/types/product.types";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 // Dentro de tu archivo de la tabla
 type SortColumn = keyof Product | "brand.name" | "subCategory.category.name";
@@ -27,9 +26,6 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         null,
     );
 
-
-
-    
     // ---------------- Sort ----------------
     const handleSort = (column: SortColumn) => {
         if (sortColumn !== column) {
@@ -44,48 +40,60 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     };
 
     const renderSortArrow = (column: SortColumn) => {
-        if (sortColumn !== column) return null;
+        const isActive = sortColumn === column;
+
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-transform ${sortDirection === "desc" ? "rotate-180" : ""
-                    }`}
+                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
+                    isActive
+                        ? sortDirection === "desc"
+                            ? "rotate-180 opacity-100"
+                            : "opacity-100"
+                        : "opacity-0"
+                }`}
             />
         );
     };
 
     // ---------------- Sorted Products ----------------
-const sortedProducts = useMemo(() => {
-    if (!sortColumn) return products;
+    const sortedProducts = useMemo(() => {
+        if (!sortColumn) return products;
 
-    return [...products].sort((a, b) => {
-        let aValue: any;
-        let bValue: any;
+        return [...products].sort((a, b) => {
+            let aValue: any;
+            let bValue: any;
 
-        if (sortColumn === "brand.name" || (sortColumn as string) === "brand") {
-            aValue = a.brand?.name || "";
-            bValue = b.brand?.name || "";
-        } else if (sortColumn === "subCategory.category.name" || (sortColumn as string) === "subCategory.category") {
-            aValue = a.subCategory?.category?.name || "";
-            bValue = b.subCategory?.category?.name || "";
-        } else {
-            aValue = a[sortColumn as keyof Product];
-            bValue = b[sortColumn as keyof Product];
-        }
+            if (
+                sortColumn === "brand.name" ||
+                (sortColumn as string) === "brand"
+            ) {
+                aValue = a.brand?.name || "";
+                bValue = b.brand?.name || "";
+            } else if (
+                sortColumn === "subCategory.category.name" ||
+                (sortColumn as string) === "subCategory.category"
+            ) {
+                aValue = a.subCategory?.category?.name || "";
+                bValue = b.subCategory?.category?.name || "";
+            } else {
+                aValue = a[sortColumn as keyof Product];
+                bValue = b[sortColumn as keyof Product];
+            }
 
-        if (sortColumn === "id" || typeof aValue === "number") {
-            return sortDirection === "asc" 
-                ? Number(aValue) - Number(bValue) 
-                : Number(bValue) - Number(aValue);
-        }
+            if (sortColumn === "id" || typeof aValue === "number") {
+                return sortDirection === "asc"
+                    ? Number(aValue) - Number(bValue)
+                    : Number(bValue) - Number(aValue);
+            }
 
-        const aStr = String(aValue).toLowerCase();
-        const bStr = String(bValue).toLowerCase();
-        
-        if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
-        if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-    });
-}, [products, sortColumn, sortDirection]);
+            const aStr = String(aValue).toLowerCase();
+            const bStr = String(bValue).toLowerCase();
+
+            if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
+            if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
+            return 0;
+        });
+    }, [products, sortColumn, sortDirection]);
 
     const headerClass = "cursor-pointer select-none flex items-center gap-1";
 
@@ -96,10 +104,13 @@ const sortedProducts = useMemo(() => {
                     <TableHead>
                         <TableRow>
                             <TableHeadCell
-                                className="px-4 w-14 cursor-pointer text-left! md:text-center!"
+                                className="px-4 w-14 cursor-pointer select-none"
                                 onClick={() => handleSort("id")}
                             >
-                                # {renderSortArrow("id")}
+                                <div className="flex items-center justify-start md:justify-center gap-1">
+                                    <span>#</span>
+                                    {renderSortArrow("id")}
+                                </div>
                             </TableHeadCell>
 
                             <TableHeadCell
@@ -122,10 +133,15 @@ const sortedProducts = useMemo(() => {
 
                             <TableHeadCell
                                 className="hidden md:table-cell! cursor-pointer"
-                                onClick={() => handleSort("subCategory.category.name")}
+                                onClick={() =>
+                                    handleSort("subCategory.category.name")
+                                }
                             >
                                 <div className={headerClass}>
-                                    Categoria {renderSortArrow("subCategory.category.name")}
+                                    Categoria{" "}
+                                    {renderSortArrow(
+                                        "subCategory.category.name",
+                                    )}
                                 </div>
                             </TableHeadCell>
 
@@ -158,7 +174,8 @@ const sortedProducts = useMemo(() => {
                                     {product.brand?.name || "sin marca"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-left">
-                                    {product.subCategory?.category?.name || "sin categoria"}
+                                    {product.subCategory?.category?.name ||
+                                        "sin categoria"}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell! text-center">
                                     {`$${product.price}`}

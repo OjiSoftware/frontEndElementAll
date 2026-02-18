@@ -40,7 +40,10 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Navbar */}
-            <Disclosure as="nav" className="bg-gray-800/50 backdrop-blur-xl">
+            <Disclosure
+                as="nav"
+                className="relative z-50 bg-gray-800/50 backdrop-blur-xl"
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
                         <div className="flex items-center">
@@ -109,7 +112,7 @@ export default function DashboardLayout({
 
                                     <MenuItems
                                         transition
-                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg outline-1 outline-white/10"
+                                        className="absolute right-0 z-999 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg outline-1 outline-white/10"
                                     >
                                         {userNavigation.map((item) => (
                                             <MenuItem key={item.name}>
