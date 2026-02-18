@@ -17,6 +17,21 @@ export const productApi = {
         return response.json();
     },
 
+    create: async (data: any) => {
+
+        const response = await fetch(`${BASE_URL}/products`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Error al crear el producto');
+
+        return response.json()
+
+
+    },
+
     getAllCategories: async () => {
         const response = await fetch(`${BASE_URL}/categories`);
         if (!response.ok) throw new Error('Error al traer categorías');
@@ -40,4 +55,5 @@ export const productApi = {
         if (!response.ok) throw new Error('Error al traer los productos');
         return response.json()
     }
+
 };
