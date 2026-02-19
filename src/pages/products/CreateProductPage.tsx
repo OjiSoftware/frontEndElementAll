@@ -68,289 +68,226 @@ export default function CreateProductPage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-3xl mx-auto px-1 xl:px-0">
-                {/* Volver */}
-                <button
-                    onClick={() => window.history.back()}
-                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
-                >
-                    ← Volver
-                </button>
-
-                {/* Encabezado */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                        <PackagePlus className="text-indigo-400" size={32} />
-                        Nuevo producto
-                    </h1>
-                    <p className="text-slate-400 mt-2">
+            {/* Contenedor principal con max-w-5xl para ganar ancho y px-4 */}
+            <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
+                {/* Volver y Encabezado más compactos */}
+                <div className="flex justify-between items-end mb-4">
+                    <div>
+                        <button
+                            onClick={() => window.history.back()}
+                            className="text-xs text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Volver
+                        </button>
+                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <PackagePlus className="text-indigo-400" size={24} />
+                            Nuevo producto
+                        </h1>
+                    </div>
+                    <p className="text-slate-400 text-sm hidden md:block">
                         Complete la información para crear un nuevo producto.
                     </p>
                 </div>
 
-                {/* Card de preview */}
-                <div className="flex items-center gap-6 mb-8 bg-slate-800/30 p-6 rounded-2xl border border-white/20 shadow-lg">
-                    <div className="w-28 h-28 rounded-xl bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
-                        <div className="w-full h-full rounded-xl overflow-hidden bg-slate-700 flex items-center justify-center">
+                {/* Card de preview más pequeña */}
+                <div className="flex items-center gap-4 mb-4 bg-slate-800/30 p-3 rounded-xl border border-white/10 shadow-lg">
+                    <div className="w-16 h-16 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
+                        <div className="w-full h-full rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center">
                             {formData.imageUrl ? (
                                 <img
                                     src={formData.imageUrl}
                                     alt={formData.name}
-                                    className="w-full h-full object-contain bg-slate-700"
+                                    className="w-full h-full object-contain"
                                 />
                             ) : (
-                                <ImageIcon
-                                    className="text-slate-600"
-                                    size={40}
-                                />
+                                <ImageIcon className="text-slate-600" size={24} />
                             )}
                         </div>
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white">
+                        <h2 className="text-lg font-bold text-white leading-tight">
                             {formData.name || "Nuevo producto"}
                         </h2>
-                        <p className="text-indigo-400 font-medium">ID: Nuevo</p>
+                        <p className="text-indigo-400 text-xs font-medium">ID: Nuevo</p>
                     </div>
                 </div>
 
-                {/* Formulario */}
+                {/* Formulario Compacto */}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
-
                         const { categoryId, subCategoryId, brandId, price, name } = formData;
-
-                        if (!name.trim()) {
-                            return toast.error("El nombre es obligatorio");
-                        }
-
-                        if (!categoryId || !subCategoryId || !brandId) {
-                            return toast.error("Debes seleccionar Categoría, Subcategoría y Marca");
-                        }
-
-                        if (price <= 0) {
-                            return toast.error("El precio debe ser mayor a 0");
-                        }
-
+                        if (!name.trim()) return toast.error("El nombre es obligatorio");
+                        if (!categoryId || !subCategoryId || !brandId) return toast.error("Selecciona Categoría, Subcategoría y Marca");
+                        if (price <= 0) return toast.error("El precio debe ser mayor a 0");
                         setShowConfirmModal(true);
                     }}
-
-                    className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 gap-6"
+                    className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
                 >
-                    {/* Nombre */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Nombre del producto
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Ingrese el nombre del producto"
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
-                            required
-                        />
-                    </div>
+                    {/* COLUMNA IZQUIERDA */}
+                    <div className="space-y-4">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1">Información Básica</h3>
 
-                    {/* Descripción */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Descripción
-                        </label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="Describe las características principales..."
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-32"
-                            required
-                        />
-                    </div>
-
-                    {/* Categoría, Subcategoría, Marca */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Categoría
-                            </label>
-                            <select
-                                name="categoryId"
-                                value={formData.categoryId || ""}
+                            <label className="block text-xs font-medium text-gray-300 mb-1">Nombre del producto</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                placeholder="Ej: Teclado Mecánico RGB"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                 required
-                            >
-                                <option value={""}>Seleccionar...</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Subcategoría
-                            </label>
-                            <select
-                                name="subCategoryId"
-                                value={formData.subCategoryId || ""}
+                            <label className="block text-xs font-medium text-gray-300 mb-1">Descripción</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
                                 onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                placeholder="Características..."
+
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24"
                                 required
-                            >
-                                <option value={""}>Seleccionar...</option>
-                                {filteredSubCategories.map((sub) => (
-                                    <option key={sub.id} value={sub.id}>
-                                        {sub.name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Marca
-                            </label>
-                            <select
-                                name="brandId"
-                                value={formData.brandId || ""}
+                            <label className="block text-xs font-medium text-gray-300 mb-1">URL de Imagen</label>
+                            <input
+                                type="url"
+                                name="imageUrl"
+                                value={formData.imageUrl}
                                 onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
-                                required
-                            >
-                                <option value={""}>Seleccionar...</option>
-                                {brands.map((brand) => (
-                                    <option key={brand.id} value={brand.id}>
-                                        {brand.name}
-                                    </option>
-                                ))}
-                            </select>
+                                placeholder="Pegar URL..."
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400"
+                            />
                         </div>
                     </div>
 
-                    {/* Stock */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Stock
-                        </label>
-                        <input
-                            type="number"
-                            name="stock"
-                            value={formData.stock}
-                            onChange={handleChange}
-                            min={0}
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none"
-                            required
-                        />
-                    </div>
+                    {/* COLUMNA DERECHA */}
+                    <div className="flex flex-col">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4">Categorización y Precio</h3>
 
-                    {/* Unidad */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Unidad
-                        </label>
-                        <input
-                            type="text"
-                            name="unit"
-                            value={formData.unit}
-                            onChange={handleChange}
-                            placeholder="kg, unidad, etc..."
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none"
-                            required
-                        />
-                    </div>
-
-                    {/* Precio */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Precio ($)
-                        </label>
-                        <input
-                            type="text"
-                            name="price"
-                            value={priceInput}
-                            onChange={handlePriceChange}
-                            onBlur={handlePriceBlur}
-                            placeholder="0,00"
-                            required
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
-                        />
-                    </div>
-
-                    {/* Imagen */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Imagen
-                        </label>
-                        <input
-                            type="url"
-                            name="imageUrl"
-                            value={formData.imageUrl}
-                            onChange={handleChange}
-                            placeholder="Pegar URL de imagen..."
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-400 mb-4"
-                        />
-                        {formData.imageUrl && (
-                            <div className="w-full h-64 rounded-xl overflow-hidden bg-slate-700 mb-4">
-                                <img
-                                    src={formData.imageUrl}
-                                    alt={formData.name}
-                                    className="w-full h-full object-contain bg-slate-700"
-                                />
+                        <div className="space-y-4 grow">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-300 mb-1">Categoría</label>
+                                <select
+                                    name="categoryId"
+                                    value={formData.categoryId || ""}
+                                    onChange={handleChange}
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                    required
+                                >
+                                    <option value="">Seleccionar...</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
                             </div>
-                        )}
-                    </div>
 
-                    <div className="flex items-center gap-2 px-1">
-                        <input
-                            type="checkbox"
-                            id="showInCatalog"
-                            name="showingInCatalog"
-                            checked={formData.showingInCatalog || false}
-                            onChange={handleChange}
-                            className="w-4 h-4 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
-                        />
-                        <label
-                            htmlFor="showInCatalog"
-                            className="text-sm text-slate-300 cursor-pointer select-none hover:text-white transition-colors"
-                        >
-                            Mostrar en catálogo
-                        </label>
-                    </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-300 mb-1">Subcategoría</label>
+                                    <select
+                                        name="subCategoryId"
+                                        value={formData.subCategoryId || ""}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {filteredSubCategories.map((sub) => (
+                                            <option key={sub.id} value={sub.id}>{sub.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-300 mb-1">Marca</label>
+                                    <select
+                                        name="brandId"
+                                        value={formData.brandId || ""}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {brands.map((brand) => (
+                                            <option key={brand.id} value={brand.id}>{brand.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
-                    {/* Botones */}
-                    <div className="flex items-center justify-end gap-4 mt-4">
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
-                            className="px-5 py-3 rounded-lg border border-red-400 text-gray-800 hover:bg-red-800 dark:border-gray-600 dark:text-white dark:hover:bg-blue-700 transition cursor-pointer"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="px-5 py-3 rounded-lg bg-linear-to-r from-red-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isLoading ? "Creando..." : "Guardar producto"}
-                        </button>
+                            <div className="grid grid-cols-3 gap-3">
+                                <div className="col-span-1">
+                                    <label className="block text-xs font-medium text-gray-300 mb-1">Stock</label>
+                                    <input
+                                        type="number"
+                                        name="stock"
+                                        value={formData.stock}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        required
+                                    />
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-xs font-medium text-gray-300 mb-1">Precio ($)</label>
+                                    <input
+                                        type="text"
+                                        name="price"
+                                        value={priceInput}
+                                        onChange={handlePriceChange}
+                                        onBlur={handlePriceBlur}
+                                        placeholder="0,00"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="showInCatalog"
+                                    name="showingInCatalog"
+                                    checked={formData.showingInCatalog || false}
+                                    onChange={handleChange}
+                                    className="w-4 h-4 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
+                                />
+                                <label htmlFor="showInCatalog" className="text-xs text-slate-300 cursor-pointer">
+                                    Mostrar en catálogo
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Botones de acción */}
+                        <div className="flex items-center gap-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => window.history.back()}
+                                className="flex-1 px-4 py-2 text-sm rounded-lg border border-slate-500 text-white bg-transparent transition-colors duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="flex-1 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                            >
+                                {isLoading ? "Creando..." : "Guardar producto"}
+                            </button>
+                        </div>
                     </div>
                 </form>
 
-                {/* Modal de confirmación */}
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Crear producto"
-                    message={
-                        <>
-                            ¿Seguro que querés crear el producto{" "}
-                            <b>{formData.name}</b>?
-                        </>
-                    }
+                    message={<>¿Seguro que querés crear el producto <b>{formData.name}</b>?</>}
                     isLoading={isLoading}
                     onCancel={() => setShowConfirmModal(false)}
                     onConfirm={handleSubmit}
