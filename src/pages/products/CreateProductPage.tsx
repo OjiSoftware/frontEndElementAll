@@ -17,7 +17,7 @@ export default function CreateProductPage() {
     } = useProductForm();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [priceInput, setPriceInput] = useState("0,00");
+    const [priceInput, setPriceInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     // ---------------- Handlers ----------------
@@ -55,7 +55,7 @@ export default function CreateProductPage() {
             });
 
             toast.success("¡Producto creado con éxito!", { id: loadingToast });
-            setPriceInput("0,00");
+            setPriceInput("");
         } catch (error) {
             console.error(error);
             toast.error("Hubo un error al crear el producto.", {
@@ -118,8 +118,24 @@ export default function CreateProductPage() {
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
+
+                        const { categoryId, subCategoryId, brandId, price, name } = formData;
+
+                        if (!name.trim()) {
+                            return toast.error("El nombre es obligatorio");
+                        }
+
+                        if (!categoryId || !subCategoryId || !brandId) {
+                            return toast.error("Debes seleccionar Categoría, Subcategoría y Marca");
+                        }
+
+                        if (price <= 0) {
+                            return toast.error("El precio debe ser mayor a 0");
+                        }
+
                         setShowConfirmModal(true);
                     }}
+
                     className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 gap-6"
                 >
                     {/* Nombre */}
@@ -161,11 +177,12 @@ export default function CreateProductPage() {
                             </label>
                             <select
                                 name="categoryId"
-                                value={formData.categoryId}
+                                value={formData.categoryId || ""}
                                 onChange={handleChange}
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                required
                             >
-                                <option value={0}>Seleccionar...</option>
+                                <option value={""}>Seleccionar...</option>
                                 {categories.map((cat) => (
                                     <option key={cat.id} value={cat.id}>
                                         {cat.name}
@@ -180,11 +197,12 @@ export default function CreateProductPage() {
                             </label>
                             <select
                                 name="subCategoryId"
-                                value={formData.subCategoryId}
+                                value={formData.subCategoryId || ""}
                                 onChange={handleChange}
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                required
                             >
-                                <option value={0}>Seleccionar...</option>
+                                <option value={""}>Seleccionar...</option>
                                 {filteredSubCategories.map((sub) => (
                                     <option key={sub.id} value={sub.id}>
                                         {sub.name}
@@ -199,11 +217,12 @@ export default function CreateProductPage() {
                             </label>
                             <select
                                 name="brandId"
-                                value={formData.brandId}
+                                value={formData.brandId || ""}
                                 onChange={handleChange}
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                required
                             >
-                                <option value={0}>Seleccionar...</option>
+                                <option value={""}>Seleccionar...</option>
                                 {brands.map((brand) => (
                                     <option key={brand.id} value={brand.id}>
                                         {brand.name}

@@ -63,30 +63,24 @@ export const useProductForm = () => {
     };
 
     const handleChange = (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-        >,
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        const numericFields = [
-            "price",
-            "stock",
-            "categoryId",
-            "subCategoryId",
-            "brandId",
-        ];
+        const numericFields = ["price", "stock", "categoryId", "subCategoryId", "brandId"];
 
-        let finalValue: string | number = numericFields.includes(name)
-            ? Number(value)
-            : value;
+        let finalValue: string | number;
 
-        // Validaciones
-        if (name === "stock") {
-            finalValue = Number(finalValue) < 0 ? 0 : Number(finalValue);
+        if (numericFields.includes(name)) {
+            finalValue = value === "" ? "" : Number(value);
+        } else {
+            finalValue = value;
         }
 
-        if (name === "price") {
-            finalValue = Number(finalValue) < 0 ? 0 : Number(finalValue);
+
+        if (typeof finalValue === "number") {
+            if (name === "stock" || name === "price") {
+                finalValue = Math.max(0, finalValue);
+            }
         }
 
         updateField(name, finalValue);
