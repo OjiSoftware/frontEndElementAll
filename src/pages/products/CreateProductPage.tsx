@@ -309,8 +309,8 @@ export default function CreateProductPage() {
                         <input
                             type="checkbox"
                             id="showInCatalog"
-                            name="showInCatalog" // Asegúrate que este nombre coincida con tu estado inicial
-                            checked={formData.showInCatalog || false}
+                            name="showingInCatalog"
+                            checked={formData.showingInCatalog || false}
                             onChange={handleChange}
                             className="w-4 h-4 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
                         />

@@ -11,6 +11,7 @@ import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { Product } from "@/types/product.types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { CheckCircle } from "lucide-react";
 
 type SortColumn = keyof Product | "brand.name" | "subCategory.category.name";
 
@@ -53,13 +54,12 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         return (
             <ArrowUpIcon
                 aria-label={`Ordenar por ${column}`}
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
-                    isActive
-                        ? sortDirection === "desc"
-                            ? "rotate-180 opacity-100"
-                            : "opacity-100"
-                        : "opacity-0"
-                }`}
+                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${isActive
+                    ? sortDirection === "desc"
+                        ? "rotate-180 opacity-100"
+                        : "opacity-100"
+                    : "opacity-0"
+                    }`}
             />
         );
     };
@@ -154,6 +154,10 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                         <TableHeadCell className="select-none">
                             Acciones
                         </TableHeadCell>
+
+                        <TableHeadCell className="">
+                            Cat.
+                        </TableHeadCell>
                     </TableRow>
                 </TableHead>
 
@@ -197,6 +201,13 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     >
                                         <TrashIcon className="w-5 h-5" />
                                     </button>
+                                </div>
+                            </TableCell>
+
+                            <TableCell>
+                                <div className="flex justify-center">
+
+                                    {product.showingInCatalog && (<CheckCircle className="w-5 h-5 text-green-500" />)}
                                 </div>
                             </TableCell>
                         </TableRow>

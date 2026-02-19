@@ -15,6 +15,7 @@ export interface Product {
     unit?: string;
     status?: boolean;
     createdAt?: string;
+    showingInCatalog: boolean;
 }
 
 // Para el formulario de edición

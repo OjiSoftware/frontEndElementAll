@@ -15,7 +15,7 @@ export const useProductForm = () => {
         description: "",
         imageUrl: "",
         unit: "",
-        showInCatalog: false,
+        showingInCatalog: false,
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -122,7 +122,7 @@ export const useProductForm = () => {
                 brandId: 0,
                 imageUrl: "",
                 unit: "",
-                showInCatalog: false,
+                showingInCatalog: false,
             });
         } catch (error) {
             console.error("Error al crear el producto:", error);
