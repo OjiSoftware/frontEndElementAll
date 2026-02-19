@@ -305,6 +305,23 @@ export default function CreateProductPage() {
                         )}
                     </div>
 
+                    <div className="flex items-center gap-2 px-1">
+                        <input
+                            type="checkbox"
+                            id="showInCatalog"
+                            name="showInCatalog" // Asegúrate que este nombre coincida con tu estado inicial
+                            checked={formData.showInCatalog || false}
+                            onChange={handleChange}
+                            className="w-4 h-4 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
+                        />
+                        <label
+                            htmlFor="showInCatalog"
+                            className="text-sm text-slate-300 cursor-pointer select-none hover:text-white transition-colors"
+                        >
+                            Mostrar en catálogo
+                        </label>
+                    </div>
+
                     {/* Botones */}
                     <div className="flex items-center justify-end gap-4 mt-4">
                         <button

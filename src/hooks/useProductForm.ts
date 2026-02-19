@@ -15,6 +15,7 @@ export const useProductForm = () => {
         description: "",
         imageUrl: "",
         unit: "",
+        showInCatalog: false,
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -55,7 +56,7 @@ export const useProductForm = () => {
         }
     }, [formData.categoryId, allSubCategories]);
 
-    const updateField = (name: string, value: string | number) => {
+    const updateField = (name: string, value: string | number | boolean) => {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -65,16 +66,20 @@ export const useProductForm = () => {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target as HTMLInputElement;
         const numericFields = ["price", "stock", "categoryId", "subCategoryId", "brandId"];
 
-        let finalValue: string | number;
+        let finalValue: string | number | boolean;
 
-        if (numericFields.includes(name)) {
+        if (type === "checkbox") {
+            finalValue = (e.target as HTMLInputElement).checked
+        } else if (numericFields.includes(name)) {
             finalValue = value === "" ? "" : Number(value);
         } else {
             finalValue = value;
         }
+
+
 
 
         if (typeof finalValue === "number") {
@@ -117,6 +122,7 @@ export const useProductForm = () => {
                 brandId: 0,
                 imageUrl: "",
                 unit: "",
+                showInCatalog: false,
             });
         } catch (error) {
             console.error("Error al crear el producto:", error);
