@@ -3,7 +3,7 @@ import { useCreateBrand } from "@/hooks/useBrandForm";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
-import { Tag, PackagePlus } from "lucide-react";
+import { PackagePlus } from "lucide-react";
 
 export default function CreateBrandPage() {
     const navigate = useNavigate();
