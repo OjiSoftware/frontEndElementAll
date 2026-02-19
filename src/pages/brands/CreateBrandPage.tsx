@@ -3,7 +3,7 @@ import { useCreateBrand } from "@/hooks/useBrandForm";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
-import { Tag } from "lucide-react";
+import { Tag, PackagePlus } from "lucide-react";
 
 export default function CreateBrandPage() {
     const navigate = useNavigate();
@@ -31,14 +31,13 @@ export default function CreateBrandPage() {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                        <Tag className="text-indigo-400" size={32} />
-                        Crear marca
+                        <PackagePlus className="text-indigo-400" size={32} />
+                        Nueva marca
                     </h1>
                     <p className="text-slate-400 mt-2">
-                        Complete la información para crear una nueva marca
+                        Complete la información para crear una nueva marca.
                     </p>
                 </div>
-
                 {/* Card */}
                 <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
                     <form

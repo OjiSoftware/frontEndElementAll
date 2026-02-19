@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useBrandEdit } from "@/hooks/useBrandEdit";
 import { brandApi } from "@/services/BrandService";
+import { SquarePen } from "lucide-react";
 
 export default function EditBrandPage() {
     const navigate = useNavigate();
@@ -46,12 +47,15 @@ export default function EditBrandPage() {
                     ← Volver
                 </button>
 
-                <h1 className="text-3xl font-bold text-white mb-2">
-                    Editar marca
-                </h1>
-                <p className="text-slate-400 mb-6">
-                    Cambie el nombre y la subcategoría de la marca
-                </p>
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                        <SquarePen className="text-indigo-400" size={32} />
+                        Editar marca
+                    </h1>
+                    <p className="text-slate-400 mt-2">
+                        Cambie el nombre y la subcategoría de la marca.
+                    </p>
+                </div>
 
                 <form
                     onSubmit={(e) => {

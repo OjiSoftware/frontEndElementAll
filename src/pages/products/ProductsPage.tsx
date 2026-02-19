@@ -51,7 +51,7 @@ export default function ProductsPage() {
     return (
         <DashboardLayout
             title="Lista de productos"
-            subtitle="Gestión de productos del sistema"
+            subtitle="Gestión de productos del sistema."
             actions={
                 <button
                     onClick={() => navigate(ROUTES.products.create)}

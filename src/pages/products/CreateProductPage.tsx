@@ -81,7 +81,7 @@ export default function CreateProductPage() {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                         <PackagePlus className="text-indigo-400" size={32} />
-                        Nuevo Producto
+                        Nuevo producto
                     </h1>
                     <p className="text-slate-400 mt-2">
                         Complete la información para crear un nuevo producto.

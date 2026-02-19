@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
@@ -48,7 +48,7 @@ export default function BrandsPage() {
     return (
         <DashboardLayout
             title="Lista de marcas"
-            subtitle="Gestión de marcas del sistema"
+            subtitle="Gestión de marcas del sistema."
             actions={
                 <button
                     onClick={() => navigate(ROUTES.brands.create)}

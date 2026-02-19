@@ -137,7 +137,7 @@ export default function EditProductPage() {
                         Editar producto
                     </h1>
                     <p className="text-slate-400 mt-2">
-                        Complete la información para editar el producto
+                        Complete la información para editar el producto.
                     </p>
                 </div>
 
