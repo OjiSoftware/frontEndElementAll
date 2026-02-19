@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal } from "../components/ConfirmModal";
+import { ConfirmModal } from "../../components/ConfirmModal";
 import { Brand } from "@/types/brand.types";
 import { Category } from "@/types/category.types";
 import { SubCategory } from "@/types/subcategory.types";
@@ -44,15 +44,23 @@ export default function EditProductPage() {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
         const { name, value } = e.target;
-        const isNumeric = ["brandId", "categoryId", "subCategoryId"].includes(
-            name,
-        );
-        const finalValue = isNumeric ? parseFloat(value) || 0 : value;
+        const isNumeric = [
+            "brandId",
+            "categoryId",
+            "subCategoryId",
+            "price",
+        ].includes(name);
+        let finalValue: string | number = isNumeric
+            ? parseFloat(value) || 0
+            : value;
+
+        if (name === "price") finalValue = Math.max(0, finalValue as number);
 
         setFormData((prev) => {
             const newState = { ...prev, [name]: finalValue };
-            if (name === "categoryId" && prev.categoryId !== finalValue)
+            if (name === "categoryId" && prev.categoryId !== finalValue) {
                 newState.subCategoryId = 0;
+            }
             return newState;
         });
     };
@@ -60,12 +68,38 @@ export default function EditProductPage() {
     const handleSubmit = async () => {
         setShowConfirmModal(false);
         const loadingToast = toast.loading("Guardando producto...");
+        <input
+            type="text"
+            name="price"
+            value={priceInput}
+            onChange={(e) => {
+                const raw = e.target.value;
+                setPriceInput(raw);
 
+                const numericValue = parseFloat(
+                    raw.replace(/\./g, "").replace(",", "."),
+                );
+                setFormData((prev) => ({
+                    ...prev,
+                    price: isNaN(numericValue) ? 0 : Math.max(0, numericValue),
+                }));
+            }}
+            onBlur={() =>
+                setPriceInput(
+                    formData.price.toLocaleString("es-AR", {
+                        minimumFractionDigits: 2,
+                    }),
+                )
+            }
+            placeholder="0,00"
+            required
+            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+        />;
         try {
-            await productApi.update(id, {
+            await productApi.update(id!, {
                 name: formData.name,
                 description: formData.description,
-                price: formData.price,
+                price: Math.max(0, formData.price),
                 imageUrl: formData.imageUrl,
                 brandId: formData.brandId,
                 subCategoryId: formData.subCategoryId,
@@ -74,7 +108,7 @@ export default function EditProductPage() {
             toast.success("¡Producto actualizado con éxito!", {
                 id: loadingToast,
             });
-            navigate("/management");
+            navigate("/management/products");
         } catch (error) {
             console.error("Error al actualizar:", error);
             toast.error("Hubo un error al guardar los cambios.", {
@@ -90,6 +124,13 @@ export default function EditProductPage() {
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto px-1 xl:px-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
+                >
+                    ← Volver
+                </button>
+
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                         <SquarePen className="text-indigo-400" size={32} />
@@ -142,7 +183,7 @@ export default function EditProductPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ingrese el nombre del producto"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                 required
                             />
                         </div>
@@ -180,6 +221,7 @@ export default function EditProductPage() {
                                 onChange={(e) => {
                                     const raw = e.target.value;
                                     setPriceInput(raw);
+
                                     const numericValue = parseFloat(
                                         raw
                                             .replace(/\./g, "")
@@ -189,7 +231,7 @@ export default function EditProductPage() {
                                         ...prev,
                                         price: isNaN(numericValue)
                                             ? 0
-                                            : numericValue,
+                                            : Math.max(0, numericValue),
                                     }));
                                 }}
                                 onBlur={() =>
@@ -200,8 +242,8 @@ export default function EditProductPage() {
                                     )
                                 }
                                 placeholder="0,00"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                 required
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                             />
                         </div>
 
@@ -255,7 +297,7 @@ export default function EditProductPage() {
                         <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/20">
                             <button
                                 type="button"
-                                onClick={() => navigate("/management")}
+                                onClick={() => navigate("/management/products")}
                                 className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
                             >
                                 Cancelar

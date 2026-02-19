@@ -34,8 +34,14 @@ function classNames(...classes: string[]) {
 
 export default function DashboardLayout({
     children,
+    title,
+    subtitle,
+    actions,
 }: {
     children: React.ReactNode;
+    title?: string;
+    subtitle?: string;
+    actions?: React.ReactNode;
 }) {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -275,13 +281,25 @@ export default function DashboardLayout({
             </Disclosure>
 
             {/* Header */}
-            <header className="relative bg-white shadow-sm dark:bg-gray-800 dark:shadow-none dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:inset-y-0 dark:after:border-y dark:after:border-white/10">
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        Lista de productos
-                    </h1>
-                </div>
-            </header>
+            {title && (
+                <header className="relative bg-white shadow-sm dark:bg-gray-800 dark:shadow-none dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:inset-y-0 dark:after:border-y dark:after:border-white/10">
+                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                {title}
+                            </h1>
+
+                            {subtitle && (
+                                <p className="text-sm text-gray-400 mt-1">
+                                    {subtitle}
+                                </p>
+                            )}
+                        </div>
+
+                        {actions && <div>{actions}</div>}
+                    </div>
+                </header>
+            )}
 
             {/* Main content */}
             <main>

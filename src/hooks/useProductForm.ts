@@ -4,119 +4,138 @@ import { SubCategory } from "@/types/subcategory.types";
 import { Category } from "@/types/category.types";
 import { productApi } from "@/services/ProductService";
 
-
 export const useProductForm = () => {
     const [formData, setFormData] = useState({
         name: "",
-        price: "",
+        price: 0,
+        stock: 0,
         categoryId: 0,
         subCategoryId: 0,
         brandId: 0,
-        stock: "",
         description: "",
         imageUrl: "",
         unit: "",
-    })
+    });
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [allSubCategories, setAllSubCategories] = useState<SubCategory[]>([]);
-    const [filteredSubCategories, setFilteredSubCategories] = useState<SubCategory[]>([]);
+    const [filteredSubCategories, setFilteredSubCategories] = useState<
+        SubCategory[]
+    >([]);
 
     useEffect(() => {
         const loadData = async () => {
-
             try {
                 const [cat, subCat, brands] = await Promise.all([
                     productApi.getAllCategories(),
                     productApi.getAllSubcategories(),
                     productApi.getAllBrands(),
-                ])
+                ]);
 
                 setCategories(cat);
-                setAllSubCategories(subCat)
-                setBrands(brands)
+                setAllSubCategories(subCat);
+                setBrands(brands);
             } catch (error) {
-                console.error("Error cargando los datos de campos: ", error)
+                console.error("Error cargando los datos de campos: ", error);
             }
-
         };
         loadData();
-    }, [])
-
+    }, []);
 
     useEffect(() => {
-        const subs = allSubCategories.filter(sub => sub.categoryId === formData.categoryId)
-        /* sub: Es el nombre que le das a "cada subcategoría" mientras el filtro las recorre.
-        sub.categoryId: Es el ID que trae la subcategoría desde la base de datos.
-        === formData.categoryId: Es la comparación con lo que el usuario seleccionó en el formulario. 
-        */
+        const subs = allSubCategories.filter(
+            (sub) => sub.categoryId === formData.categoryId,
+        );
+        setFilteredSubCategories(subs);
 
-        setFilteredSubCategories(subs)
-
-        if (formData.subCategoryId != 0)
-            setFormData(prev => ({ ...prev, subCategoryId: 0 }));
-
-
+        // Reiniciar subCategoryId si cambió la categoría
+        if (formData.subCategoryId !== 0) {
+            setFormData((prev) => ({ ...prev, subCategoryId: 0 }));
+        }
     }, [formData.categoryId, allSubCategories]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target
+    const updateField = (name: string, value: string | number) => {
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-        const finalValue = (name.includes('Id') || name === 'price' || name === 'stock') ? Number(value) : value
+    const handleChange = (
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >,
+    ) => {
+        const { name, value } = e.target;
+        const numericFields = [
+            "price",
+            "stock",
+            "categoryId",
+            "subCategoryId",
+            "brandId",
+        ];
 
-        setFormData({
-            ...formData,
-            [name]: finalValue
-        })
-    }
+        let finalValue: string | number = numericFields.includes(name)
+            ? Number(value)
+            : value;
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        // Validaciones
+        if (name === "stock") {
+            finalValue = Number(finalValue) < 0 ? 0 : Number(finalValue);
+        }
+
+        if (name === "price") {
+            finalValue = Number(finalValue) < 0 ? 0 : Number(finalValue);
+        }
+
+        updateField(name, finalValue);
+    };
+
+    const handleSubmit = async (
+        e?: React.SyntheticEvent<HTMLFormElement>,
+        overrideData?: typeof formData,
+    ) => {
+        e?.preventDefault();
+        const dataToSubmit = overrideData || formData;
 
         try {
-
-            const { categoryId, ...productData } = formData;
-
+            const { categoryId, ...productData } = dataToSubmit;
 
             if (productData.subCategoryId === 0 || productData.brandId === 0) {
-                alert("Por favor, seleccione una subcategoría y una marca válida.");
                 return;
             }
 
+            if (productData.price < 0) productData.price = 0;
+            if (productData.stock < 0) productData.stock = 0;
+
             const res = await productApi.create(productData);
-
             console.log("Producto creado:", res);
-            alert("¡Producto creado con éxito!");
 
-            // Resetear el formulario a su estado inicial
+            // Resetear formulario
             setFormData({
                 name: "",
                 description: "",
-                price: "",
+                price: 0,
+                stock: 0,
                 categoryId: 0,
                 subCategoryId: 0,
                 brandId: 0,
-                stock: "",
                 imageUrl: "",
-                unit: ""
+                unit: "",
             });
-
         } catch (error) {
             console.error("Error al crear el producto:", error);
-            alert("Hubo un error al crear el producto. Revisa la consola.");
         }
     };
 
-
-
     return {
         formData,
+        setFormData,
         categories,
         brands,
         filteredSubCategories,
         handleChange,
-        handleSubmit
+        handleSubmit,
     };
-
-}
+};

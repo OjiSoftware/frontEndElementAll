@@ -10,6 +10,7 @@ import {
 import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { Product } from "@/types/product.types";
 import { Link } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 type SortColumn = keyof Product | "brand.name" | "subCategory.category.name";
 
@@ -51,6 +52,7 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
 
         return (
             <ArrowUpIcon
+                aria-label={`Ordenar por ${column}`}
                 className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
                     isActive
                         ? sortDirection === "desc"
@@ -156,14 +158,16 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                 </TableHead>
 
                 <TableBody className="divide-y">
-                    {sortedProducts.map((product) => (
+                    {sortedProducts.map((product, index) => (
                         <TableRow
                             key={product.id}
                             className="bg-white dark:border-gray-700 dark:bg-gray-800"
                         >
+                            {/* Solo número de fila */}
                             <TableCell className="px-4 text-gray-500">
-                                {product.id}
+                                {index + 1}
                             </TableCell>
+
                             <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                 {product.name}
                             </TableCell>
@@ -180,7 +184,7 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                             <TableCell>
                                 <div className="flex items-center gap-3">
                                     <Link
-                                        to={`/edit/${product.id}`}
+                                        to={ROUTES.products.edit(product.id)}
                                         title="Editar producto"
                                         className="text-blue-500 hover:text-blue-400 transition cursor-pointer"
                                     >

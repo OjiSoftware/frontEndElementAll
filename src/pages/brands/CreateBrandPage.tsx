@@ -21,6 +21,13 @@ export default function CreateBrandPage() {
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto px-1 xl:px-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
+                >
+                    ← Volver
+                </button>
+
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3">
