@@ -1,5 +1,5 @@
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { useCreateBrand } from "@/hooks/useCreateBrand";
+import { useCreateBrand } from "@/hooks/useBrandForm";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
@@ -112,7 +112,7 @@ export default function CreateBrandPage() {
                         <div className="md:col-span-2 flex justify-end gap-4 mt-6 pt-6 border-t border-white/20">
                             <button
                                 type="button"
-                                onClick={() => navigate("/management")}
+                                onClick={() => navigate("/management/brands")}
                                 className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
                             >
                                 Cancelar

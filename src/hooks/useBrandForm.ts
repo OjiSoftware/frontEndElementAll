@@ -99,7 +99,7 @@ export function useCreateBrand() {
             });
 
             toast.success("Marca creada con éxito", { id: loadingToast });
-            navigate("/management");
+            navigate("/management/brands");
         } catch (error) {
             console.error(error);
             toast.error("Error al crear marca", { id: loadingToast });

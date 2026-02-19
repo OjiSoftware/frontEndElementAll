@@ -4,9 +4,9 @@ import ProductsPage from "@/pages/products/ProductsPage";
 import CreateProductPage from "@/pages/products/CreateProductPage";
 import EditProductPage from "@/pages/products/EditProductPage";
 
-// import BrandsPage from "@/pages/brands/BrandsPage";
+import BrandsPage from "@/pages/brands/BrandsPage";
 import CreateBrandPage from "@/pages/brands/CreateBrandPage";
-// import EditBrandPage from "@/pages/brands/EditBrandPage";
+import EditBrandPage from "@/pages/brands/EditBrandPage";
 
 export const AppRoutes = () => {
     return (
@@ -27,15 +27,15 @@ export const AppRoutes = () => {
                 />
 
                 {/* BRANDS */}
-                {/* <Route path="/management/brands" element={<BrandsPage />} /> */
+                <Route path="/management/brands" element={<BrandsPage />} />
                 <Route
                     path="/management/brands/create"
                     element={<CreateBrandPage />}
                 />
-                /* <Route
+                <Route
                     path="/management/brands/edit/:id"
                     element={<EditBrandPage />}
-                /> */}
+                />
             </Routes>
         </BrowserRouter>
     );

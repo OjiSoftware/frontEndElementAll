@@ -13,3 +13,9 @@ export interface CreateBrandDto {
     name: string;
     subCategoryId: number;
 }
+
+export interface UpdateBrandDto {
+    name?: string;
+    subCategoryId?: number;
+    status?: boolean;
+}
