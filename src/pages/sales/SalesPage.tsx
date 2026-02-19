@@ -1,48 +1,44 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { ProductsTable } from "@/components/ProductsTable";
+import { SalesTable } from "@/components/SalesTable";
 import Pagination from "@/components/Pagination";
-import { Product } from "@/types/product.types";
+import { Sale } from "@/types/sale.types";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 import SearchBar from "../../components/SearchBar";
 import { ConfirmDeleteModal } from "../../components/ConfirmDeleteModal";
-import { useDisableProduct } from "@/hooks/useDisableProduct";
-import { productApi } from "@/services/ProductService";
+import { saleApi } from "@/services/SaleService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 
-export default function ProductsPage() {
+export default function SalesPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState("");
-    const [products, setProducts] = useState<Product[]>([]);
-    const [productToDelete, setProductToDelete] = useState<Product | null>(
-        null,
-    );
+    const [sales, setSales] = useState<Sale[]>([]);
+    const [saleToDelete, setSaleToDelete] = useState<Sale | null>(null);
     const navigate = useNavigate();
     const itemsPerPage = useItemsPerpage();
-    const { disableProduct, loading } = useDisableProduct(setProducts);
+
 
     // ---------------- Filtrado ----------------
-    const filteredProducts = products
-        .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
-        .filter((p) => p.status);
+    const filteredSales = sales
+        .filter((s) => s.status);
 
     // ---------------- Paginación ----------------
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
-    const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
+    const currentSales = filteredSales.slice(firstIndex, lastIndex);
 
     // ---------------- Fetch ----------------
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchSales = async () => {
             try {
-                const data = await productApi.getAllProducts();
-                setProducts(data);
+                const data = await saleApi.getAllSales();
+                setSales(data);
             } catch (error) {
-                console.error("Error cargando productos", error);
+                console.error("Error cargando ventas", error);
             }
         };
-        fetchProducts();
+        fetchSales();
     }, []);
 
     // Resetear página al cambiar itemsPerPage o query
@@ -50,14 +46,14 @@ export default function ProductsPage() {
 
     return (
         <DashboardLayout
-            title="Lista de productos"
-            subtitle="Gestión de productos del sistema."
+            title="Lista de ventas"
+            subtitle="Gestión de ventas generadas en el sistema."
             actions={
                 <button
-                    onClick={() => navigate(ROUTES.products.create)}
+                    onClick={() => navigate(ROUTES.sales.create)}
                     className="flex-1 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
                 >
-                    + Nuevo producto
+                    + Nueva venta
                 </button>
             }
         >
@@ -66,25 +62,25 @@ export default function ProductsPage() {
                 <SearchBar
                     value={query}
                     onChange={setQuery}
-                    placeholder="Buscar productos"
+                    placeholder="Buscar ventas"
                 />
 
                 {/* PRODUCTS TABLE */}
-                <ProductsTable
-                    products={currentProducts}
-                    onDelete={(product) => setProductToDelete(product)}
+                <SalesTable
+                    sales={currentSales}
+                    onDelete={(sales) => setSaleToDelete(sales)}
                 />
 
                 {/* PAGINATION */}
                 <Pagination
-                    totalItems={filteredProducts.length}
+                    totalItems={filteredSales.length}
                     itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
                 />
 
                 {/* MODAL DE CONFIRMACIÓN */}
-                {productToDelete && (
+{/*                 {productToDelete && (
                     <ConfirmDeleteModal
                         isOpen={true}
                         itemName={productToDelete.name}
@@ -103,7 +99,7 @@ export default function ProductsPage() {
                             setProductToDelete(null);
                         }}
                     />
-                )}
+                )} */}
             </div>
         </DashboardLayout>
     );

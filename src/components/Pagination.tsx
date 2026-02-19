@@ -115,7 +115,7 @@ export default function Pagination({
                                     className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold cursor-pointer transition-all duration-300
                 ${
                     currentPage === page
-                        ? "bg-linear-to-r from-indigo-500 to-purple-500 text-white"
+                        ? "bg-indigo-600 text-white"
                         : "bg-slate-700/90 text-gray-200 hover:bg-indigo-500/20"
                 }`}
                                 >

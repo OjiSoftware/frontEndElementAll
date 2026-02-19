@@ -9,4 +9,9 @@ export const ROUTES = {
         create: "/management/brands/create",
         edit: (id: number) => `/management/brands/edit/${id}`,
     },
+    sales: {
+        list: "/management/sales",
+        create: "/management/sales/create",
+        edit: (id: number) => `/management/sales/edit/${id}`,
+    },
 };

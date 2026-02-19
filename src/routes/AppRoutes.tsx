@@ -8,6 +8,10 @@ import BrandsPage from "@/pages/brands/BrandsPage";
 import CreateBrandPage from "@/pages/brands/CreateBrandPage";
 import EditBrandPage from "@/pages/brands/EditBrandPage";
 
+import SalesPage from "@/pages/sales/SalesPage";
+/* import CreateSalesPage from "@/pages/sales/CreateSalesPage";
+import EditSAlesPage from "@/pages/sales/EditSalesPage"; */
+
 export const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -36,6 +40,18 @@ export const AppRoutes = () => {
                     path="/management/brands/edit/:id"
                     element={<EditBrandPage />}
                 />
+
+                {/* SALES */}
+                <Route path="/management/sales" element={<SalesPage />} />
+{/*                 <Route
+                    path="/sales/create"
+                    element={<CreateSalesPage />}
+                />
+                <Route
+                    path="/sales/edit/:id"
+                    element={<EditSAlesPage />}
+                /> */}
+
             </Routes>
         </BrowserRouter>
     );
