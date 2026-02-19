@@ -327,14 +327,14 @@ export default function CreateProductPage() {
                         <button
                             type="button"
                             onClick={() => window.history.back()}
-                            className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
+                            className="px-5 py-3 rounded-lg border border-red-400 text-gray-800 hover:bg-red-800 dark:border-gray-600 dark:text-white dark:hover:bg-blue-700 transition cursor-pointer"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-5 py-3 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-5 py-3 rounded-lg bg-linear-to-r from-red-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? "Creando..." : "Guardar producto"}
                         </button>
