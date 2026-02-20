@@ -9,6 +9,7 @@ import { ConfirmDeleteModal } from "../../components/ConfirmDeleteModal";
 import { saleApi } from "@/services/SaleService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { useDisableSale }  from "@/hooks/useDisableSale";
 
 export default function SalesPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +18,7 @@ export default function SalesPage() {
     const [saleToDelete, setSaleToDelete] = useState<Sale | null>(null);
     const navigate = useNavigate();
     const itemsPerPage = useItemsPerpage();
-
+    const { disableSale, loading } = useDisableSale(setSales);
 
     // ---------------- Filtrado ----------------
     const filteredSales = sales
@@ -80,26 +81,26 @@ export default function SalesPage() {
                 />
 
                 {/* MODAL DE CONFIRMACIÓN */}
-{/*                 {productToDelete && (
+                {saleToDelete && (
                     <ConfirmDeleteModal
                         isOpen={true}
-                        itemName={productToDelete.name}
+                        itemName={`Venta #${saleToDelete.id}`}
                         isLoading={loading}
-                        onCancel={() => setProductToDelete(null)}
+                        onCancel={() => setSaleToDelete(null)}
                         onConfirm={async () => {
-                            await disableProduct(productToDelete.id);
+                            await disableSale(saleToDelete.id);
 
                             if (
-                                currentProducts.length === 1 &&
+                                currentSales.length === 1 &&
                                 currentPage > 1
                             ) {
                                 setCurrentPage((prev) => prev - 1);
                             }
 
-                            setProductToDelete(null);
+                            setSaleToDelete(null);
                         }}
                     />
-                )} */}
+                )}
             </div>
         </DashboardLayout>
     );

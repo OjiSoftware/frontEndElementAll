@@ -11,7 +11,7 @@ import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { Sale } from "@/types/sale.types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { CheckCircle } from "lucide-react";
+
 
 type SortColumn = keyof Sale | "client.name" ;
 
@@ -55,6 +55,9 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
 
     // ---------------- Sorted Products ----------------
     const sortedSales = useMemo(() => {
+
+/*         const filtered = sales.filter(s => s.status !== "CANCELLED"); */
+
         if (!sortColumn) return sales;
 
         return [...sales].sort((a, b) => {
@@ -163,21 +166,27 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                             </TableCell>
 
                             <TableCell className="hidden md:table-cell!">
-                                {sales.createdAt}
+                                {sales.createdAt 
+                                  ? new Date(sales.createdAt).toLocaleDateString('es-AR', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: 'numeric'
+                                    })
+                                  : "Sin fecha"}
                             </TableCell>
                             <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                 {sales.status}
                             </TableCell>
                             <TableCell className="hidden md:table-cell!">
-                                {sales.total}
+                                {"$" +sales.total}
                             </TableCell>
                             <TableCell className="hidden md:table-cell!">
-                                {sales.client?.name || "sin cliente"}
+                                {sales.client?.surname + ", " + sales.client?.name || "sin cliente" }
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-3">
                                     <Link
-                                        to={ROUTES.products.edit(sales.id)}
+                                        to={ROUTES.sales.edit(sales.id)}
                                         title="Editar venta"
                                         className="text-blue-500 hover:text-blue-400 transition cursor-pointer"
                                     >
