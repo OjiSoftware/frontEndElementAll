@@ -3,7 +3,7 @@ import { useSaleForm } from "@/hooks/useSaleForm";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { ShoppingCart, Trash2, ChevronDown, ChevronUp, UserPlus } from "lucide-react";
 import ProductSelector from "@/components/ProductsSelector";
 import { saleApi } from "@/services/SaleService";
 import { clientApi } from "@/services/ClientService";
@@ -12,12 +12,14 @@ import { clientApi } from "@/services/ClientService";
 export default function CreateSalePage() {
     const navigate = useNavigate();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [isClientOpen, setIsClientOpen] = useState(true);
 
     const {
         formData,
         setFormData,
         products,
         addProductToSale,
+        updateProductQuantity,
         handleChange,
         isLoading
     } = useSaleForm();
@@ -71,6 +73,15 @@ export default function CreateSalePage() {
                 dni: formData.dni,
                 phoneNumber: formData.phoneNumber,
                 email: formData.email,
+                addresses: {
+                    street: formData.street,
+                    streetNum: parseInt(formData.number, 10) || 0,
+                    floor: formData.floor ? parseInt(formData.floor, 10) : undefined,
+                    apartment: formData.apartment || undefined,
+                    locality: formData.city,
+                    province: formData.province,
+                    reference: formData.reference || undefined,
+                }
             };
             const clientResponse = await clientApi.create(clientPayload);
             const newClientId = clientResponse.id || clientResponse.client?.id;
@@ -98,34 +109,29 @@ export default function CreateSalePage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-4xl mx-auto px-1 xl:px-0">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
-                >
-                    ← Volver
-                </button>
-
-                {/* Header */}
-                <div className="mb-8 flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center py-6">
+                <div className="flex justify-between items-end mb-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <ShoppingCart className="text-indigo-400" size={32} />
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="text-xs text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                        >
+                            ← Volver
+                        </button>
+                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <ShoppingCart className="text-indigo-400" size={24} />
                             Nueva Venta
                         </h1>
-                        <p className="text-slate-400 mt-2">
-                            Ingresa los datos del cliente, selecciona los productos y confirma el total para registrar la operación.
-                        </p>
                     </div>
 
                     {/* Selector de Estado */}
-                    <div className="min-w-[200px]">
-                        <label className="block text-sm font-medium text-gray-200 mb-1">Estado de la Venta</label>
+                    <div className="flex flex-col items-end">
+                        <label className="block text-xs font-medium text-gray-300 mb-1">Estado de la Venta</label>
                         <select
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer"
+                            className="bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer min-w-[150px]"
                         >
                             <option value="PENDING">Pendiente</option>
                             <option value="IN_PROGRESS">En Progreso</option>
@@ -136,108 +142,174 @@ export default function CreateSalePage() {
                 </div>
 
                 {/* Card Principal */}
-                <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
-                    <div className="space-y-8">
+                <div className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6">
 
-                        {/* Datos del Cliente */}
-                        <div className="pb-6 border-b border-white/10">
-                            <h2 className="text-xl font-semibold text-white mb-4">Datos del Cliente</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-1">Nombre</label>
-                                    <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Nombre" />
+                    {/* Datos del Cliente Desplegable */}
+                    <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-800/50">
+                        <button
+                            type="button"
+                            onClick={() => setIsClientOpen(!isClientOpen)}
+                            className="w-full flex items-center justify-between p-4 bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer"
+                        >
+                            <div className="flex items-center gap-2">
+                                <UserPlus className="text-indigo-400" size={20} />
+                                <h2 className="text-base font-semibold text-white">Datos del Cliente y Facturación</h2>
+                            </div>
+                            {isClientOpen ? <ChevronUp className="text-gray-400" size={20} /> : <ChevronDown className="text-gray-400" size={20} />}
+                        </button>
+
+                        {isClientOpen && (
+                            <div className="p-4 border-t border-white/5 space-y-4 shadow-inner">
+                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1">Información Personal</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Nombre</label>
+                                        <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Ej: Juan" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Apellido</label>
+                                        <input type="text" name="surname" value={formData.surname} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Ej: Pérez" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">DNI</label>
+                                        <input type="text" name="dni" value={formData.dni} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Sin puntos" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Teléfono</label>
+                                        <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="+54 9 11..." />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Correo Electrónico</label>
+                                        <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="correo@ejemplo.com" />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-1">Apellido</label>
-                                    <input type="text" name="surname" value={formData.surname} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Apellido" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-1">DNI</label>
-                                    <input type="text" name="dni" value={formData.dni} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="DNI" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-1">Teléfono</label>
-                                    <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Teléfono" />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-200 mb-1">Correo Electrónico</label>
-                                    <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Correo Electrónico" />
+
+                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mt-6">Dirección de Facturación</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Calle</label>
+                                        <input type="text" name="street" value={formData.street} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Ej: Av. Rivadavia" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Número</label>
+                                        <input type="text" name="number" value={formData.number} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Altura" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-300 mb-1">Piso</label>
+                                            <input type="text" name="floor" value={formData.floor} onChange={handleChange} className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Opc." />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-300 mb-1">Dpto.</label>
+                                            <input type="text" name="apartment" value={formData.apartment} onChange={handleChange} className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Opc." />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Ciudad / Localidad</label>
+                                        <input type="text" name="city" value={formData.city} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Ciudad" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Provincia</label>
+                                        <input type="text" name="province" value={formData.province} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Provincia" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">CP</label>
+                                        <input type="text" name="postalCode" value={formData.postalCode} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="1000" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">País</label>
+                                        <input type="text" name="country" value={formData.country} onChange={handleChange} required className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="País" />
+                                    </div>
+                                    <div className="md:col-span-4">
+                                        <label className="block text-xs font-medium text-gray-300 mb-1">Referencia</label>
+                                        <input type="text" name="reference" value={formData.reference} onChange={handleChange} className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all" placeholder="Ej: Esquina con pared azul..." />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
+                    </div>
 
-                        {/* Selector de Productos */}
-                        <div className="pb-6 border-b border-white/10">
-                            <ProductSelector
-                                products={products}
-                                onProductSelect={addProductToSale}
-                            />
-                        </div>
+                    {/* Selector de Productos */}
+                    <div>
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4">Productos de la Venta</h3>
+                        <ProductSelector
+                            products={products}
+                            onProductSelect={addProductToSale}
+                        />
+                    </div>
 
-                        {/* Tabla de Items */}
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-gray-300">
-                                <thead className="text-xs uppercase bg-slate-700/50 text-slate-400">
-                                    <tr>
-                                        <th className="px-4 py-3">Producto</th>
-                                        <th className="px-4 py-3 text-center">Cant.</th>
-                                        <th className="px-4 py-3 text-right">Precio</th>
-                                        <th className="px-4 py-3 text-right">Subtotal</th>
-                                        <th className="px-4 py-3 text-center">Acción</th>
+                    {/* Tabla de Items */}
+                    <div className="overflow-x-auto bg-slate-800/50 rounded-xl border border-white/10">
+                        <table className="w-full text-left text-gray-300 text-sm">
+                            <thead className="text-xs uppercase bg-slate-700/50 text-slate-400">
+                                <tr>
+                                    <th className="px-4 py-3">Producto</th>
+                                    <th className="px-4 py-3 text-center">Cant.</th>
+                                    <th className="px-4 py-3 text-right">Precio</th>
+                                    <th className="px-4 py-3 text-right">Subtotal</th>
+                                    <th className="px-4 py-3 text-center">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {formData.details.map((item) => (
+                                    <tr key={item.productId} className="hover:bg-white/5 transition-colors">
+                                        <td className="px-4 py-3 font-medium text-white">{item.name}</td>
+                                        <td className="px-4 py-3 text-center">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={item.quantity}
+                                                onChange={(e) => updateProductQuantity(item.productId, parseInt(e.target.value) || 1)}
+                                                className="w-16 bg-slate-700/90 border border-gray-500 rounded-lg px-2 py-1 text-sm text-center text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                            />
+                                        </td>
+                                        <td className="px-4 py-3 text-right">${item.price.toLocaleString()}</td>
+                                        <td className="px-4 py-3 text-right font-bold text-indigo-300">
+                                            ${(item.price * item.quantity).toLocaleString()}
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <button
+                                                onClick={() => removeItem(item.productId)}
+                                                className="text-red-400 hover:text-red-300 p-1 cursor-pointer transition-colors"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {formData.details.map((item) => (
-                                        <tr key={item.productId} className="hover:bg-white/5 transition-colors">
-                                            <td className="px-4 py-4 font-medium text-white">{item.name}</td>
-                                            <td className="px-4 py-4 text-center">{item.quantity}</td>
-                                            <td className="px-4 py-4 text-right">${item.price.toLocaleString()}</td>
-                                            <td className="px-4 py-4 text-right font-bold text-indigo-300">
-                                                ${(item.price * item.quantity).toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-4 text-center">
-                                                <button
-                                                    onClick={() => removeItem(item.productId)}
-                                                    className="text-red-400 hover:text-red-300 p-1"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {formData.details.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="px-4 py-8 text-center text-slate-500 italic">
-                                                No hay productos añadidos aún
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                ))}
+                                {formData.details.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-8 text-center text-slate-500 italic">
+                                            No hay productos añadidos aún
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Resumen Final y Botones */}
+                    <div className="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-white/10 gap-4">
+                        <div className="text-xl font-bold text-white">
+                            Total: <span className="text-green-400">${formData.total}</span>
                         </div>
 
-                        {/* Resumen Final */}
-                        <div className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-white/20 gap-4">
-                            <div className="text-2xl font-bold text-white">
-                                Total: <span className="text-green-400">${formData.total}</span>
-                            </div>
-
-                            <div className="flex gap-4 w-full md:w-auto">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/management/sales")}
-                                    className="flex-1 md:flex-none px-6 py-3 rounded-lg border border-gray-500 text-gray-300 hover:bg-slate-700 transition cursor-pointer"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    onClick={() => setShowConfirmModal(true)}
-                                    disabled={formData.details.length === 0}
-                                    className="flex-1 md:flex-none px-8 py-3 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 text-white font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                                >
-                                    Finalizar Venta
-                                </button>
-                            </div>
+                        <div className="flex gap-3 w-full md:w-auto">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/management/sales")}
+                                className="flex-1 md:flex-none px-6 py-2 rounded-lg border border-slate-500 text-gray-300 hover:bg-slate-700 hover:text-white transition cursor-pointer text-sm"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={() => setShowConfirmModal(true)}
+                                disabled={formData.details.length === 0}
+                                className="flex-1 md:flex-none px-6 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
+                            >
+                                Finalizar Venta
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -247,12 +319,12 @@ export default function CreateSalePage() {
                     isOpen={showConfirmModal}
                     title="Confirmar Venta"
                     message={
-                        <div className="text-slate-300">
+                        <div className="text-slate-300 text-sm">
                             ¿Estás seguro de registrar esta venta por un total de
                             <b className="text-white ml-1 font-bold">${formData.total}</b>?
                         </div>
                     }
-                    isLoading={false}
+                    isLoading={isLoading}
                     onCancel={() => setShowConfirmModal(false)}
                     onConfirm={handleConfirmSubmit}
                     confirmText="Confirmar"

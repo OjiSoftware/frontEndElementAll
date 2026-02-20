@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { productApi } from "@/services/ProductService";
+import { saleApi } from "@/services/SaleService";
 import { Product } from "@/types/product.types";
 
-export const useSaleForm = () => {
+export const useSaleEdit = (saleId: string | undefined) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [clientId, setClientId] = useState<number | null>(null);
+
   const [formData, setFormData] = useState({
     status: "PENDING",
     total: 0,
@@ -27,20 +30,61 @@ export const useSaleForm = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      if (!saleId) return;
       try {
         setIsLoading(true);
-        const data = await productApi.getAllProducts(); //
-        setProducts(data);
+        const [productsData, saleData] = await Promise.all([
+          productApi.getAllProducts(),
+          saleApi.getById(saleId)
+        ]);
+
+        setProducts(productsData);
+
+        if (saleData) {
+          setClientId(saleData.clientId);
+          const address = saleData.client?.addresses?.[0] || {};
+
+          const mappedDetails = saleData.details.map((d: any) => {
+            const product = productsData.find((p: any) => p.id === d.productId);
+
+            const price = d.unitaryPrice ? Number(d.unitaryPrice) : Number(product?.price || 0);
+            return {
+              productId: d.productId,
+              name: product?.name || "Producto desconocido",
+              price: price,
+              quantity: d.quantity
+            };
+          });
+
+          setFormData({
+            status: saleData.status || "PENDING",
+            total: Number(saleData.total) || 0,
+            details: mappedDetails,
+            name: saleData.client?.name || "",
+            surname: saleData.client?.surname || "",
+            dni: saleData.client?.dni || "",
+            phoneNumber: saleData.client?.phoneNumber || "",
+            email: saleData.client?.email || "",
+            street: address.street || "",
+            number: address.streetNum ? address.streetNum.toString() : "",
+            city: address.locality || "",
+            province: address.province || "",
+            postalCode: "", // Dejado por UI compliance
+            country: "",
+            floor: address.floor ? address.floor.toString() : "",
+            apartment: address.apartment || "",
+            reference: address.reference || "",
+          });
+        }
       } catch (error) {
-        console.error("Error cargando productos", error);
+        console.error("Error cargando la venta", error);
       } finally {
         setIsLoading(false);
       }
     };
     loadData();
-  }, []);
+  }, [saleId]);
 
-  // Función para manejar cambios en inputs simples (si los tienes)
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -51,7 +95,6 @@ export const useSaleForm = () => {
     }));
   };
 
-  // Lógica para el Selector de Productos
   const addProductToSale = (product: Product) => {
     setFormData((prev) => {
       const existingItem = prev.details.find(d => d.productId === product.id);
@@ -65,7 +108,7 @@ export const useSaleForm = () => {
         newDetails = [...prev.details, {
           productId: product.id,
           name: product.name,
-          price: product.price,
+          price: Number(product.price),
           quantity: 1
         }];
       }
@@ -80,10 +123,9 @@ export const useSaleForm = () => {
       };
     });
   };
-
   const updateProductQuantity = (productId: number, quantity: number) => {
     setFormData((prev) => {
-      if (quantity < 1) return prev;
+      if (quantity < 1) return prev; // Don't allow less than 1 here
 
       const newDetails = prev.details.map(d =>
         d.productId === productId ? { ...d, quantity } : d
@@ -108,5 +150,6 @@ export const useSaleForm = () => {
     addProductToSale,
     updateProductQuantity,
     isLoading,
+    clientId
   };
 };
