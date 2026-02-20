@@ -10,7 +10,7 @@ import EditBrandPage from "@/pages/brands/EditBrandPage";
 
 import SalesPage from "@/pages/sales/SalesPage";
 import CreateSalesPage from "@/pages/sales/CreateSalesPage";
-/* import EditSAlesPage from "@/pages/sales/EditSalesPage"; */
+import EditSAlesPage from "@/pages/sales/EditSalesPage";
 
 export const AppRoutes = () => {
     return (
@@ -49,7 +49,7 @@ export const AppRoutes = () => {
                 />
                 <Route
                     path="management/sales/edit/:id"
-/*                     element={<EditSAlesPage />} */
+                    element={<EditSAlesPage />}
                 />
 
             </Routes>
