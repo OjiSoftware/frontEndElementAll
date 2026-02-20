@@ -9,8 +9,8 @@ import CreateBrandPage from "@/pages/brands/CreateBrandPage";
 import EditBrandPage from "@/pages/brands/EditBrandPage";
 
 import SalesPage from "@/pages/sales/SalesPage";
-/* import CreateSalesPage from "@/pages/sales/CreateSalesPage";
-import EditSAlesPage from "@/pages/sales/EditSalesPage"; */
+import CreateSalesPage from "@/pages/sales/CreateSalesPage";
+/* import EditSAlesPage from "@/pages/sales/EditSalesPage"; */
 
 export const AppRoutes = () => {
     return (
@@ -43,14 +43,14 @@ export const AppRoutes = () => {
 
                 {/* SALES */}
                 <Route path="/management/sales" element={<SalesPage />} />
-{/*                 <Route
-                    path="/sales/create"
+                <Route
+                    path="management/sales/create"
                     element={<CreateSalesPage />}
                 />
                 <Route
-                    path="/sales/edit/:id"
-                    element={<EditSAlesPage />}
-                /> */}
+                    path="management/sales/edit/:id"
+/*                     element={<EditSAlesPage />} */
+                />
 
             </Routes>
         </BrowserRouter>
