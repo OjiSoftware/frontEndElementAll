@@ -43,17 +43,16 @@ export default function EditProductPage() {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
-        const { name, value } = e.target;
-        const isNumeric = [
-            "brandId",
-            "categoryId",
-            "subCategoryId",
-            "price",
-        ].includes(name);
-        let finalValue: string | number = isNumeric
-            ? parseFloat(value) || 0
-            : value;
+        const { name, value, type } = e.target;
 
+        if (type === "checkbox") {
+            const { checked } = e.target as HTMLInputElement;
+            setFormData((prev) => ({ ...prev, [name]: checked }));
+            return;
+        }
+
+        const isNumeric = ["brandId", "categoryId", "subCategoryId", "price"].includes(name);
+        let finalValue: string | number = isNumeric ? parseFloat(value) || 0 : value;
         if (name === "price") finalValue = Math.max(0, finalValue as number);
 
         setFormData((prev) => {
@@ -103,6 +102,7 @@ export default function EditProductPage() {
                 imageUrl: formData.imageUrl,
                 brandId: formData.brandId,
                 subCategoryId: formData.subCategoryId,
+                showingInCatalog: formData.showingInCatalog,
             });
 
             toast.success("¡Producto actualizado con éxito!", {
@@ -293,6 +293,21 @@ export default function EditProductPage() {
                             </select>
                         </div>
 
+                        {/* Checkbox de Catálogo */}
+                        <div className="md:col-span-2 flex items-center gap-3 bg-slate-700/50 p-3 rounded-xl border border-gray-600">
+                            <input
+                                type="checkbox"
+                                id="showingInCatalog"
+                                name="showingInCatalog"
+                                checked={formData.showingInCatalog}
+                                onChange={handleChange}
+                                className="w-5 h-5 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-800 cursor-pointer"
+                            />
+                            <label htmlFor="showingInCatalog" className="text-sm font-medium text-white cursor-pointer select-none">
+                                Mostrar en catálogo
+                            </label>
+                        </div>
+
                         {/* Botones */}
                         <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/20">
                             <button
@@ -306,7 +321,7 @@ export default function EditProductPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-5 py-3 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-5 py-3 rounded-lg bg-indigo-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? "Guardando..." : "Guardar cambios"}
                             </button>

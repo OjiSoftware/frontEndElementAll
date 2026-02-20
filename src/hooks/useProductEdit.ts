@@ -18,6 +18,7 @@ export function useProductEdit() {
         subCategoryId: 0,
         price: 0,
         description: "",
+        showingInCatalog: false,
         imageUrl:
             "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0",
     });
@@ -66,6 +67,7 @@ export function useProductEdit() {
                     categoryId: subCat?.categoryId || 0,
                     subCategoryId: productData.subCategoryId || 0,
                     brandId: productData.brandId || 0,
+                    showingInCatalog: productData.showingInCatalog ?? false,
                 };
 
                 setFormData(newFormData);
