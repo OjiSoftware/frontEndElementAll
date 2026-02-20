@@ -26,5 +26,6 @@ export interface ProductEdit {
     subCategoryId: number;
     price: number;
     description: string;
+    showingInCatalog: boolean,
     imageUrl: string;
 }
