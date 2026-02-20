@@ -19,6 +19,7 @@ export default function CreateSalePage() {
         setFormData,
         products,
         addProductToSale,
+        updateProductQuantity,
         handleChange,
         isLoading
     } = useSaleForm();
@@ -254,7 +255,15 @@ export default function CreateSalePage() {
                                 {formData.details.map((item) => (
                                     <tr key={item.productId} className="hover:bg-white/5 transition-colors">
                                         <td className="px-4 py-3 font-medium text-white">{item.name}</td>
-                                        <td className="px-4 py-3 text-center">{item.quantity}</td>
+                                        <td className="px-4 py-3 text-center">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={item.quantity}
+                                                onChange={(e) => updateProductQuantity(item.productId, parseInt(e.target.value) || 1)}
+                                                className="w-16 bg-slate-700/90 border border-gray-500 rounded-lg px-2 py-1 text-sm text-center text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                            />
+                                        </td>
                                         <td className="px-4 py-3 text-right">${item.price.toLocaleString()}</td>
                                         <td className="px-4 py-3 text-right font-bold text-indigo-300">
                                             ${(item.price * item.quantity).toLocaleString()}

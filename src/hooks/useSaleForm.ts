@@ -4,7 +4,7 @@ import { Product } from "@/types/product.types";
 
 export const useSaleForm = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Empieza cargando
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     status: "PENDING",
     total: 0,
@@ -34,7 +34,7 @@ export const useSaleForm = () => {
       } catch (error) {
         console.error("Error cargando productos", error);
       } finally {
-        setIsLoading(false); // Terminó la carga, sea con éxito o error
+        setIsLoading(false);
       }
     };
     loadData();
@@ -81,6 +81,24 @@ export const useSaleForm = () => {
     });
   };
 
+  const updateProductQuantity = (productId: number, quantity: number) => {
+    setFormData((prev) => {
+      if (quantity < 1) return prev;
+
+      const newDetails = prev.details.map(d =>
+        d.productId === productId ? { ...d, quantity } : d
+      );
+
+      const newTotal = newDetails.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+      const roundedTotal = Number(newTotal.toFixed(2));
+
+      return {
+        ...prev,
+        details: newDetails,
+        total: roundedTotal
+      };
+    });
+  };
 
   return {
     formData,
@@ -88,6 +106,7 @@ export const useSaleForm = () => {
     products,
     handleChange,
     addProductToSale,
+    updateProductQuantity,
     isLoading,
   };
 };

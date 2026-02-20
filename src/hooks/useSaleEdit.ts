@@ -46,7 +46,7 @@ export const useSaleEdit = (saleId: string | undefined) => {
 
           const mappedDetails = saleData.details.map((d: any) => {
             const product = productsData.find((p: any) => p.id === d.productId);
-            // Si el backend viene con unitaryPrice, lo usamos, o sino el del producto original
+
             const price = d.unitaryPrice ? Number(d.unitaryPrice) : Number(product?.price || 0);
             return {
               productId: d.productId,
@@ -123,6 +123,24 @@ export const useSaleEdit = (saleId: string | undefined) => {
       };
     });
   };
+  const updateProductQuantity = (productId: number, quantity: number) => {
+    setFormData((prev) => {
+      if (quantity < 1) return prev; // Don't allow less than 1 here
+
+      const newDetails = prev.details.map(d =>
+        d.productId === productId ? { ...d, quantity } : d
+      );
+
+      const newTotal = newDetails.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+      const roundedTotal = Number(newTotal.toFixed(2));
+
+      return {
+        ...prev,
+        details: newDetails,
+        total: roundedTotal
+      };
+    });
+  };
 
   return {
     formData,
@@ -130,6 +148,7 @@ export const useSaleEdit = (saleId: string | undefined) => {
     products,
     handleChange,
     addProductToSale,
+    updateProductQuantity,
     isLoading,
     clientId
   };

@@ -7,13 +7,14 @@ import {
     TableHeadCell,
     TableRow,
 } from "flowbite-react";
-import { PencilIcon, TrashIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+import { PencilIcon, TrashIcon, ArrowUpIcon, EyeIcon } from "@heroicons/react/20/solid";
 import { Sale } from "@/types/sale.types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { SaleDetailsModal } from "@/components/SaleDetailsModal";
 
 
-type SortColumn = keyof Sale | "client.name" ;
+type SortColumn = keyof Sale | "client.name";
 
 interface SalesTableProps {
     sales: Sale[];
@@ -23,6 +24,20 @@ interface SalesTableProps {
 export function SalesTable({ sales, onDelete }: SalesTableProps) {
     const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+    // State for details modal
+    const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+    const handleOpenDetails = (sale: Sale) => {
+        setSelectedSale(sale);
+        setIsDetailsModalOpen(true);
+    };
+
+    const handleCloseDetails = () => {
+        setIsDetailsModalOpen(false);
+        setSelectedSale(null);
+    };
 
     // ---------------- Sort ----------------
     const handleSort = (column: SortColumn) => {
@@ -56,7 +71,7 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
     // ---------------- Sorted Products ----------------
     const sortedSales = useMemo(() => {
 
-/*         const filtered = sales.filter(s => s.status !== "CANCELLED"); */
+        /*         const filtered = sales.filter(s => s.status !== "CANCELLED"); */
 
         if (!sortColumn) return sales;
 
@@ -73,7 +88,7 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
             } else if (sortColumn === "client.name") {
                 aValue = a.client?.name || "";
                 bValue = b.client?.name || "";
-            }else {
+            } else {
                 aValue = a[sortColumn as keyof Sale];
                 bValue = b[sortColumn as keyof Sale];
             }
@@ -146,7 +161,7 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                 Cliente {renderSortArrow("client.name")}
                             </div>
                         </TableHeadCell>
-                        
+
                         <TableHeadCell className="select-none">
                             Acciones
                         </TableHeadCell>
@@ -166,25 +181,32 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                             </TableCell>
 
                             <TableCell className="hidden md:table-cell!">
-                                {sales.createdAt 
-                                  ? new Date(sales.createdAt).toLocaleDateString('es-AR', {
-                                      day: '2-digit',
-                                      month: '2-digit',
-                                      year: 'numeric'
+                                {sales.createdAt
+                                    ? new Date(sales.createdAt).toLocaleDateString('es-AR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric'
                                     })
-                                  : "Sin fecha"}
+                                    : "Sin fecha"}
                             </TableCell>
                             <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                 {sales.status}
                             </TableCell>
                             <TableCell className="hidden md:table-cell!">
-                                {"$" +sales.total}
+                                {"$" + sales.total}
                             </TableCell>
                             <TableCell className="hidden md:table-cell!">
-                                {sales.client?.surname + ", " + sales.client?.name || "sin cliente" }
+                                {sales.client?.surname + ", " + sales.client?.name || "sin cliente"}
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-3">
+                                    <button
+                                        title="Ver detalles"
+                                        className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition cursor-pointer"
+                                        onClick={() => handleOpenDetails(sales)}
+                                    >
+                                        <EyeIcon className="w-5 h-5" />
+                                    </button>
                                     <Link
                                         to={ROUTES.sales.edit(sales.id)}
                                         title="Editar venta"
@@ -202,11 +224,17 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                 </div>
                             </TableCell>
 
-                            
+
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
+
+            <SaleDetailsModal
+                isOpen={isDetailsModalOpen}
+                sale={selectedSale}
+                onClose={handleCloseDetails}
+            />
         </div>
     );
 }
