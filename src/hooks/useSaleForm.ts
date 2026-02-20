@@ -13,7 +13,16 @@ export const useSaleForm = () => {
     surname: "",
     dni: "",
     phoneNumber: "",
-    email: ""
+    email: "",
+    street: "",
+    number: "",
+    city: "",
+    province: "",
+    postalCode: "",
+    country: "",
+    floor: "",
+    apartment: "",
+    reference: "",
   });
 
   useEffect(() => {
