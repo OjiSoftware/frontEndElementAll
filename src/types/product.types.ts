@@ -19,13 +19,16 @@ export interface Product {
 }
 
 // Para el formulario de edición
-export interface ProductEdit {
+export interface ProductEditFrontend {
     name: string;
     brandId: number;
-    categoryId: number;
+    categoryId: number; // solo UI
     subCategoryId: number;
+    stock: number;
     price: number;
     description: string;
-    showingInCatalog: boolean,
+    showingInCatalog: boolean;
     imageUrl: string;
 }
+
+export type ProductEditBackend = Omit<ProductEditFrontend, "categoryId">;

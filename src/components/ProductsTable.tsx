@@ -24,7 +24,6 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-    // Formateador ARS
     const formatARS = useMemo(
         () =>
             new Intl.NumberFormat("es-AR", {
@@ -50,24 +49,22 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
 
     const renderSortArrow = (column: SortColumn) => {
         const isActive = sortColumn === column;
-
         return (
             <ArrowUpIcon
                 aria-label={`Ordenar por ${column}`}
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${isActive
-                    ? sortDirection === "desc"
-                        ? "rotate-180 opacity-100"
-                        : "opacity-100"
-                    : "opacity-0"
-                    }`}
+                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
+                    isActive
+                        ? sortDirection === "desc"
+                            ? "rotate-180 opacity-100"
+                            : "opacity-100"
+                        : "opacity-0"
+                }`}
             />
         );
     };
 
-    // ---------------- Sorted Products ----------------
     const sortedProducts = useMemo(() => {
         if (!sortColumn) return products;
-
         return [...products].sort((a, b) => {
             let aValue: any;
             let bValue: any;
@@ -98,65 +95,101 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         });
     }, [products, sortColumn, sortDirection]);
 
+    // ---------------- Class constants ----------------
+    const thClasses = "px-2 py-3 md:px-4 select-none";
+    const tdBase = "px-2 py-3 md:px-4";
+    const hiddenOnMobile = "hidden md:table-cell!";
+    const flexTh = "flex items-center";
+    const flexTdIcons = "flex justify-center items-center gap-2 lg:gap-3!";
+
+    // ---------------- Column widths para table-fixed ----------------
+    const colWidths = {
+        id: "w-1/5 md:w-1/6! lg:w-1/12!",
+        name: "w-1/2 md:w-1/3!",
+        brand: "w-1/4",
+        category: "w-1/3",
+        price: "w-1/3 md:w-1/3",
+        actions: "w-20 lg:w-28!",
+        catalog: "w-28 md:w-32!",
+    };
+
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <Table hoverable>
+            <Table hoverable className="table-fixed">
                 <TableHead>
                     <TableRow>
                         <TableHeadCell
-                            className="px-4 w-14 cursor-pointer select-none"
+                            className={`${thClasses} ${colWidths.id} cursor-pointer`}
                             onClick={() => handleSort("id")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 # {renderSortArrow("id")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="cursor-pointer"
+                            className={`${thClasses} ${colWidths.name} cursor-pointer`}
                             onClick={() => handleSort("name")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 Nombre {renderSortArrow("name")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer"
+                            className={`${thClasses} ${colWidths.brand} ${hiddenOnMobile} cursor-pointer`}
                             onClick={() => handleSort("brand.name")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 Marca {renderSortArrow("brand.name")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer"
+                            className={`${thClasses} ${colWidths.category} ${hiddenOnMobile} cursor-pointer`}
                             onClick={() =>
                                 handleSort("subCategory.category.name")
                             }
                         >
-                            <div className="flex items-center gap-1">
-                                Categoria{" "}
+                            <div className={flexTh}>
+                                Categoría{" "}
                                 {renderSortArrow("subCategory.category.name")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer"
+                            className={`${thClasses} ${colWidths.price} ${hiddenOnMobile} cursor-pointer`}
                             onClick={() => handleSort("price")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={`${flexTh}`}>
                                 Precio {renderSortArrow("price")}
                             </div>
                         </TableHeadCell>
 
-                        <TableHeadCell className="select-none">
-                            Acciones
+                        <TableHeadCell
+                            className={`${thClasses} ${colWidths.actions}`}
+                        >
+                            <div className={`${flexTh} justify-center`}>
+                                Acciones
+                            </div>
                         </TableHeadCell>
 
-                        <TableHeadCell className="">
-                            Cat.
+                        <TableHeadCell
+                            className={`${thClasses} ${colWidths.catalog} cursor-pointer relative`}
+                            onClick={() => handleSort("showingInCatalog")}
+                        >
+                            <span className="block text-center w-full">
+                                Catálogo
+                            </span>
+                            <ArrowUpIcon
+                                className={`absolute right-2 md:right-3! top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 transition-transform duration-150 ${
+                                    sortColumn === "showingInCatalog"
+                                        ? sortDirection === "desc"
+                                            ? "rotate-180 opacity-100"
+                                            : "opacity-100"
+                                        : "opacity-0"
+                                }`}
+                            />
                         </TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -167,26 +200,41 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                             key={product.id}
                             className="bg-white dark:border-gray-700 dark:bg-gray-800"
                         >
-                            {/* Solo número de fila */}
-                            <TableCell className="px-4 text-gray-500">
-                                {index + 1}
+                            <TableCell
+                                className={`${tdBase} ${colWidths.id} text-gray-500`}
+                            >
+                                { index + 1}
                             </TableCell>
 
-                            <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                            <TableCell
+                                className={`${tdBase} ${colWidths.name} text-gray-900 dark:text-white`}
+                            >
                                 {product.name}
                             </TableCell>
-                            <TableCell className="hidden md:table-cell!">
-                                {product.brand?.name || "sin marca"}
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.brand} ${hiddenOnMobile}`}
+                            >
+                                {product.brand?.name || "Sin marca"}
                             </TableCell>
-                            <TableCell className="hidden md:table-cell!">
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.category} ${hiddenOnMobile}`}
+                            >
                                 {product.subCategory?.category?.name ||
-                                    "sin categoria"}
+                                    "Sin categoría"}
                             </TableCell>
-                            <TableCell className="hidden md:table-cell!">
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.price} ${hiddenOnMobile}`}
+                            >
                                 {formatARS.format(product.price)}
                             </TableCell>
-                            <TableCell>
-                                <div className="flex items-center gap-3">
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.actions}`}
+                            >
+                                <div className={flexTdIcons}>
                                     <Link
                                         to={ROUTES.products.edit(product.id)}
                                         title="Editar producto"
@@ -204,10 +252,13 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 </div>
                             </TableCell>
 
-                            <TableCell>
-                                <div className="flex justify-center">
-
-                                    {product.showingInCatalog && (<CheckCircle className="w-5 h-5 text-green-500" />)}
+                            <TableCell
+                                className={`${tdBase} ${colWidths.catalog}`}
+                            >
+                                <div className={flexTdIcons}>
+                                    {product.showingInCatalog && (
+                                        <CheckCircle className="w-5 h-5 text-green-500" />
+                                    )}
                                 </div>
                             </TableCell>
                         </TableRow>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { productApi } from "@/services/ProductService";
 import toast from "react-hot-toast";
-import { ProductEdit } from "@/types/product.types";
+import { ProductEditFrontend } from "@/types/product.types";
 import { Category } from "@/types/category.types";
 import { SubCategory } from "@/types/subcategory.types";
 import { Brand } from "@/types/brand.types";
@@ -11,16 +11,16 @@ import { Brand } from "@/types/brand.types";
 export function useProductEdit() {
     const { id } = useParams();
 
-    const [formData, setFormData] = useState<ProductEdit>({
+    const [formData, setFormData] = useState<ProductEditFrontend>({
         name: "",
         brandId: 0,
-        categoryId: 0,
+        categoryId: 0, // solo UI
         subCategoryId: 0,
         price: 0,
         description: "",
         showingInCatalog: false,
-        imageUrl:
-            "https://th.bing.com/th/id/R.ffe256686838d8692c8aee6a2dd4f10b?rik=PBFvuMeHlhrbZg&pid=ImgRaw&r=0",
+        stock: 0,
+        imageUrl: "",
     });
 
     const [priceInput, setPriceInput] = useState<string>("0,00");
@@ -58,21 +58,24 @@ export function useProductEdit() {
                 setBrands(brandsData);
                 setSubCategories(subcategoriesData);
 
+                // Buscar la categoría correspondiente a la subcategoría
                 const subCat: SubCategory | undefined = subcategoriesData.find(
                     (sub: SubCategory) => sub.id === productData.subCategoryId,
                 );
 
-                const newFormData = {
-                    ...productData,
-                    categoryId: subCat?.categoryId || 0,
-                    subCategoryId: productData.subCategoryId || 0,
+                const newFormData: ProductEditFrontend = {
+                    name: productData.name || "",
                     brandId: productData.brandId || 0,
+                    categoryId: subCat?.categoryId || 0, // solo UI
+                    subCategoryId: productData.subCategoryId || 0,
+                    price: productData.price || 0,
+                    description: productData.description || "",
                     showingInCatalog: productData.showingInCatalog ?? false,
+                    stock: productData.stock || 0,
+                    imageUrl: productData.imageUrl || "",
                 };
 
                 setFormData(newFormData);
-
-                // Formatear precio a string para el input
                 setPriceInput(formatARS(Number(productData.price)));
             } catch (error) {
                 console.error("Error al cargar datos:", error);

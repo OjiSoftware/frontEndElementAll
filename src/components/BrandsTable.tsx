@@ -23,6 +23,7 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
     const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
+    // ---------------- Sort ----------------
     const handleSort = (column: SortColumn) => {
         if (sortColumn !== column) {
             setSortColumn(column);
@@ -40,7 +41,6 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
 
         return (
             <ArrowUpIcon
-                aria-label={`Ordenar por ${column}`}
                 className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
                     isActive
                         ? sortDirection === "desc"
@@ -82,41 +82,60 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
         });
     }, [brands, sortColumn, sortDirection]);
 
+    // ---------------- Class constants ----------------
+    const thClasses = "px-2 py-3 md:px-4 select-none";
+    const tdBase = "px-2 py-3 md:px-4";
+    const hiddenOnMobile = "hidden md:table-cell!";
+    const flexTh = "flex items-center";
+    const flexTdIcons = "flex justify-center items-center gap-3";
+
+    // ---------------- Column widths ----------------
+    const colWidths = {
+        id: "w-1/5 md:w-1/6! lg:w-1/12!",
+        name: "w-1/2 md:w-1/4!",
+        subCategory: "w-1/4",
+        actions: "w-28",
+    };
+
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <Table hoverable>
+            <Table hoverable className="table-fixed">
                 <TableHead>
                     <TableRow>
                         <TableHeadCell
-                            className="px-4 w-14 cursor-pointer select-none"
+                            className={`${thClasses} ${colWidths.id} cursor-pointer`}
                             onClick={() => handleSort("id")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 # {renderSortArrow("id")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="cursor-pointer select-none"
+                            className={`${thClasses} ${colWidths.name} cursor-pointer`}
                             onClick={() => handleSort("name")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 Nombre {renderSortArrow("name")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none"
+                            className={`${thClasses} ${colWidths.subCategory} ${hiddenOnMobile} cursor-pointer`}
                             onClick={() => handleSort("subCategory.name")}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className={flexTh}>
                                 Subcategoría{" "}
                                 {renderSortArrow("subCategory.name")}
                             </div>
                         </TableHeadCell>
 
-                        <TableHeadCell className="select-none">
-                            Acciones
+                        <TableHeadCell
+                            className={`${thClasses} ${colWidths.actions}`}
+                        >
+                            <div className={`${flexTh} justify-center`}>
+                                Acciones
+                            </div>
                         </TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -127,27 +146,38 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                             key={brand.id}
                             className="bg-white dark:border-gray-700 dark:bg-gray-800"
                         >
-                            <TableCell className="px-4 text-gray-500">
+                            <TableCell
+                                className={`${tdBase} ${colWidths.id} text-gray-500`}
+                            >
                                 {index + 1}
                             </TableCell>
-                            <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.name} text-gray-900 dark:text-white`}
+                            >
                                 {brand.name}
                             </TableCell>
-                            <TableCell className="hidden md:table-cell!">
-                                {brand.subCategory?.name || "sin subcategoría"}
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.subCategory} ${hiddenOnMobile}`}
+                            >
+                                {brand.subCategory?.name || "Sin subcategoría"}
                             </TableCell>
-                            <TableCell>
-                                <div className="flex items-center gap-3">
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.actions}`}
+                            >
+                                <div className={flexTdIcons}>
                                     <Link
                                         to={ROUTES.brands.edit(brand.id)}
                                         title="Editar marca"
-                                        className="text-blue-500 hover:text-blue-400 transition cursor-pointer"
+                                        className="text-blue-500 hover:text-blue-400 transition"
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
                                         title="Eliminar marca"
-                                        className="text-red-500 hover:text-red-400 transition cursor-pointer"
+                                        className="text-red-500 hover:text-red-400 transition"
                                         onClick={() => onDelete(brand)}
                                     >
                                         <TrashIcon className="w-5 h-5" />

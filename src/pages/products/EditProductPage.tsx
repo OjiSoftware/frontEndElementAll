@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../../components/ConfirmModal";
-import { Brand } from "@/types/brand.types";
-import { Category } from "@/types/category.types";
-import { SubCategory } from "@/types/subcategory.types";
 import { productApi } from "@/services/ProductService";
 import toast from "react-hot-toast";
 import { useProductEdit } from "@/hooks/useProductEdit";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Image as ImageIcon } from "lucide-react";
+import type { ProductEditBackend } from "@/types/product.types";
 
 export default function EditProductPage() {
     const navigate = useNavigate();
@@ -26,22 +24,33 @@ export default function EditProductPage() {
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+    // 🔹 Filtrar subcategorías según la categoría seleccionada
+    const filteredSubCategories = subCategories.filter(
+        (sub) => sub.categoryId === formData.categoryId,
+    );
+
     if (!id)
         return (
-            <div>
-                <h1>Producto no encontrado</h1>
-                <button
-                    onClick={() => navigate("/management")}
-                    className="px-4 py-2 bg-gray-700 text-white rounded-lg"
-                >
-                    Volver
-                </button>
-            </div>
+            <DashboardLayout>
+                <div className="flex flex-col items-center justify-center h-full text-white">
+                    <h1 className="text-2xl font-bold">
+                        Producto no encontrado
+                    </h1>
+                    <button
+                        onClick={() => navigate("/management")}
+                        className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                    >
+                        Volver
+                    </button>
+                </div>
+            </DashboardLayout>
         );
 
     // ---------------- Handlers ----------------
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >,
     ) => {
         const { name, value, type } = e.target;
 
@@ -51,9 +60,10 @@ export default function EditProductPage() {
             return;
         }
 
-        const isNumeric = ["brandId", "categoryId", "subCategoryId", "price"].includes(name);
-        let finalValue: string | number = isNumeric ? parseFloat(value) || 0 : value;
-        if (name === "price") finalValue = Math.max(0, finalValue as number);
+        const isNumeric = ["brandId", "categoryId", "subCategoryId", "stock"].includes(
+            name,
+        );
+        const finalValue = isNumeric ? parseInt(value) || 0 : value;
 
         setFormData((prev) => {
             const newState = { ...prev, [name]: finalValue };
@@ -64,46 +74,44 @@ export default function EditProductPage() {
         });
     };
 
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value;
+        setPriceInput(raw);
+
+        const numericValue = parseFloat(
+            raw.replace(/\./g, "").replace(",", "."),
+        );
+        setFormData((prev) => ({
+            ...prev,
+            price: isNaN(numericValue) ? 0 : Math.max(0, numericValue),
+        }));
+    };
+
+    const handlePriceBlur = () => {
+        setPriceInput(
+            formData.price.toLocaleString("es-AR", {
+                minimumFractionDigits: 2,
+            }),
+        );
+    };
+
     const handleSubmit = async () => {
         setShowConfirmModal(false);
-        const loadingToast = toast.loading("Guardando producto...");
-        <input
-            type="text"
-            name="price"
-            value={priceInput}
-            onChange={(e) => {
-                const raw = e.target.value;
-                setPriceInput(raw);
+        const loadingToast = toast.loading("Guardando cambios...");
 
-                const numericValue = parseFloat(
-                    raw.replace(/\./g, "").replace(",", "."),
-                );
-                setFormData((prev) => ({
-                    ...prev,
-                    price: isNaN(numericValue) ? 0 : Math.max(0, numericValue),
-                }));
-            }}
-            onBlur={() =>
-                setPriceInput(
-                    formData.price.toLocaleString("es-AR", {
-                        minimumFractionDigits: 2,
-                    }),
-                )
-            }
-            placeholder="0,00"
-            required
-            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
-        />;
         try {
-            await productApi.update(id!, {
-                name: formData.name,
-                description: formData.description,
-                price: Math.max(0, formData.price),
-                imageUrl: formData.imageUrl,
+            const payload: ProductEditBackend = {
                 brandId: formData.brandId,
                 subCategoryId: formData.subCategoryId,
+                name: formData.name,
+                stock: formData.stock,
+                price: Math.max(0, formData.price),
+                description: formData.description,
                 showingInCatalog: formData.showingInCatalog,
-            });
+                imageUrl: formData.imageUrl,
+            };
+
+            await productApi.update(id!, payload);
 
             toast.success("¡Producto actualizado con éxito!", {
                 id: loadingToast,
@@ -117,64 +125,78 @@ export default function EditProductPage() {
         }
     };
 
-    const filteredSubCategories: SubCategory[] = subCategories.filter(
-        (sub) => sub.categoryId === formData.categoryId,
-    );
-
     return (
         <DashboardLayout>
-            <div className="max-w-3xl mx-auto px-1 xl:px-0">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
-                >
-                    ← Volver
-                </button>
-
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                        <SquarePen className="text-indigo-400" size={32} />
-                        Editar producto
-                    </h1>
-                    <p className="text-slate-400 mt-2">
-                        Complete la información para editar el producto.
+            <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
+                {/* Volver y Encabezado */}
+                <div className="flex justify-between items-end mb-4">
+                    <div>
+                        <div className="mb-2">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer"
+                            >
+                                ← Volver
+                            </button>
+                        </div>
+                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <SquarePen className="text-indigo-400" size={24} />
+                            Editar producto
+                        </h1>
+                    </div>
+                    <p className="text-slate-400 text-sm hidden md:block">
+                        Modifique la información necesaria del producto.
                     </p>
                 </div>
 
-                {/* Card de producto */}
-                <div className="flex items-center gap-6 mb-8 bg-slate-800/30 p-6 rounded-2xl border border-white/20 shadow-lg">
-                    <div className="w-28 h-28 rounded-xl bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
-                        <div className="w-full h-full rounded-xl overflow-hidden bg-slate-700">
-                            <img
-                                src={formData.imageUrl}
-                                alt={formData.name}
-                                title={formData.name}
-                                className="w-full h-full object-cover"
-                            />
+                {/* Card de preview */}
+                <div className="flex items-center gap-4 mb-4 bg-slate-800/30 p-3 rounded-xl border border-white/10 shadow-lg">
+                    <div className="w-16 h-16 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
+                        <div className="w-full h-full rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center">
+                            {formData.imageUrl ? (
+                                <img
+                                    src={formData.imageUrl}
+                                    alt={formData.name}
+                                    className="w-full h-full object-contain"
+                                />
+                            ) : (
+                                <ImageIcon
+                                    className="text-slate-600"
+                                    size={24}
+                                />
+                            )}
                         </div>
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white">
+                        <h2 className="text-lg font-bold text-white leading-tight">
                             {formData.name || "Sin nombre"}
                         </h2>
-                        <p className="text-indigo-400 font-medium">
-                            ID del Producto: #{id}
+                        <p className="text-indigo-400 text-xs font-medium">
+                            ID: #{id}
                         </p>
                     </div>
                 </div>
 
                 {/* Formulario */}
-                <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            setShowConfirmModal(true);
-                        }}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
-                        {/* Nombre del producto */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!formData.name.trim())
+                            return toast.error("El nombre es obligatorio");
+                        if (formData.price <= 0)
+                            return toast.error("El precio debe ser mayor a 0");
+                        setShowConfirmModal(true);
+                    }}
+                    className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
+                >
+                    {/* Columna izquierda */}
+                    <div className="space-y-4">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
+                            Información básica
+                        </h3>
+
+                        <div>
+                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
                                 Nombre del producto
                             </label>
                             <input
@@ -182,138 +204,170 @@ export default function EditProductPage() {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                placeholder="Ingrese el nombre del producto"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                placeholder="Ej: Teclado Mecánico RGB"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                 required
                             />
                         </div>
 
-                        {/* Marca */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Marca
+                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                Descripción
                             </label>
-                            <select
-                                name="brandId"
-                                value={formData.brandId}
+                            <textarea
+                                name="description"
+                                value={formData.description}
                                 onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
+                                placeholder="Características..."
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24"
                                 required
-                            >
-                                <option value={0}>Seleccione una marca</option>
-                                {brands.map((b: Brand) => (
-                                    <option key={b.id} value={b.id}>
-                                        {b.name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
-                        {/* Precio */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Precio ($)
+                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                URL de Imagen
                             </label>
                             <input
-                                type="text"
-                                name="price"
-                                value={priceInput}
-                                onChange={(e) => {
-                                    const raw = e.target.value;
-                                    setPriceInput(raw);
-
-                                    const numericValue = parseFloat(
-                                        raw
-                                            .replace(/\./g, "")
-                                            .replace(",", "."),
-                                    );
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        price: isNaN(numericValue)
-                                            ? 0
-                                            : Math.max(0, numericValue),
-                                    }));
-                                }}
-                                onBlur={() =>
-                                    setPriceInput(
-                                        formData.price.toLocaleString("es-AR", {
-                                            minimumFractionDigits: 2,
-                                        }),
-                                    )
-                                }
-                                placeholder="0,00"
-                                required
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                type="url"
+                                name="imageUrl"
+                                value={formData.imageUrl}
+                                onChange={handleChange}
+                                placeholder="Pegar URL"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400"
                             />
                         </div>
+                    </div>
 
-                        {/* Categoría */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Categoría
-                            </label>
-                            <select
-                                name="categoryId"
-                                value={formData.categoryId}
-                                onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
-                            >
-                                <option value={0}>
-                                    Seleccione una categoría
-                                </option>
-                                {categories.map((c: Category) => (
-                                    <option key={c.id} value={c.id}>
-                                        {c.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                    {/* Columna derecha */}
+                    <div className="flex flex-col mt-2 md:mt-0">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 mb-4">
+                            Categorización y precio
+                        </h3>
 
-                        {/* Subcategoría */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Subcategoría
-                            </label>
-                            <select
-                                name="subCategoryId"
-                                value={formData.subCategoryId}
-                                onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all appearance-none cursor-pointer"
-                            >
-                                <option value={0}>
-                                    Seleccione una subcategoría
-                                </option>
-                                {filteredSubCategories.map(
-                                    (sub: SubCategory) => (
-                                        <option key={sub.id} value={sub.id}>
-                                            {sub.name}
+                        <div className="space-y-4 grow">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                    Categoría
+                                </label>
+                                <select
+                                    name="categoryId"
+                                    value={formData.categoryId || ""}
+                                    onChange={handleChange}
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                    required
+                                >
+                                    <option value="">Seleccionar...</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
                                         </option>
-                                    ),
-                                )}
-                            </select>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                        Subcategoría
+                                    </label>
+                                    <select
+                                        name="subCategoryId"
+                                        value={formData.subCategoryId || ""}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {filteredSubCategories.map((sub) => (
+                                            <option key={sub.id} value={sub.id}>
+                                                {sub.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                        Marca
+                                    </label>
+                                    <select
+                                        name="brandId"
+                                        value={formData.brandId || ""}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        required
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {brands.map((brand) => (
+                                            <option
+                                                key={brand.id}
+                                                value={brand.id}
+                                            >
+                                                {brand.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="col-span-1">
+                                    <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                        Stock
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="stock"
+                                        value={formData.stock}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        required
+                                    />
+                                </div>
+                                <div className="col-span-1">
+                                    <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                        Precio ($)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="price"
+                                        value={priceInput}
+                                        onChange={handlePriceChange}
+                                        onBlur={handlePriceBlur}
+                                        placeholder="0,00"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-6 md:mt-8!">
+                                <input
+                                    type="checkbox"
+                                    id="showInCatalog"
+                                    name="showingInCatalog"
+                                    checked={formData.showingInCatalog || false}
+                                    onChange={handleChange}
+                                    className="w-4 h-4 md:w-5! md:h-5! rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
+                                />
+
+                                <label
+                                    htmlFor="showInCatalog"
+                                    className="text-sm  text-slate-300 cursor-pointer"
+                                >
+                                    Mostrar en catálogo
+                                </label>
+                            </div>
                         </div>
 
-                        {/* Checkbox de Catálogo */}
-                        <div className="md:col-span-2 flex items-center gap-3 bg-slate-700/50 p-3 rounded-xl border border-gray-600">
-                            <input
-                                type="checkbox"
-                                id="showingInCatalog"
-                                name="showingInCatalog"
-                                checked={formData.showingInCatalog}
-                                onChange={handleChange}
-                                className="w-5 h-5 rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-800 cursor-pointer"
-                            />
-                            <label htmlFor="showingInCatalog" className="text-sm font-medium text-white cursor-pointer select-none">
-                                Mostrar en catálogo
-                            </label>
-                        </div>
-
-                        {/* Botones */}
-                        <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/20">
+                        <div
+                            className="flex flex-row items-stretch gap-3 mt-6 w-full
+                        border-t border-white/10 pt-4"
+                        >
                             <button
                                 type="button"
-                                onClick={() => navigate("/management/products")}
-                                className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
+                                onClick={() => window.history.back()}
+                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
                             >
                                 Cancelar
                             </button>
@@ -321,15 +375,14 @@ export default function EditProductPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-5 py-3 rounded-lg bg-indigo-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
                             >
-                                {isLoading ? "Guardando..." : "Guardar cambios"}
+                                {isLoading ? "Creando..." : "Guardar producto"}
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
 
-                {/* Modal */}
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Guardar cambios"

@@ -17,6 +17,7 @@ export default function EditBrandPage() {
         loading,
         handleSubmit,
     } = useBrandEdit();
+
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [subCategories, setSubCategories] = useState<
         { id: number; name: string }[]
@@ -24,7 +25,6 @@ export default function EditBrandPage() {
 
     if (!id) return null;
 
-    // Fetch de subcategorías
     useEffect(() => {
         const fetchSubCategories = async () => {
             try {
@@ -39,34 +39,49 @@ export default function EditBrandPage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-3xl mx-auto px-1 xl:px-0">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="text-sm text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
-                >
-                    ← Volver
-                </button>
-
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                        <SquarePen className="text-indigo-400" size={32} />
-                        Editar marca
-                    </h1>
-                    <p className="text-slate-400 mt-2">
-                        Cambie el nombre y la subcategoría de la marca.
+            <div className="max-w-3xl mx-auto px-4 h-full flex flex-col justify-center">
+                {/* Volver y header */}
+                <div className="flex justify-between items-end mb-4">
+                    <div>
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer mb-2"
+                        >
+                            ← Volver
+                        </button>
+                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <SquarePen className="text-indigo-400" size={24} />
+                            Editar marca
+                        </h1>
+                    </div>
+                    <p className="text-slate-400 text-sm hidden md:block">
+                        Modifique la información de la marca.
                     </p>
                 </div>
 
+                {/* Preview */}
+                <div className="flex items-center gap-4 mb-4 bg-slate-800/30 p-3 rounded-xl border border-white/10 shadow-lg">
+                    <div>
+                        <h2 className="text-lg font-bold text-white leading-tight">
+                            {name || "Marca sin nombre"}
+                        </h2>
+                        <p className="text-indigo-400 text-xs font-medium">
+                            ID: {id}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Formulario */}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
                         setShowConfirmModal(true);
                     }}
-                    className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md grid gap-6"
+                    className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 gap-6"
                 >
                     {/* Nombre */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
+                        <label className="block text-xs font-medium text-gray-300 mb-1.5">
                             Nombre de la marca
                         </label>
                         <input
@@ -74,14 +89,14 @@ export default function EditBrandPage() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Ingrese el nombre de la marca"
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                             required
                         />
                     </div>
 
                     {/* Subcategoría */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
+                        <label className="block text-xs font-medium text-gray-300 mb-1.5">
                             Subcategoría
                         </label>
                         <select
@@ -89,12 +104,10 @@ export default function EditBrandPage() {
                             onChange={(e) =>
                                 setSubCategoryId(parseInt(e.target.value))
                             }
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                             required
                         >
-                            <option value="">
-                                Seleccione una subcategoría
-                            </option>
+                            <option value="">Seleccionar...</option>
                             {subCategories.map((sc) => (
                                 <option key={sc.id} value={sc.id}>
                                     {sc.name}
@@ -104,11 +117,11 @@ export default function EditBrandPage() {
                     </div>
 
                     {/* Botones */}
-                    <div className="flex items-center justify-end gap-4 mt-6 pt-6 border-t border-white/20">
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
                         <button
                             type="button"
                             onClick={() => navigate("/management/brands")}
-                            className="px-5 py-3 rounded-lg border border-gray-400 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700 transition cursor-pointer"
+                            className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
                         >
                             Cancelar
                         </button>
@@ -116,7 +129,7 @@ export default function EditBrandPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-5 py-3 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 text-white font-bold hover:opacity-90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
                         >
                             {loading ? "Guardando..." : "Guardar cambios"}
                         </button>
