@@ -336,25 +336,6 @@ export default function CreateProductPage() {
                             >
                                 {isLoading ? "Creando..." : "Guardar producto"}
                             </button>
-                        </div><div
-                            className="flex flex-row items-stretch gap-3 mt-6 w-full
-                        border-t border-white/10 pt-4"
-                        >
-                            <button
-                                type="button"
-                                onClick={() => window.history.back()}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
-                            >
-                                Cancelar
-                            </button>
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                            >
-                                {isLoading ? "Creando..." : "Guardar producto"}
-                            </button>
                         </div>
                     </div>
                 </form>
