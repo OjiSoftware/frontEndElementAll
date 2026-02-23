@@ -8,6 +8,7 @@ import {
     MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link, useLocation } from "react-router-dom";
 
 const user = {
     name: "Tom Cook",
@@ -17,9 +18,9 @@ const user = {
 };
 
 const navigation = [
-    { name: "Gestión", href: "#", current: true },
-    { name: "Reportes", href: "#", current: false },
-    { name: "Configuración", href: "#", current: false },
+    { name: "Productos", href: "/management/products" },
+    { name: "Marcas", href: "/management/brands" },
+    { name: "Ventas", href: "/management/sales" },
 ];
 
 const userNavigation = [
@@ -43,6 +44,8 @@ export default function DashboardLayout({
     subtitle?: string;
     actions?: React.ReactNode;
 }) {
+    const location = useLocation();
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Navbar */}
@@ -56,31 +59,34 @@ export default function DashboardLayout({
                             <div className="shrink-0">
                                 <img
                                     alt="Your Company"
-                                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                                    src="https://images.freeimages.com/vhq/images/previews/214/generic-logo-140952.png"
                                     className="size-8"
                                 />
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
-                                    {navigation.map((item) => (
-                                        <a
-                                            key={item.name}
-                                            href={item.href}
-                                            aria-current={
-                                                item.current
-                                                    ? "page"
-                                                    : undefined
-                                            }
-                                            className={classNames(
-                                                item.current
-                                                    ? "bg-gray-900 text-white dark:bg-gray-950/50"
-                                                    : "text-white hover:bg-white/5 dark:hover:bg-white/5",
-                                                "rounded-md px-3 py-2 text-sm font-medium uppercase",
-                                            )}
-                                        >
-                                            {item.name}
-                                        </a>
-                                    ))}
+                                    {navigation.map((item) => {
+                                        const isCurrent = location.pathname.startsWith(item.href);
+                                        return (
+                                            <Link
+                                                key={item.name}
+                                                to={item.href}
+                                                aria-current={
+                                                    isCurrent
+                                                        ? "page"
+                                                        : undefined
+                                                }
+                                                className={classNames(
+                                                    isCurrent
+                                                        ? "bg-gray-900 text-white dark:bg-gray-950/50"
+                                                        : "text-white hover:bg-white/5 dark:hover:bg-white/5",
+                                                    "rounded-md px-3 py-2 text-sm font-medium uppercase",
+                                                )}
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        )
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -155,22 +161,25 @@ export default function DashboardLayout({
 
                 <DisclosurePanel className="md:hidden">
                     <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-                        {navigation.map((item) => (
-                            <DisclosureButton
-                                key={item.name}
-                                as="a"
-                                href={item.href}
-                                aria-current={item.current ? "page" : undefined}
-                                className={classNames(
-                                    item.current
-                                        ? "bg-gray-900 text-white dark:bg-gray-950/50"
-                                        : "text-white hover:bg-white/5 dark:hover:bg-white/5",
-                                    "block rounded-md px-3 py-2 text-base font-medium uppercase",
-                                )}
-                            >
-                                {item.name}
-                            </DisclosureButton>
-                        ))}
+                        {navigation.map((item) => {
+                            const isCurrent = location.pathname.startsWith(item.href);
+                            return (
+                                <DisclosureButton
+                                    key={item.name}
+                                    as={Link}
+                                    to={item.href}
+                                    aria-current={isCurrent ? "page" : undefined}
+                                    className={classNames(
+                                        isCurrent
+                                            ? "bg-gray-900 text-white dark:bg-gray-950/50"
+                                            : "text-white hover:bg-white/5 dark:hover:bg-white/5",
+                                        "block rounded-md px-3 py-2 text-base font-medium uppercase",
+                                    )}
+                                >
+                                    {item.name}
+                                </DisclosureButton>
+                            )
+                        })}
                     </div>
                     <div className="border-t border-white/10 pt-4 pb-3 px-2">
                         <Disclosure>
@@ -181,9 +190,8 @@ export default function DashboardLayout({
                                         <span>Mi cuenta</span>
 
                                         <svg
-                                            className={`h-4 w-4 transition-transform duration-200 ${
-                                                open ? "rotate-180" : ""
-                                            }`}
+                                            className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""
+                                                }`}
                                             viewBox="0 0 20 20"
                                             fill="currentColor"
                                         >
