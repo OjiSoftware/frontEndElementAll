@@ -1,4 +1,4 @@
-import { SubCategory } from "./subcategory.types";
+
 
 export interface Brand {
     id: number;
