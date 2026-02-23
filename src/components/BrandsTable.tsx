@@ -41,13 +41,12 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
 
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${
-                    isActive
-                        ? sortDirection === "desc"
-                            ? "rotate-180 opacity-100"
-                            : "opacity-100"
-                        : "opacity-0"
-                }`}
+                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${isActive
+                    ? sortDirection === "desc"
+                        ? "rotate-180 opacity-100"
+                        : "opacity-100"
+                    : "opacity-0"
+                    }`}
             />
         );
     };
@@ -59,13 +58,13 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
             let aValue: any;
             let bValue: any;
 
-            if (sortColumn === "subCategory.name") {
-                aValue = a.subCategory?.name || "";
-                bValue = b.subCategory?.name || "";
-            } else {
-                aValue = a[sortColumn as keyof Brand];
-                bValue = b[sortColumn as keyof Brand];
-            }
+            /*             if (sortColumn === "subCategory.name") {
+                            aValue = a.subCategory?.name || "";
+                            bValue = b.subCategory?.name || "";
+                        } else { */
+            aValue = a[sortColumn as keyof Brand];
+            bValue = b[sortColumn as keyof Brand];
+            /*             } */
 
             if (sortColumn === "id" || typeof aValue === "number") {
                 return sortDirection === "asc"
@@ -120,7 +119,7 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                             </div>
                         </TableHeadCell>
 
-                        <TableHeadCell
+                        {/* <TableHeadCell
                             className={`${thClasses} ${colWidths.subCategory} ${hiddenOnMobile} cursor-pointer`}
                             onClick={() => handleSort("subCategory.name")}
                         >
@@ -129,7 +128,7 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                                 {renderSortArrow("subCategory.name")}
                             </div>
                         </TableHeadCell>
-
+ */}
                         <TableHeadCell
                             className={`${thClasses} ${colWidths.actions}`}
                         >
@@ -158,11 +157,11 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                                 {brand.name}
                             </TableCell>
 
-                            <TableCell
+                            {/*  <TableCell
                                 className={`${tdBase} ${colWidths.subCategory} ${hiddenOnMobile}`}
                             >
                                 {brand.subCategory?.name || "Sin subcategoría"}
-                            </TableCell>
+                            </TableCell> */}
 
                             <TableCell
                                 className={`${tdBase} ${colWidths.actions}`}

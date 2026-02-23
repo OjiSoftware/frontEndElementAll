@@ -7,9 +7,9 @@ export function useBrandEdit() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [name, setName] = useState("");
-    const [subCategoryId, setSubCategoryId] = useState<number | undefined>(
+    /* const [subCategoryId, setSubCategoryId] = useState<number | undefined>(
         undefined,
-    );
+    ); */
     const [loading, setLoading] = useState(false);
 
     // Fetch inicial
@@ -25,7 +25,7 @@ export function useBrandEdit() {
                     navigate("/management/brands");
                 } else {
                     setName(brand.name);
-                    setSubCategoryId(brand.subCategoryId);
+                    /* setSubCategoryId(brand.subCategoryId); */
                 }
             } catch (error) {
                 console.error("Error cargando marca:", error);
@@ -37,12 +37,12 @@ export function useBrandEdit() {
     }, [id, navigate]);
 
     const handleSubmit = async () => {
-        if (!id || subCategoryId === undefined) return;
+        if (!id /* || subCategoryId === undefined */) return;
 
         setLoading(true);
         const toastId = toast.loading("Guardando cambios...");
         try {
-            await brandApi.update(id, { name, subCategoryId });
+            await brandApi.update(id, { name });
             toast.success("Marca actualizada con éxito", { id: toastId });
             navigate("/management/brands");
         } catch (error) {
@@ -57,8 +57,8 @@ export function useBrandEdit() {
         id,
         name,
         setName,
-        subCategoryId,
-        setSubCategoryId,
+        /* subCategoryId, */
+        /* setSubCategoryId, */
         loading,
         handleSubmit,
     };

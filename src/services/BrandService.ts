@@ -9,7 +9,7 @@ export const brandApi = {
     },
 
     // Crear una marca
-    create: async (data: { name: string; subCategoryId: number }) => {
+    create: async (data: { name: string; /* subCategoryId: number  */ }) => {
         const response = await fetch(`${BASE_URL}/brands`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -22,7 +22,7 @@ export const brandApi = {
     // Actualizar una marca (ahora incluye status opcional)
     update: async (
         id: string | number,
-        data: { name?: string; subCategoryId?: number; status?: boolean },
+        data: { name: string; /* subCategoryId?: number; *//*  status?: boolean  */ },
     ) => {
         const response = await fetch(`${BASE_URL}/brands/${id}`, {
             method: "PUT",
@@ -33,9 +33,9 @@ export const brandApi = {
         return response.json();
     },
 
-    getSubCategories: async () => {
+    /* getSubCategories: async () => {
         const response = await fetch(`${BASE_URL}/subcategories`);
         if (!response.ok) throw new Error("Error al traer subcategorías");
         return response.json(); // [{id, name}, ...]
-    },
+    }, */
 };

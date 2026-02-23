@@ -8,28 +8,21 @@ import { useCreateBrand } from "@/hooks/useBrandForm";
 export default function CreateBrandPage() {
     const {
         formData,
-        categories,
-        filteredSubCategories,
+        /* categories, */
+        /* filteredSubCategories, */
         isLoading,
         handleChange,
-        handleSubmit: submitBrand,
+        handleSubmit,
     } = useCreateBrand();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    const handleSubmit = async () => {
+    const handleConfirm = async () => {
         setShowConfirmModal(false);
-        const loadingToast = toast.loading("Creando marca...");
-        try {
-            await submitBrand();
-            toast.success("¡Marca creada con éxito!", { id: loadingToast });
-        } catch (error) {
-            console.error(error);
-            toast.error("Hubo un error al crear la marca.", {
-                id: loadingToast,
-            });
-        }
+        await handleSubmit();
     };
+
+
 
     return (
         <DashboardLayout>
@@ -74,10 +67,10 @@ export default function CreateBrandPage() {
                         e.preventDefault();
                         if (!formData.name.trim())
                             return toast.error("El nombre es obligatorio");
-                        if (!formData.categoryId || !formData.subCategoryId)
+                        /* if (!formData.categoryId || !formData.subCategoryId)
                             return toast.error(
                                 "Selecciona Categoría y Subcategoría",
-                            );
+                            ); */
                         setShowConfirmModal(true);
                     }}
                     className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
@@ -106,11 +99,11 @@ export default function CreateBrandPage() {
 
                     {/* Columna derecha: Categorías */}
                     <div className="space-y-4 md:col-span-2">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
+                        {/*                         <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
                             Categorización
-                        </h3>
+                        </h3> */}
 
-                        <div>
+                        {/*                         <div>
                             <label className="block text-xs font-medium text-gray-300 mb-1.5">
                                 Categoría
                             </label>
@@ -148,7 +141,7 @@ export default function CreateBrandPage() {
                                     </option>
                                 ))}
                             </select>
-                        </div>
+                        </div> */}
 
                         {/* Botones */}
                         <div className="flex gap-3 mt-6 pt-4 border-t border-white/10">
@@ -181,7 +174,7 @@ export default function CreateBrandPage() {
                     }
                     isLoading={isLoading}
                     onCancel={() => setShowConfirmModal(false)}
-                    onConfirm={handleSubmit}
+                    onConfirm={handleConfirm}
                     confirmText="Crear"
                     cancelText="Cancelar"
                 />

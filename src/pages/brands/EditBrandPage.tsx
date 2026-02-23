@@ -12,30 +12,30 @@ export default function EditBrandPage() {
         id,
         name,
         setName,
-        subCategoryId,
-        setSubCategoryId,
+        /*         subCategoryId,
+                setSubCategoryId, */
         loading,
         handleSubmit,
     } = useBrandEdit();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [subCategories, setSubCategories] = useState<
-        { id: number; name: string }[]
-    >([]);
+    /*     const [subCategories, setSubCategories] = useState<
+            { id: number; name: string }[]
+        >([]); */
 
     if (!id) return null;
 
-    useEffect(() => {
-        const fetchSubCategories = async () => {
-            try {
-                const data = await brandApi.getSubCategories();
-                setSubCategories(data);
-            } catch (error) {
-                console.error("Error cargando subcategorías:", error);
-            }
-        };
-        fetchSubCategories();
-    }, []);
+    /*    useEffect(() => {
+            const fetchSubCategories = async () => {
+                try {
+                    const data = await brandApi.getSubCategories();
+                    setSubCategories(data);
+                } catch (error) {
+                    console.error("Error cargando subcategorías:", error);
+                }
+            };
+            fetchSubCategories();
+        }, []); */
 
     return (
         <DashboardLayout>
@@ -95,7 +95,7 @@ export default function EditBrandPage() {
                     </div>
 
                     {/* Subcategoría */}
-                    <div>
+                    {/* <div>
                         <label className="block text-xs font-medium text-gray-300 mb-1.5">
                             Subcategoría
                         </label>
@@ -114,7 +114,7 @@ export default function EditBrandPage() {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
 
                     {/* Botones */}
                     <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">

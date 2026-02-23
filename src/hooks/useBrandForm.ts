@@ -28,41 +28,41 @@ export function useCreateBrand() {
     /* -------------------------------------------------------------------------- */
     /*                     Cargar categorías y subcategorías                      */
     /* -------------------------------------------------------------------------- */
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const [catData, subData] = await Promise.all([
-                    productApi.getAllCategories(),
-                    productApi.getAllSubcategories(),
-                ]);
-
-                setCategories(catData);
-                setSubCategories(subData);
-            } catch (error) {
-                console.error(error);
-                toast.error("Error cargando datos");
-            }
-        };
-
-        loadData();
-    }, []);
+    /*     useEffect(() => {
+            const loadData = async () => {
+                try {
+                    const [catData, subData] = await Promise.all([
+                        productApi.getAllCategories(),
+                        productApi.getAllSubcategories(),
+                    ]);
+    
+                    setCategories(catData);
+                    setSubCategories(subData);
+                } catch (error) {
+                    console.error(error);
+                    toast.error("Error cargando datos");
+                }
+            };
+    
+            loadData();
+        }, []); */
 
     /* -------------------------------------------------------------------------- */
     /*                         Filtrar subcategorías                              */
     /* -------------------------------------------------------------------------- */
-    useEffect(() => {
-        const filtered = subCategories.filter(
-            (sub) => Number(sub.categoryId) === Number(formData.categoryId),
-        );
-
-        setFilteredSubCategories(filtered);
-
-        // reset subcategoría cuando cambia categoría
-        setFormData((prev) => ({
-            ...prev,
-            subCategoryId: 0,
-        }));
-    }, [formData.categoryId, subCategories]);
+    /*     useEffect(() => {
+            const filtered = subCategories.filter(
+                (sub) => Number(sub.categoryId) === Number(formData.categoryId),
+            );
+    
+            setFilteredSubCategories(filtered);
+    
+            // reset subcategoría cuando cambia categoría
+            setFormData((prev) => ({
+                ...prev,
+                subCategoryId: 0,
+            }));
+        }, [formData.categoryId, subCategories]); */
 
     /* -------------------------------------------------------------------------- */
     /*                              Handle inputs                                 */
@@ -84,7 +84,7 @@ export function useCreateBrand() {
     /*                              Crear brand                                   */
     /* -------------------------------------------------------------------------- */
     const handleSubmit = async () => {
-        if (!formData.name || formData.subCategoryId === 0) {
+        if (!formData.name /* || formData.subCategoryId === 0 */) {
             toast.error("Completa todos los campos");
             return;
         }
@@ -95,7 +95,7 @@ export function useCreateBrand() {
         try {
             await brandApi.create({
                 name: formData.name,
-                subCategoryId: formData.subCategoryId,
+                /* subCategoryId: formData.subCategoryId, */
             });
 
             toast.success("Marca creada con éxito", { id: loadingToast });
@@ -110,8 +110,8 @@ export function useCreateBrand() {
 
     return {
         formData,
-        categories,
-        filteredSubCategories,
+        /* categories, */
+        /* filteredSubCategories, */
         isLoading,
         handleChange,
         handleSubmit,
