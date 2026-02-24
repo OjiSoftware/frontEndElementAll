@@ -11,6 +11,7 @@ import { productApi } from "@/services/ProductService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 
+
 export default function ProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState("");
