@@ -11,6 +11,7 @@ import EditBrandPage from "@/pages/brands/EditBrandPage";
 import SalesPage from "@/pages/sales/SalesPage";
 import CreateSalesPage from "@/pages/sales/CreateSalesPage";
 import EditSAlesPage from "@/pages/sales/EditSalesPage";
+import CatalogPage from "@/pages/catalog/catalogPage";
 
 export const AppRoutes = () => {
     return (
@@ -50,6 +51,13 @@ export const AppRoutes = () => {
                 <Route
                     path="management/sales/edit/:id"
                     element={<EditSAlesPage />}
+                />
+
+
+                {/* Catalog */}
+                <Route
+                    path="/catalog"
+                    element={<CatalogPage />}
                 />
 
             </Routes>
