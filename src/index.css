@@ -1,2 +1,8 @@
 @import "tailwindcss";
 @import "flowbite";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-lato: "Lato", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}

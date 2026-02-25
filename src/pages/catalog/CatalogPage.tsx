@@ -60,7 +60,7 @@ export default function CatalogPage() {
             </div>
 
             <div className='w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow'>
-                <h1 className='text-3xl font-bold text-gray-800 mb-8 border-b pb-4'>
+                <h1 className='text-3xl font-bold font-poppins text-gray-800 mb-8 border-b pb-4'>
                     Catálogo de Productos
                 </h1>
 

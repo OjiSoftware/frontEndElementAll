@@ -9,12 +9,20 @@ const config: Config = {
         "node_modules/flowbite/**/*.js",
     ],
     theme: {
+        // Al ponerlo directamente aquí (fuera de extend), sobrescribes las predeterminadas
+        fontFamily: {
+            // Reemplaza la fuente 'sans' de Tailwind (la que usa por defecto en <body>)
+            sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            // Fuente secundaria para usar como utilidad (font-lato)
+            lato: ['Lato', 'sans-serif'],
+            poppins: ['Poppins', 'sans-serif'],
+        },
         extend: {
             colors: {
-                primary: "#4CB050",
-                dark: "#2F3028",
-                darker: "#0E1503",
-                accent: "#8BC24A",
+                primary: "#4CAF50",
+                dark: "#545454",
+                darker: "#2F3027",
+                accent: "#8BC34A",
             },
             keyframes: {
                 "fade-in": {

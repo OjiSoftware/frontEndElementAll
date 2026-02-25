@@ -9,6 +9,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/logo_elementAll.png";
 
 const user = {
     name: "Tom Cook",
@@ -59,7 +60,7 @@ export default function DashboardLayout({
                             <div className="shrink-0">
                                 <img
                                     alt="Your Company"
-                                    src="https://images.freeimages.com/vhq/images/previews/214/generic-logo-140952.png"
+                                    src={logo}
                                     className="size-8"
                                 />
                             </div>
