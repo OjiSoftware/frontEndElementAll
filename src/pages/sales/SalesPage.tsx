@@ -61,10 +61,19 @@ export default function SalesPage() {
             <div className="space-y-4">
                 {/* SEARCH BAR */}
                 <SearchBar
-                    value={query}
-                    onChange={setQuery}
-                    placeholder="Buscar ventas"
-                />
+                  value={query}
+                  onChange={setQuery}
+                  placeholder="Buscar marcas"
+                  containerClassName="max-w-full"
+                  inputClassName="
+                    bg-gray-900
+                    text-white
+                    border-gray-700
+                    placeholder-gray-500
+                    focus:ring-indigo-500
+                  "
+                  iconClassName="text-gray-400"
+              />
 
                 {/* PRODUCTS TABLE */}
                 <SalesTable

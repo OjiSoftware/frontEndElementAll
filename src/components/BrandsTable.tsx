@@ -176,7 +176,7 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                                     </Link>
                                     <button
                                         title="Eliminar marca"
-                                        className="text-red-500 hover:text-red-400 transition"
+                                        className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                         onClick={() => onDelete(brand)}
                                     >
                                         <TrashIcon className="w-5 h-5" />
