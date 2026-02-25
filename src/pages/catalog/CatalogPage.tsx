@@ -4,6 +4,7 @@ import { catalogApi } from '@/services/CatalogService'
 import ProductCard from '@/components/ProductCard'
 import Footer from '@/components/Footer'
 import { CategorySidebar } from '@/components/CategorySidebar'
+import Navbar from '@/components/Navbar'
 
 
 export default function CatalogPage() {
@@ -53,6 +54,11 @@ export default function CatalogPage() {
 
     return (
         <div className="flex flex-col min-h-screen w-full ">
+
+            <div>
+                <Navbar />
+            </div>
+
             <div className='w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow'>
                 <h1 className='text-3xl font-bold text-gray-800 mb-8 border-b pb-4'>
                     Catálogo de Productos
