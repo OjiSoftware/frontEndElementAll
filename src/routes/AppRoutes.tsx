@@ -45,11 +45,11 @@ export const AppRoutes = () => {
                 {/* SALES */}
                 <Route path="/management/sales" element={<SalesPage />} />
                 <Route
-                    path="management/sales/create"
+                    path="/management/sales/create"
                     element={<CreateSalesPage />}
                 />
                 <Route
-                    path="management/sales/edit/:id"
+                    path="/management/sales/edit/:id"
                     element={<EditSAlesPage />}
                 />
 

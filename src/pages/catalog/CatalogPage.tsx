@@ -1,18 +1,19 @@
+// CatalogPage.tsx
 import { useState, useEffect } from "react";
 import { catalogApi } from "@/services/CatalogService";
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
 import { CategorySidebar } from "@/components/CategorySidebar";
-import Navbar from "@/components/Navbar";
 import Pagination from "@/components/PaginationCatalog";
 import { Product } from "@/types/product.types";
+import Navbar from "@/components/Navbar";
 
 export default function CatalogPage() {
     // ---------------- STATE ----------------
     const [catProducts, setCatProducts] = useState<Product[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [search, setSearch] = useState(""); // estado de búsqueda
     const itemsPerPage = 12;
 
     // ---------------- FETCH ----------------
@@ -20,24 +21,33 @@ export default function CatalogPage() {
         const loadCatalog = async () => {
             try {
                 const data = await catalogApi.getCatalog();
-
                 setCatProducts(data);
                 setFilteredProducts(data);
             } catch (error) {
                 console.error("Error al cargar el catálogo:", error);
             }
         };
-
         loadCatalog();
     }, []);
 
-    // ---------------- FILTROS ----------------
+    // ---------------- BUSQUEDA ----------------
+    useEffect(() => {
+        let filtered = catProducts;
 
+        if (search.trim() !== "") {
+            filtered = filtered.filter((p) =>
+                p.name.toLowerCase().includes(search.toLowerCase()),
+            );
+        }
+
+        setFilteredProducts(filtered);
+    }, [search, catProducts]);
+
+    // ---------------- FILTROS ----------------
     const handleSelectSubCategory = (subId: number) => {
         const filtered = catProducts.filter(
             (p) => Number(p.subCategoryId) === subId,
         );
-
         setFilteredProducts(filtered);
     };
 
@@ -45,7 +55,6 @@ export default function CatalogPage() {
         const filtered = catProducts.filter(
             (p) => Number(p.brandId) === brandId,
         );
-
         setFilteredProducts(filtered);
     };
 
@@ -54,25 +63,21 @@ export default function CatalogPage() {
     };
 
     // ---------------- PAGINACIÓN ----------------
-
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
-
     const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
 
-    // resetear página cuando cambian filtros
     useEffect(() => {
         setCurrentPage(1);
     }, [filteredProducts]);
 
     // ---------------- UI ----------------
-
     return (
         <div className="flex flex-col min-h-screen w-full">
-            <Navbar />
+            {/* Navbar con búsqueda */}
+            <Navbar search={search} setSearch={setSearch} />
 
             <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow">
-
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* SIDEBAR */}
                     <div className="w-full md:w-64 shrink-0">
@@ -101,7 +106,7 @@ export default function CatalogPage() {
                                     ))}
                                 </div>
 
-                                {/* PAGINATION */}
+                                {/* PAGINACIÓN */}
                                 <Pagination
                                     totalItems={filteredProducts.length}
                                     itemsPerPage={itemsPerPage}

@@ -74,9 +74,7 @@ export default function BrandsPage() {
                             <path d="M12 18v-6" />
                         </svg>
                     </span>
-                    <span className="hidden md:inline">
-                        + Nueva marca
-                    </span>{" "}
+                    <span className="hidden md:inline">+ Nueva marca</span>{" "}
                 </button>
             }
         >
@@ -85,6 +83,15 @@ export default function BrandsPage() {
                     value={query}
                     onChange={setQuery}
                     placeholder="Buscar marcas"
+                    containerClassName="max-w-full"
+                    inputClassName="
+                      bg-gray-900
+                      text-white
+                      border-gray-700
+                      placeholder-gray-500
+                      focus:ring-indigo-500
+                    "
+                    iconClassName="text-gray-400"
                 />
 
                 <BrandsTable
