@@ -15,6 +15,12 @@ export const catalogApi = {
         const response = await fetch(`${BASE_URL}/categories/catalog`)
         if (!response.ok) throw new Error("Error al obtener el arbol de categorias");
         return response.json();
+    },
+
+    getActivesBrands: async () => {
+        const response = await fetch(`${BASE_URL}/brands`);
+        if (!response.ok) throw new Error("Error al obtener todas las marcas activas");
+        return response.json();
     }
 
 }

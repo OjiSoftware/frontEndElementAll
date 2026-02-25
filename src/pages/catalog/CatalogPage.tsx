@@ -41,6 +41,16 @@ export default function CatalogPage() {
         setFilteredProducts(filtered);
     };
 
+    const handleSelectBrand = (brandId: number) => {
+
+        const filteredBrands = catProducts.filter((p: any) => p.brandId === brandId)
+        setFilteredProducts(filteredBrands)
+    }
+
+    const handleClearFilters = () => {
+        setFilteredProducts(catProducts)
+    }
+
     return (
         <div className="flex flex-col min-h-screen w-full ">
             <div className='w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow'>
@@ -53,7 +63,7 @@ export default function CatalogPage() {
 
                     {/* Sidebar (izquierda) */}
                     <div className='w-full md:w-64 shrink-0'>
-                        <CategorySidebar onSelectSubCategory={handleSelectSubCategory} />
+                        <CategorySidebar onSelectSubCategory={handleSelectSubCategory} onSelectBrand={handleSelectBrand} onClearFilters={handleClearFilters} />
                     </div>
 
                     {/* Grilla de Productos (derecha) */}
