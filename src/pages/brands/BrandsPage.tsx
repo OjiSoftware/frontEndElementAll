@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/PaginationManagement";
 import SearchBar from "@/components/SearchBar";
 import { ConfirmDeleteModal } from "@/components/ConfirmDeleteModal";
 import { BrandsTable } from "@/components/BrandsTable";

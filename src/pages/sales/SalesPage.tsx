@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { SalesTable } from "@/components/SalesTable";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/PaginationManagement";
 import { Sale } from "@/types/sale.types";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 import SearchBar from "../../components/SearchBar";
