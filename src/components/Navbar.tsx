@@ -4,6 +4,7 @@ import logo from "@/assets/logo_elementAll2.png";
 import SearchBar from "@/components/SearchBar";
 import { catalogApi } from "@/services/CatalogService";
 import { Product } from "@/types/product.types";
+import { useCart } from "@/context/CartContext";
 
 interface NavbarProps {
     search: string;
@@ -16,6 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
     const [suggestions, setSuggestions] = useState<Product[]>([]); // filtrados
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // controla visibilidad
     const wrapperRef = useRef<HTMLDivElement>(null); // detecta click fuera
+    const { totalItems } = useCart();
 
     // Cargar catálogo al montar
     useEffect(() => {
@@ -192,7 +194,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             />
                         </svg>
                         <span className="absolute -top-2 -right-2 bg-[#A94442] text-white font-poppins text-[10px] font-bold h-4 w-4 md:h-5 md:w-5 flex items-center justify-center rounded-full border-2 border-[#5CB85C]">
-                            5
+                            {totalItems}
                         </span>
                     </div>
                 </div>
