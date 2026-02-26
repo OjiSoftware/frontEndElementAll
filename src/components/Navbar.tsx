@@ -1,5 +1,6 @@
 // Navbar.tsx
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import logo from "@/assets/logo_elementAll2.png";
 import SearchBar from "@/components/SearchBar";
 
@@ -12,8 +13,8 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <nav className="w-full bg-[#4caf50] shadow-md relative z-10">
-            <div className="max-w-[1200px] mx-auto px-4 py-3 md:py-4">
+        <nav className="w-full bg-[#4caf50] shadow-md relative z-10 border-b border-gray-400">
+            <div className="max-w-[1187px] mx-auto px-4 py-3 md:py-4">
                 <div className="flex items-center justify-between gap-4 md:gap-8">
                     {/* Botón Menú Móvil */}
                     <button
@@ -45,12 +46,12 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         <img
                             src={logo}
                             alt="Logo"
-                            className="h-15 md:h-16 object-contain"
+                            className="h-20 md:h-16 object-contain my-1"
                         />
                     </div>
 
                     {/* Bloque Central */}
-                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px]">
+                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px] mt-1 ">
                         {/* SearchBar Desktop */}
                         <SearchBar
                             value={search}
@@ -70,31 +71,31 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         />
 
                         {/* Enlaces Desktop */}
-                        <div className="flex w-full justify-between text-[12px] font-bold font-lato uppercase tracking-widest">
-                            <a
-                                href="#"
-                                className="text-white hover:text-[#f9c72a] transition-colors"
+                        <div className="flex w-full justify-between text-[13px] subpixel-antialiased font-normal font-lato uppercase tracking-[0.2rem] mt-2">
+                            <NavLink
+                                to="/"
+                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                             >
                                 Inicio
-                            </a>
-                            <a
-                                href="#"
-                                className="text-white hover:text-[#f9c72a] transition-colors"
+                            </NavLink>
+                            <NavLink
+                                to="/nosotros"
+                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                             >
                                 Nosotros
-                            </a>
-                            <a
-                                href="#"
-                                className="text-white hover:text-[#f9c72a] transition-colors"
+                            </NavLink>
+                            <NavLink
+                                to="/contacto"
+                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                             >
                                 Contacto
-                            </a>
-                            <a
-                                href="#"
-                                className="text-white hover:text-[#f9c72a] transition-colors"
+                            </NavLink>
+                            <NavLink
+                                to="/catalog"
+                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                             >
                                 Tienda
-                            </a>
+                            </NavLink>
                         </div>
                     </div>
 
@@ -146,22 +147,35 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
             {/* Menú Mobile */}
             {isMenuOpen && (
                 <div className="md:hidden bg-[#4cae4c] border-t border-green-400">
-                    <div className="flex flex-col p-4 space-y-4 text-sm font-bold font-lato uppercase tracking-widest">
-                        <a href="#" className="text-[#D9E968]">
+                    <div className="flex flex-col p-4 space-y-4 text-[15px] font-bold font-lato uppercase tracking-widest">
+                        <NavLink
+                            to="/"
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                        >
                             Inicio
-                        </a>
-                        <a href="#" className="text-[#D9E968]">
+                        </NavLink>
+                        <NavLink
+                            to="/nosotros"
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                        >
                             Nosotros
-                        </a>
-                        <a href="#" className="text-[#D9E968]">
+                        </NavLink>
+                        <NavLink
+                            to="/contacto"
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                        >
                             Contacto
-                        </a>
-                        <a
-                            href="#"
-                            className="text-white underline decoration-2 underline-offset-4"
+                        </NavLink>
+                        <NavLink
+                            to="/catalog"
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
                         >
                             Tienda
-                        </a>
+                        </NavLink>
                     </div>
                 </div>
             )}

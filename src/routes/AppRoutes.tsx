@@ -12,13 +12,14 @@ import SalesPage from "@/pages/sales/SalesPage";
 import CreateSalesPage from "@/pages/sales/CreateSalesPage";
 import EditSAlesPage from "@/pages/sales/EditSalesPage";
 import CatalogPage from "@/pages/catalog/CatalogPage";
+import HomePage from "@/pages/home/HomePage";
 
 export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
                 {/* HOME */}
-                <Route path="/" element={<ProductsPage />} />
+                <Route path="/" element={<HomePage />} />
 
                 {/* PRODUCTS */}
                 <Route path="/management/products" element={<ProductsPage />} />

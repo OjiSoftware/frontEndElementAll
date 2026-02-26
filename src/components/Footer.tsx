@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
               <img
                 src={logo}
                 alt="ElementAll Logo"
-                className="h-20 object-contain pl-0.5 pt-1"
+                className="h-30 object-contain pl-0.5 pt-1"
               />
 
               <p className="text-sm text-gray-200 font-medium font-lato max-w-xs mt-1">
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-[#545454] mt-10 pt-6">
+        <div className="borde3r-t border-[#545454] mt-10 pt-6">
           <div className="w-full max-[1187px]:px-6 max-w-[1187px] mx-auto">
             <p className="text-xs text-gray-400 text-left">
               © 2026 ElementAll | Todos los derechos reservados. Desarrollado por OJI Software.
