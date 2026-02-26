@@ -1,8 +1,9 @@
-// Navbar.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "@/assets/logo_elementAll2.png";
 import SearchBar from "@/components/SearchBar";
+import { catalogApi } from "@/services/CatalogService";
+import { Product } from "@/types/product.types";
 
 interface NavbarProps {
     search: string;
@@ -11,6 +12,56 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [catProducts, setCatProducts] = useState<Product[]>([]); // todos los productos
+    const [suggestions, setSuggestions] = useState<Product[]>([]); // filtrados
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // controla visibilidad
+    const wrapperRef = useRef<HTMLDivElement>(null); // detecta click fuera
+
+    // Cargar catálogo al montar
+    useEffect(() => {
+        const loadCatalog = async () => {
+            try {
+                const data = await catalogApi.getCatalog();
+                setCatProducts(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        loadCatalog();
+    }, []);
+
+    // Manejo de búsqueda con dropdown
+    const handleSearchChange = (value: string) => {
+        setSearch(value);
+
+        if (!value.trim()) {
+            setSuggestions([]);
+            setIsDropdownOpen(false);
+            return;
+        }
+
+        const filtered = catProducts.filter((p) =>
+            p.name.toLowerCase().includes(value.toLowerCase()),
+        );
+
+        setSuggestions(filtered.slice(0, 5)); // máximo 5 sugerencias
+        setIsDropdownOpen(filtered.length > 0);
+    };
+
+    // Cerrar dropdown al click fuera
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                wrapperRef.current &&
+                !wrapperRef.current.contains(event.target as Node)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <nav className="w-full bg-[#4caf50] shadow-md relative z-10 border-b border-gray-400">
@@ -55,7 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         {/* SearchBar Desktop */}
                         <SearchBar
                             value={search}
-                            onChange={setSearch}
+                            onChange={handleSearchChange}
                             placeholder="¿Qué estás buscando?"
                             containerClassName="w-full mb-3"
                             inputClassName="
@@ -69,6 +120,29 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             "
                             iconClassName="text-white/80"
                         />
+
+                        {/* ----------------- ✅ DROPDOWN ----------------- */}
+                        {isDropdownOpen && (
+                            <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 max-h-60 overflow-y-auto z-20">
+                                {suggestions.map((p) => (
+                                    <div
+                                        key={p.id}
+                                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                        onClick={() => {
+                                            setSearch(p.name);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                    >
+                                        {p.name}
+                                    </div>
+                                ))}
+                                {suggestions.length === 0 && (
+                                    <div className="px-4 py-2 text-gray-500">
+                                        No hay resultados
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* Enlaces Desktop */}
                         <div className="flex w-full justify-between text-[13px] subpixel-antialiased font-normal font-lato uppercase tracking-[0.2rem] mt-2">
@@ -151,28 +225,28 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         <NavLink
                             to="/"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                         >
                             Inicio
                         </NavLink>
                         <NavLink
                             to="/nosotros"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                         >
                             Nosotros
                         </NavLink>
                         <NavLink
                             to="/contacto"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                         >
                             Contacto
                         </NavLink>
                         <NavLink
                             to="/catalog"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}
+                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
                         >
                             Tienda
                         </NavLink>

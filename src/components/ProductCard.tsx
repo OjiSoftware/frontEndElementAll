@@ -27,20 +27,20 @@ const ProductCard: React.FC<Props> = ({ product }) => {
 
             {/* Información */}
             <div className="grow">
-                <h3 className="text-gray-600 text-xs font-semibold uppercase tracking-tight line-clamp-2 min-h-8">
+                <h3 className="text-darker font-lato text-sm font-normal uppercase tracking-tight line-clamp-2 min-h-8">
                     {product.name}
                 </h3>
-                <p className="text-gray-400 text-xs mt-1 italic">
+                <p className="text-gray-400 font-lato text-xs mt-1 italic max-h-16 overflow-y-auto">
                     {product.description}
                 </p>
-                <p className="text-black font-bold text-lg mt-2">
+                <p className="text-black font-lato font-bold text-lg mt-2">
                     {formatPrice(product.price)}
                 </p>
             </div>
 
             {/* Botón Añadir al carrito */}
             <button
-                className="mt-4 bg-[#5CB85C] hover:bg-[#4cae4c] text-white py-2 px-3 rounded flex items-center justify-center gap-2 text-xs font-medium transition-colors"
+                className="mt-4 bg-[#4caf50] hover:bg-[#8bc34a] text-white py-2 px-3 rounded flex items-center justify-center gap-2 text-xs font-medium transition-colors"
                 onClick={() => console.log(`Añadido: ${product.id}`)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

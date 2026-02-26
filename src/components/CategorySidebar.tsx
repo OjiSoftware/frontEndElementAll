@@ -1,15 +1,28 @@
 import { useEffect, useState } from 'react';
 import { catalogApi } from '@/services/CatalogService';
-
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
 interface SidebarProps {
-    onSelectSubCategory: (id: number) => void;
-    onSelectBrand: (id: number) => void;
+    onSelectSubCategory: (id: number, subName: string, catName: string) => void;
+    onSelectBrand: (id: number, brandName: string) => void;
     onClearFilters: () => void;
+    selectedSubCategory?: number | null;
+    selectedBrand?: number | null;
 }
-export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFilters }: SidebarProps) {
+export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFilters, selectedSubCategory, selectedBrand }: SidebarProps) {
     const [categories, setCategories] = useState<any[]>([]);
-    const [brands, setBrands] = useState<any[]>([])
+    const [brands, setBrands] = useState<any[]>([]);
+
+    // State for expanded menus
+    const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
+    const [brandsExpanded, setBrandsExpanded] = useState<boolean>(true);
+
+    const toggleCategory = (id: number) => {
+        setExpandedCategories(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
 
     useEffect(() => {
         const loadMenu = async () => {
@@ -37,61 +50,87 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
                 {/* Botón "Ver Todo" integrado dentro de la card */}
                 <button
                     onClick={onClearFilters}
-                    className="w-full mb-8 py-2 px-4 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                    className="w-full mb-8 py-2 px-4 bg-[#4caf50] hover:bg-[#8bc34a] text-white text-xs subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
                 >
-                    VER TODO
+                    MOSTRAR TODO
                 </button>
 
                 {/* SECCIÓN DE CATEGORÍAS */}
                 <div className="mb-8">
-                    <h2 className="text-[13px] font-bold text-gray-800 uppercase tracking-tight mb-6">
+                    <h2 className="text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] mb-4">
                         Categorías
                     </h2>
 
                     <ul className="space-y-6">
-                        {categories.map((cat) => (
-                            <li key={cat.id}>
-                                {/* Nombre de Línea (Hogar, Jardín, etc) */}
-                                <h3 className="text-gray-500 font-semibold text-sm mb-3 hover:text-green-600 transition-colors cursor-default">
-                                    {cat.name}
-                                </h3>
+                        {categories.map((cat) => {
+                            const isExpanded = expandedCategories[cat.id] ?? true; // Default expanded or collapsed, adjust if needed
+                            return (
+                                <li key={cat.id}>
+                                    {/* Nombre de Línea (Hogar, Jardín, etc) */}
+                                    <div
+                                        className="flex items-center justify-between mb-3 cursor-pointer group"
+                                        onClick={() => toggleCategory(cat.id)}
+                                    >
+                                        <h3 className="text-gray-500 font-semibold text-sm font-lato group-hover:text-[#4caf50] transition-colors">
+                                            {cat.name}
+                                        </h3>
+                                        {isExpanded ? (
+                                            <ChevronUpIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
+                                        ) : (
+                                            <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
+                                        )}
+                                    </div>
 
-                                {/* Subcategorías con el indentado de la imagen */}
-                                <ul className="ml-4 space-y-2">
-                                    {cat.subCategories?.map((sub: any) => (
-                                        <li
-                                            key={sub.id}
-                                            onClick={() => onSelectSubCategory(sub.id)}
-                                            className="text-gray-400 text-[13px] hover:text-green-500 cursor-pointer transition-all duration-200"
-                                        >
-                                            {sub.name}
-                                        </li>
-                                    ))}
-                                </ul>
+                                    {isExpanded && (
+                                        <ul className="ml-4 space-y-2 mb-6">
+                                            {cat.subCategories?.map((sub: any) => (
+                                                <li
+                                                    key={sub.id}
+                                                    onClick={() => onSelectSubCategory(sub.id, sub.name, cat.name)}
+                                                    className={`text-sm font-lato cursor-pointer transition-all duration-200 ${selectedSubCategory === sub.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
+                                                >
+                                                    {sub.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
 
-                                {/* Separador sutil entre líneas de categorías */}
-                                <hr className="mt-6 border-gray-50" />
-                            </li>
-                        ))}
+                                    {/* Separador sutil entre líneas de categorías */}
+                                    {isExpanded && <hr className="mt-2 border-gray-50" />}
+                                </li>
+                            )
+                        })}
                     </ul>
                 </div>
 
                 {/* SECCIÓN DE MARCAS */}
                 <div>
-                    <h2 className="text-[13px] font-bold text-gray-800 uppercase tracking-tight mb-4">
-                        Nuestras Marcas
-                    </h2>
-                    <ul className="space-y-1">
-                        {brands.map((brand) => (
-                            <li
-                                key={brand.id}
-                                onClick={() => onSelectBrand(brand.id)}
-                                className="px-2 py-1 text-gray-400 text-[13px] hover:text-green-600 cursor-pointer transition-colors"
-                            >
-                                • {brand.name}
-                            </li>
-                        ))}
-                    </ul>
+                    <div
+                        className="flex items-center justify-between mb-4 cursor-pointer group"
+                        onClick={() => setBrandsExpanded(!brandsExpanded)}
+                    >
+                        <h2 className="text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem]">
+                            Nuestras Marcas
+                        </h2>
+                        {brandsExpanded ? (
+                            <ChevronUpIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
+                        ) : (
+                            <ChevronDownIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
+                        )}
+                    </div>
+                    {brandsExpanded && (
+                        <ul className="space-y-1">
+                            {brands.map((brand) => (
+                                <li
+                                    key={brand.id}
+                                    onClick={() => onSelectBrand(brand.id, brand.name)}
+                                    className={`px-2 py-1 text-sm font-lato cursor-pointer transition-colors ${selectedBrand === brand.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
+                                >
+                                    • {brand.name}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </aside>

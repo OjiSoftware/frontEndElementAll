@@ -49,7 +49,7 @@ export default function Pagination({
 
     return (
 
-        <div className="flex items-center justify-between border-t border-green-700 px-4 py-4 sm:px-6">
+        <div className="flex items-center justify-between border-t border-gray-300 px-4 py-4 sm:px-6">
 
             {/* MOBILE */}
             <div className="sm:hidden w-full flex items-center justify-center gap-4">
@@ -57,7 +57,7 @@ export default function Pagination({
                 <button
                     onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className="p-2 rounded-md text-black bg-[#8bc34a] hover:bg-[#7cb342] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
+                    className="p-2 rounded-md text-black bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                 >
                     <ChevronLeftIcon className="size-5" />
                 </button>
@@ -78,7 +78,7 @@ export default function Pagination({
                         onPageChange(Math.min(totalPages, currentPage + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="p-2 rounded-md text-black bg-[#8bc34a] hover:bg-[#7cb342] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
+                    className="p-2 rounded-md text-black bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                 >
                     <ChevronRightIcon className="size-5" />
                 </button>
@@ -92,7 +92,7 @@ export default function Pagination({
                 {/* TEXTO */}
                 <div>
 
-                    <p className="text-sm text-black">
+                    <p className="text-sm font-lato text-black">
 
                         Mostrando{" "}
 
@@ -112,7 +112,7 @@ export default function Pagination({
                             {totalItems}
                         </span>
 
-                        {" "}resultados
+                        {" "}resultados.
 
                     </p>
 
@@ -122,7 +122,7 @@ export default function Pagination({
                 {/* BOTONES */}
                 <div>
 
-                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-md">
+                    <nav className="isolate inline-flex -space-x-px rounded-md">
 
                         {/* PREV */}
                         <button
@@ -130,7 +130,7 @@ export default function Pagination({
                                 onPageChange(Math.max(1, currentPage - 1))
                             }
                             disabled={currentPage === 1}
-                            className="relative inline-flex items-center rounded-l-md px-3 py-2 bg-[#8bc34a] text-black hover:bg-[#7cb342] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
+                            className="relative inline-flex items-center rounded-l-md px-3 py-2 bg-white text-black border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                         >
                             <ChevronLeftIcon className="size-5" />
                         </button>
@@ -143,7 +143,7 @@ export default function Pagination({
 
                                 <span
                                     key={i}
-                                    className="px-4 py-2 text-black font-medium"
+                                    className="px-4 py-2 bg-white text-black border border-gray-300 font-lato font-medium"
                                 >
                                     ...
                                 </span>
@@ -154,11 +154,10 @@ export default function Pagination({
                                     key={page}
                                     onClick={() => onPageChange(page)}
                                     className={`
-                                        px-4 py-2 font-bold cursor-pointer transition-all duration-200
-                                        ${
-                                            currentPage === page
-                                                ? "bg-[#4caf50] text-black shadow-md scale-105"
-                                                : "bg-black text-[#8bc34a] hover:bg-[#1a1a1a]"
+                                        px-4 py-2 font-lato font-bold cursor-pointer transition-all duration-200
+                                        ${currentPage === page
+                                            ? "bg-gray-200 text-black border border-gray-300 z-10"
+                                            : "bg-white text-black border border-gray-300 hover:bg-gray-100"
                                         }
                                     `}
                                 >
@@ -177,7 +176,7 @@ export default function Pagination({
                                 )
                             }
                             disabled={currentPage === totalPages}
-                            className="relative inline-flex items-center rounded-r-md px-3 py-2 bg-[#8bc34a] text-black hover:bg-[#7cb342] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
+                            className="relative inline-flex items-center rounded-r-md px-3 py-2 bg-white text-black border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                         >
                             <ChevronRightIcon className="size-5" />
                         </button>
