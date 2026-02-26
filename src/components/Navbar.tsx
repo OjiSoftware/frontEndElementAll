@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import { catalogApi } from "@/services/CatalogService";
 import { Product } from "@/types/product.types";
 import { useCart } from "@/context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
     search: string;
@@ -13,11 +14,14 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [catProducts, setCatProducts] = useState<Product[]>([]); // todos los productos
-    const [suggestions, setSuggestions] = useState<Product[]>([]); // filtrados
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // controla visibilidad
-    const wrapperRef = useRef<HTMLDivElement>(null); // detecta click fuera
+    const [catProducts, setCatProducts] = useState<Product[]>([]);
+    const [suggestions, setSuggestions] = useState<Product[]>([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showEmptyToast, setShowEmptyToast] = useState(false); // ✅ Estado para el toast
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const cartRef = useRef<HTMLDivElement>(null);
     const { totalItems } = useCart();
+    const navigate = useNavigate();
 
     // Cargar catálogo al montar
     useEffect(() => {
@@ -32,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
         loadCatalog();
     }, []);
 
-    // Manejo de búsqueda con dropdown
+    // Manejo de búsqueda
     const handleSearchChange = (value: string) => {
         setSearch(value);
 
@@ -46,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
             p.name.toLowerCase().includes(value.toLowerCase()),
         );
 
-        setSuggestions(filtered.slice(0, 5)); // máximo 5 sugerencias
+        setSuggestions(filtered.slice(0, 5));
         setIsDropdownOpen(filtered.length > 0);
     };
 
@@ -104,8 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                     </div>
 
                     {/* Bloque Central */}
-                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px] mt-1 ">
-                        {/* SearchBar Desktop */}
+                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px] mt-1">
                         <SearchBar
                             value={search}
                             onChange={handleSearchChange}
@@ -123,7 +126,6 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             iconClassName="text-white/80"
                         />
 
-                        {/* ----------------- ✅ DROPDOWN ----------------- */}
                         {isDropdownOpen && (
                             <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 max-h-60 overflow-y-auto z-20">
                                 {suggestions.map((p) => (
@@ -146,29 +148,36 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             </div>
                         )}
 
-                        {/* Enlaces Desktop */}
                         <div className="flex w-full justify-between text-[13px] subpixel-antialiased font-normal font-lato uppercase tracking-[0.2rem] mt-2">
                             <NavLink
                                 to="/"
-                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                                className={({ isActive }) =>
+                                    `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                                }
                             >
                                 Inicio
                             </NavLink>
                             <NavLink
                                 to="/nosotros"
-                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                                className={({ isActive }) =>
+                                    `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                                }
                             >
                                 Nosotros
                             </NavLink>
                             <NavLink
                                 to="/contacto"
-                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                                className={({ isActive }) =>
+                                    `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                                }
                             >
                                 Contacto
                             </NavLink>
                             <NavLink
                                 to="/catalog"
-                                className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                                className={({ isActive }) =>
+                                    `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                                }
                             >
                                 Tienda
                             </NavLink>
@@ -176,7 +185,21 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                     </div>
 
                     {/* Carrito */}
-                    <div className="relative cursor-pointer shrink-0">
+                    <div
+                        className="relative cursor-pointer shrink-0"
+                        ref={cartRef}
+                        onClick={() => {
+                            if (totalItems === 0) {
+                                setShowEmptyToast(true);
+                                setTimeout(
+                                    () => setShowEmptyToast(false),
+                                    2000,
+                                );
+                                return;
+                            }
+                            navigate("/cart");
+                        }}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-7 w-7 md:h-8 md:w-8 text-white"
@@ -193,6 +216,26 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                                 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                             />
                         </svg>
+
+                        {/* Toast al lado del carrito */}
+                        {showEmptyToast && cartRef.current && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: cartRef.current.offsetWidth + 16, // ahora 16px de separación
+                                    backgroundColor: "#661414",
+                                    color: "white",
+                                    padding: "4px 8px",
+                                    borderRadius: "6px",
+                                    zIndex: 50,
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                El carrito está vacío.
+                            </div>
+                        )}
+
                         <span className="absolute -top-2 -right-2 bg-[#A94442] text-white font-poppins text-[10px] font-bold h-4 w-4 md:h-5 md:w-5 flex items-center justify-center rounded-full border-2 border-[#5CB85C]">
                             {totalItems}
                         </span>
@@ -227,28 +270,36 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         <NavLink
                             to="/"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                            className={({ isActive }) =>
+                                `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                            }
                         >
                             Inicio
                         </NavLink>
                         <NavLink
                             to="/nosotros"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                            className={({ isActive }) =>
+                                `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                            }
                         >
                             Nosotros
                         </NavLink>
                         <NavLink
                             to="/contacto"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                            className={({ isActive }) =>
+                                `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                            }
                         >
                             Contacto
                         </NavLink>
                         <NavLink
                             to="/catalog"
                             onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) => `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`}
+                            className={({ isActive }) =>
+                                `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
+                            }
                         >
                             Tienda
                         </NavLink>

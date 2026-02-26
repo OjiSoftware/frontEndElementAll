@@ -13,6 +13,7 @@ import CreateSalesPage from "@/pages/sales/CreateSalesPage";
 import EditSAlesPage from "@/pages/sales/EditSalesPage";
 import CatalogPage from "@/pages/catalog/CatalogPage";
 import HomePage from "@/pages/home/HomePage";
+import CartPage from "@/pages/cart/CartPage";
 
 export const AppRoutes = () => {
     return (
@@ -55,11 +56,10 @@ export const AppRoutes = () => {
                 />
 
                 {/* Catalog */}
-                <Route
-                    path="/catalog"
-                    element={<CatalogPage />}
-                />
+                <Route path="/catalog" element={<CatalogPage />} />
 
+                {/* Shopping Cart */}
+                <Route path="/cart" element={<CartPage />} />
             </Routes>
         </BrowserRouter>
     );
