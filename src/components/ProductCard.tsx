@@ -10,8 +10,7 @@ interface Props {
 const ProductCard: React.FC<Props> = ({ product }) => {
     const { addToCart } = useCart();
     const [isAdding, setIsAdding] = useState(false);
-    const [productQuantity, setProductQuantity] = useState(1)
-
+    const [productQuantity, setProductQuantity] = useState(1);
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat("es-AR", {
@@ -32,9 +31,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 duration: 2000,
             });
 
-
             setProductQuantity(1);
-
         } finally {
             setIsAdding(false);
         }
@@ -53,7 +50,11 @@ const ProductCard: React.FC<Props> = ({ product }) => {
 
             {/* Información */}
             <div className="grow">
-                <h3 className="text-darker font-lato text-sm font-normal uppercase tracking-tight line-clamp-2 min-h-8">
+                <h3
+                    title={product.name}
+                    // Eliminamos 'line-clamp-2' y 'min-h-8' para que el texto crezca libremente
+                    className="text-darker font-lato text-sm font-normal uppercase tracking-tight"
+                >
                     {product.name}
                 </h3>
                 <p className="text-gray-400 font-lato text-xs mt-1 italic max-h-16 overflow-y-auto">
@@ -64,35 +65,86 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 </p>
             </div>
 
-            {/* Botones para sumar y restar productos */}
-            <div className="flex items-center justify-center gap-4 mb-2 mt-4">
-                {/* Botón Menos */}
-                <button
-                    type="button"
-                    className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
-                >
-                    <span className="text-lg font-bold">-</span>
-                </button>
+            {/* Selector de Cantidad */}
+            <div className="flex flex-col items-center gap-1.5 mb-2 mt-3">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-gray-400 font-bold">
+                    Cantidad
+                </span>
 
-                <span className="font-bold text-base w-6 text-center">{productQuantity}</span>
+                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg h-8 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden">
+                    <button
+                        type="button"
+                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer active:bg-gray-100"
+                        onClick={() =>
+                            setProductQuantity(Math.max(1, productQuantity - 1))
+                        }
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={3}
+                            stroke="currentColor"
+                            className="w-3.5 h-3.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 12h-15"
+                            />
+                        </svg>
+                    </button>
 
-                {/* Botón Más */}
-                <button
-                    type="button"
-                    className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    onClick={() => setProductQuantity(productQuantity + 1)}
-                >
-                    <span className="text-lg font-bold">+</span>
-                </button>
+                    <input
+                        type="number"
+                        value={productQuantity === 0 ? "" : productQuantity}
+                        onChange={(e) => {
+                            const rawValue = e.target.value;
+                            if (rawValue === "") {
+                                setProductQuantity(0);
+                                return;
+                            }
+                            const val = parseInt(rawValue, 10);
+                            if (!isNaN(val)) {
+                                setProductQuantity(Math.max(0, val));
+                            }
+                        }}
+                        onBlur={() => {
+                            if (productQuantity < 1) setProductQuantity(1);
+                        }}
+                        className="w-9 h-full text-center bg-transparent border-none font-bold text-[#3b4b5e] text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+
+                    <button
+                        type="button"
+                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-green-600 transition-colors cursor-pointer active:bg-gray-100"
+                        onClick={() => setProductQuantity(productQuantity + 1)}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={3}
+                            stroke="currentColor"
+                            className="w-3.5 h-3.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {/* Botón Añadir al carrito */}
             <button
-                className={`mt-4 relative ${isAdding
-                    ? "bg-[#f9c72a]"
-                    : "bg-[#4caf50] hover:bg-[#8bc34a]"
-                    } text-white py-2 px-3 rounded flex items-center justify-center text-xs font-medium transition-colors cursor-pointer disabled:cursor-not-allowed overflow-hidden`}
+                className={`mt-4 relative ${
+                    isAdding
+                        ? "bg-[#8bc34a]"
+                        : "bg-[#4caf50] hover:bg-[#8bc34a]"
+                } text-white py-2 px-3 rounded flex items-center justify-center text-xs font-medium transition-colors cursor-pointer disabled:cursor-not-allowed overflow-hidden`}
                 onClick={handleAddToCart}
                 disabled={isAdding}
             >
@@ -140,10 +192,10 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                         />
                     </svg>
-                    <span>Añadir al carrito</span>
+                    <span>Agregar al carrito</span>
                 </div>
             </button>
-        </div >
+        </div>
     );
 };
 

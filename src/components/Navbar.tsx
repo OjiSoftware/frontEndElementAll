@@ -222,8 +222,8 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             <div
                                 style={{
                                     position: "absolute",
-                                    top: 0,
-                                    left: cartRef.current.offsetWidth + 16, // ahora 16px de separación
+                                    top: -2,
+                                    left: cartRef.current.offsetWidth + 20, // ahora 16px de separación
                                     backgroundColor: "#661414",
                                     color: "white",
                                     padding: "4px 8px",
@@ -232,11 +232,11 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                                     whiteSpace: "nowrap",
                                 }}
                             >
-                                El carrito está vacío.
+                                El carrito está vacío
                             </div>
                         )}
 
-                        <span className="absolute -top-2 -right-2 bg-[#A94442] text-white font-poppins text-[10px] font-bold h-4 w-4 md:h-5 md:w-5 flex items-center justify-center rounded-full border-2 border-[#5CB85C]">
+                        <span className="absolute -top-2 -right-2.5 bg-[#A94442] text-white font-poppins text-[10px] font-bold h-4 w-4 md:h-5! md:w-5! flex items-center justify-center rounded-full border-2 border-[#5CB85C]">
                             {totalItems}
                         </span>
                     </div>
