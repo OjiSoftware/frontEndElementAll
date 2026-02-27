@@ -8,22 +8,21 @@ interface CartTableProps {
 
 const CartTable: React.FC<CartTableProps> = ({ cart }) => {
     return (
-        <table className="w-full border-collapse">
-            <thead>
-                <tr className="bg-gray-100 text-left">
-                    <th className="p-2 border-b">Producto</th>
-                    <th className="p-2 border-b">Precio</th>
-                    <th className="p-2 border-b">Cantidad</th>
-                    <th className="p-2 border-b">Subtotal</th>
-                    <th className="p-2 border-b">Acción</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div className="flex flex-col w-full">
+            <div className="hidden sm:grid grid-cols-[4fr_1.5fr_1.2fr_1.5fr_24px] gap-4 p-4 border-b border-gray-200 text-[11px] lg:text-xs font-bold text-gray-400 tracking-wider items-center font-lato">
+                <div className="uppercase">Producto</div>
+                <div className="uppercase text-center">Precio Unitario</div>
+                <div className="uppercase text-center">Cantidad</div>
+                <div className="uppercase text-center">Subtotal</div>
+                <div></div> {/* Placeholder for the expand toggle */}
+            </div>
+
+            <div className="divide-y divide-gray-200">
                 {cart.map((item) => (
                     <CartRow key={item.product.id} item={item} />
                 ))}
-            </tbody>
-        </table>
+            </div>
+        </div>
     );
 };
 

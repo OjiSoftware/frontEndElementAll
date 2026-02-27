@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
         style={{ backgroundImage: `url(${background})` }}
       ></div>
 
-      <div className="bg-[#2f3027] text-white pt-10 pb-6 w-full">
+      <div className="bg-[#2f3027] text-white pt-10 pb-6 w-full font-lato">
         <div className="w-full max-[1187px]:px-6 max-w-[1187px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-start gap-3">

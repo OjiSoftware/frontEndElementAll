@@ -127,7 +127,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         />
 
                         {isDropdownOpen && (
-                            <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 max-h-60 overflow-y-auto z-20">
+                            <div className="absolute top-[55px] center w-[650px] bg-white shadow-lg font-lato text-sm rounded-md mt-1 max-h-60 overflow-y-auto z-20">
                                 {suggestions.map((p) => (
                                     <div
                                         key={p.id}
