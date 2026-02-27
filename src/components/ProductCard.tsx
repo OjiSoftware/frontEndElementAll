@@ -10,6 +10,8 @@ interface Props {
 const ProductCard: React.FC<Props> = ({ product }) => {
     const { addToCart } = useCart();
     const [isAdding, setIsAdding] = useState(false);
+    const [productQuantity, setProductQuantity] = useState(1)
+
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat("es-AR", {
@@ -22,11 +24,17 @@ const ProductCard: React.FC<Props> = ({ product }) => {
         setIsAdding(true);
         try {
             await new Promise((res) => setTimeout(res, 1000));
-            addToCart(product);
+
+            addToCart(product, productQuantity);
+
             toast.success(`${product.name} agregado al carrito 🛒`, {
                 style: { backgroundColor: "#4caf50", color: "white" },
                 duration: 2000,
             });
+
+
+            setProductQuantity(1);
+
         } finally {
             setIsAdding(false);
         }
@@ -56,13 +64,35 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 </p>
             </div>
 
-            {/* Botón Añadir al carrito mejorado */}
+            {/* Botones para sumar y restar productos */}
+            <div className="flex items-center justify-center gap-4 mb-2 mt-4">
+                {/* Botón Menos */}
+                <button
+                    type="button"
+                    className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                    onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
+                >
+                    <span className="text-lg font-bold">-</span>
+                </button>
+
+                <span className="font-bold text-base w-6 text-center">{productQuantity}</span>
+
+                {/* Botón Más */}
+                <button
+                    type="button"
+                    className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                    onClick={() => setProductQuantity(productQuantity + 1)}
+                >
+                    <span className="text-lg font-bold">+</span>
+                </button>
+            </div>
+
+            {/* Botón Añadir al carrito */}
             <button
-                className={`mt-4 relative ${
-                    isAdding
-                        ? "bg-[#f9c72a]"
-                        : "bg-[#4caf50] hover:bg-[#8bc34a]"
-                } text-white py-2 px-3 rounded flex items-center justify-center text-xs font-medium transition-colors cursor-pointer disabled:cursor-not-allowed overflow-hidden`}
+                className={`mt-4 relative ${isAdding
+                    ? "bg-[#f9c72a]"
+                    : "bg-[#4caf50] hover:bg-[#8bc34a]"
+                    } text-white py-2 px-3 rounded flex items-center justify-center text-xs font-medium transition-colors cursor-pointer disabled:cursor-not-allowed overflow-hidden`}
                 onClick={handleAddToCart}
                 disabled={isAdding}
             >
@@ -113,7 +143,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                     <span>Añadir al carrito</span>
                 </div>
             </button>
-        </div>
+        </div >
     );
 };
 

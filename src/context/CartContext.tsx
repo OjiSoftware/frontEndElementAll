@@ -8,7 +8,7 @@ export interface CartItem {
 
 interface CartContextType {
     cart: CartItem[];
-    addToCart: (product: Product) => void;
+    addToCart: (product: Product, quantity?: number) => void;
     removeFromCart: (productId: number) => void;
     updateQuantity: (productId: number, quantity: number) => void;
     clearCart: () => void;
@@ -22,15 +22,20 @@ export const CartContext = createContext<CartContextType | undefined>(
 
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>(() => {
-        const savedCart = localStorage.getItem("cart");
-        return savedCart ? JSON.parse(savedCart) : [];
+        try {
+            const savedCart = localStorage.getItem("cart");
+            return savedCart ? JSON.parse(savedCart) : [];
+        } catch (error) {
+            console.error("Error cargando el carrito desde localStorage", error);
+            return [];
+        }
     });
 
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
 
-    const addToCart = (product: Product) => {
+    const addToCart = (product: Product, quantity: number = 1) => {
         setCart((prev) => {
             const existing = prev.find(
                 (item) => item.product.id === product.id,
@@ -39,12 +44,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
             if (existing) {
                 return prev.map((item) =>
                     item.product.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: item.quantity + quantity }
                         : item,
                 );
             }
 
-            return [...prev, { product, quantity: 1 }];
+            return [...prev, { product, quantity }];
         });
     };
 
