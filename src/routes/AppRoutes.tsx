@@ -14,6 +14,7 @@ import EditSAlesPage from "@/pages/sales/EditSalesPage";
 import CatalogPage from "@/pages/catalog/CatalogPage";
 import HomePage from "@/pages/home/HomePage";
 import CartPage from "@/pages/cart/CartPage";
+import LoginPage from "@/pages/brands/LoginPage";
 
 export const AppRoutes = () => {
     return (
@@ -60,6 +61,9 @@ export const AppRoutes = () => {
 
                 {/* Shopping Cart */}
                 <Route path="/cart" element={<CartPage />} />
+
+                {/* Login */}
+                <Route path="/login" element={<LoginPage />} />
             </Routes>
         </BrowserRouter>
     );
