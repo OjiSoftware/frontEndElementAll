@@ -104,6 +104,8 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             src={logo}
                             alt="Logo"
                             className="h-20 md:h-16 object-contain my-1"
+                            onClick={() => navigate("/")}
+                            style={{ cursor: "pointer" }}
                         />
                     </div>
 

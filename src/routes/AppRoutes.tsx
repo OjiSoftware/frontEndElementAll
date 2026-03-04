@@ -16,6 +16,7 @@ import CatalogPage from "@/pages/public/catalog";
 import HomePage from "@/pages/public";
 import CartPage from "@/pages/public/cart";
 import LoginPage from "@/pages/auth";
+import ContactoPage from "@/pages/public/contacto";
 
 export const AppRoutes = () => {
     return (
@@ -56,6 +57,9 @@ export const AppRoutes = () => {
                     path="/management/sales/edit/:id"
                     element={<EditSAlesPage />}
                 />
+
+                {/* Contacto */}
+                <Route path="/contacto" element={<ContactoPage />} />
 
                 {/* Catalog */}
                 <Route path="/catalog" element={<CatalogPage />} />

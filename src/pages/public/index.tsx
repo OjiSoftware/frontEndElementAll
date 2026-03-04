@@ -55,7 +55,7 @@ export default function HomePage() {
             </div>
 
             {/* Nueva Sección Inferior - Ocupa un mínimo del 38.2% del alto de la pantalla */}
-            <div className="bg-[#e5e7eb] w-full flex flex-col items-center justify-center shadow-md relative z-10 border-t border-white ">
+            <div className="bg-[#f1f3f5] w-full flex flex-col items-center justify-center shadow-md relative z-10 border-t border-white ">
                 <div className="w-full h-full max-h-[380px] max-[1187px]:px-4 max-w-[1187px] mx-auto flex flex-col justify-center pt-5 pb-6">
                     {/* Header de Categorias */}
                     <div className="flex justify-between items-end mb-4 pt-0">

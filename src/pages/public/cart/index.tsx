@@ -85,7 +85,7 @@ export default function CartPage() {
                 {/* BOTÓN VOLVER (Nuevo) */}
                 <div className="mb-2">
                     <button
-                        onClick={() => window.history.back()}
+                        onClick={() => navigate("/catalog")}
                         className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                         <ChevronLeftIcon className="w-4 h-4" />
