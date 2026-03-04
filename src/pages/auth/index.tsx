@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginError } from '../../types/errors';
-import { emailValidator, validateLoginPassword } from '../../helpers/validations';
+import { emailValidator, validateLoginPassword } from '../../../helpers/validations';
 
 export default function LoginPage() {
     const navigate = useNavigate();

@@ -1,20 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import ProductsPage from "@/pages/products/ProductsPage";
-import CreateProductPage from "@/pages/products/CreateProductPage";
-import EditProductPage from "@/pages/products/EditProductPage";
+import ProductsPage from "@/pages/management/products";
+import CreateProductPage from "@/pages/management/products/CreateProductPage";
+import EditProductPage from "@/pages/management/products/EditProductPage";
 
-import BrandsPage from "@/pages/brands/BrandsPage";
-import CreateBrandPage from "@/pages/brands/CreateBrandPage";
-import EditBrandPage from "@/pages/brands/EditBrandPage";
+import BrandsPage from "@/pages/management/brands";
+import CreateBrandPage from "@/pages/management/brands/CreateBrandPage";
+import EditBrandPage from "@/pages/management/brands/EditBrandPage";
 
-import SalesPage from "@/pages/sales/SalesPage";
-import CreateSalesPage from "@/pages/sales/CreateSalesPage";
-import EditSAlesPage from "@/pages/sales/EditSalesPage";
-import CatalogPage from "@/pages/catalog/CatalogPage";
-import HomePage from "@/pages/home/HomePage";
-import CartPage from "@/pages/cart/CartPage";
-import LoginPage from "@/pages/brands/LoginPage";
+import SalesPage from "@/pages/management/sales";
+import CreateSalesPage from "@/pages/management/sales/CreateSalesPage";
+import EditSAlesPage from "@/pages/management/sales/EditSalesPage";
+
+import CatalogPage from "@/pages/public/catalog";
+import HomePage from "@/pages/public";
+import CartPage from "@/pages/public/cart";
+import LoginPage from "@/pages/auth";
 
 export const AppRoutes = () => {
     return (

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal } from "../../components/ConfirmModal";
+import { ConfirmModal } from "../../../components/ConfirmModal";
 import { productApi } from "@/services/ProductService";
 import toast from "react-hot-toast";
 import { useProductEdit } from "@/hooks/useProductEdit";
