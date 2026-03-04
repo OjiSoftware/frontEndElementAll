@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import background from "@/assets/background.jpg";
 import logo from "@/assets/logo_elementAll.png";
 
@@ -46,21 +47,21 @@ const Footer: React.FC = () => {
             <div className="flex flex-col items-start">
               <h3 className="text-lg font-bold font-poppins mb-4">Legal</h3>
               <div className="flex flex-col gap-2">
-                <a href="#" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                <Link to="/arrepentimiento" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Botón de Arrepentimiento
-                </a>
+                </Link>
                 <p className="text-sm text-gray-300 font-lato">
-                  Defensa de las y los Consumidores. <a href="#" className="underline hover:text-white transition-colors">Para reclamos ingrese aquí</a>
+                  Defensa de las y los Consumidores. <a href="https://defensadelconsumidor.cba.gov.ar/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">Para reclamos ingrese aquí</a>
                 </p>
-                <a href="#" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                <Link to="/libro-quejas" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Libro de Quejas
-                </a>
-                <a href="#" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                </Link>
+                <Link to="/terminos-condiciones" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Términos y Condiciones
-                </a>
-                <a href="#" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                </Link>
+                <Link to="/politicas-privacidad" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Políticas de Privacidad
-                </a>
+                </Link>
               </div>
             </div>
           </div>

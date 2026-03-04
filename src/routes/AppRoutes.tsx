@@ -17,6 +17,10 @@ import HomePage from "@/pages/public";
 import CartPage from "@/pages/public/cart";
 import LoginPage from "@/pages/auth";
 import ContactoPage from "@/pages/public/contacto";
+import ArrepentimientoPage from "@/pages/public/legal/ArrepentimientoPage";
+import LibroQuejasPage from "@/pages/public/legal/LibroQuejasPage";
+import TerminosPage from "@/pages/public/legal/TerminosPage";
+import PrivacidadPage from "@/pages/public/legal/PrivacidadPage";
 
 export const AppRoutes = () => {
     return (
@@ -60,6 +64,12 @@ export const AppRoutes = () => {
 
                 {/* Contacto */}
                 <Route path="/contacto" element={<ContactoPage />} />
+
+                {/* Legales */}
+                <Route path="/arrepentimiento" element={<ArrepentimientoPage />} />
+                <Route path="/libro-quejas" element={<LibroQuejasPage />} />
+                <Route path="/terminos-condiciones" element={<TerminosPage />} />
+                <Route path="/politicas-privacidad" element={<PrivacidadPage />} />
 
                 {/* Catalog */}
                 <Route path="/catalog" element={<CatalogPage />} />
