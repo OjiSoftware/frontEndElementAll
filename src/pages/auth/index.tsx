@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, LogIn, Loader2 } from "lucide-react";
+import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from "lucide-react";
 import { LoginError } from "../../types/errors.types";
 import { validateEmail } from "../../helpers/email.validator";
 import { validatePassword } from "../../helpers/password.validator";
@@ -13,9 +13,10 @@ export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<LoginError>({});
     const [loading, setLoading] = useState(false);
-    const [loginStatus, setLoginStatus] = useState("Iniciar Sesión");
+    const [loginStatus, setLoginStatus] = useState("Iniciar sesión");
 
     const handleInputChange = (
         field: keyof LoginError,
@@ -75,11 +76,11 @@ export default function LoginPage() {
                         data.message ||
                         "Credenciales incorrectas.",
                 });
-                setLoginStatus("Iniciar Sesión");
+                setLoginStatus("Iniciar sesión");
             }
         } catch (error) {
             setErrors({ api: "Error de conexión." });
-            setLoginStatus("Iniciar Sesión");
+            setLoginStatus("Iniciar sesión");
         } finally {
             setLoading(false);
         }
@@ -87,9 +88,7 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
-            {/* Contenedor principal que agrupa todo para un centrado real */}
             <div className="w-full max-w-md flex flex-col items-center">
-                {/* Logo y Encabezado */}
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
@@ -101,11 +100,10 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                {/* Card del Formulario */}
                 <div className="w-full bg-gray-800/50 border border-white/10 p-6 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-xl">
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-bold text-white tracking-tight">
-                            Iniciar Sesión
+                            Iniciar sesión
                         </h2>
                         <p className="text-gray-400 text-sm mt-2">
                             Ingresa tus credenciales de acceso
@@ -152,11 +150,7 @@ export default function LoginPage() {
                                     }
                                     placeholder="tu@correo.com"
                                     className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
-                                        ${
-                                            errors.email
-                                                ? "border-red-500/50 focus:ring-1 focus:ring-red-500 placeholder:text-red-400/60 text-red-400"
-                                                : "border-white/10 focus:border-indigo-500 placeholder:text-gray-500 text-white"
-                                        }`}
+                                        ${errors.email ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
                             </div>
                             {errors.email && (
@@ -183,7 +177,7 @@ export default function LoginPage() {
                                 </div>
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) =>
                                         handleInputChange(
@@ -193,13 +187,33 @@ export default function LoginPage() {
                                         )
                                     }
                                     placeholder="••••••••"
-                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
-                                        ${
-                                            errors.password1
-                                                ? "border-red-500/50 focus:ring-1 focus:ring-red-500 placeholder:text-red-400/60 text-red-400"
-                                                : "border-white/10 focus:border-indigo-500 placeholder:text-gray-500 text-white"
-                                        }`}
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
+                                        ${errors.password1 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
+                                {/* Botón del ojo */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 transition-colors z-30 cursor-pointer focus:outline-none"
+                                    title={
+                                        showPassword
+                                            ? "Ocultar contraseña"
+                                            : "Mostrar contraseña"
+                                    }
+                                    aria-label={
+                                        showPassword
+                                            ? "Ocultar contraseña"
+                                            : "Mostrar contraseña"
+                                    }
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                        <Eye className="h-4 w-4" />
+                                    )}
+                                </button>
                             </div>
 
                             <div className="flex flex-col sm:flex-row justify-between gap-2 pt-1">
@@ -239,7 +253,6 @@ export default function LoginPage() {
                     </form>
                 </div>
 
-                {/* Footer de OjiSoftware */}
                 <p className="mt-8 text-center text-xs text-gray-500">
                     Desarrollado por{" "}
                     <span className="font-bold text-gray-400">OjiSoftware</span>{" "}

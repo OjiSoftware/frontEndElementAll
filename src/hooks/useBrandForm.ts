@@ -35,7 +35,7 @@ export function useCreateBrand() {
                         productApi.getAllCategories(),
                         productApi.getAllSubcategories(),
                     ]);
-    
+
                     setCategories(catData);
                     setSubCategories(subData);
                 } catch (error) {
@@ -43,7 +43,7 @@ export function useCreateBrand() {
                     toast.error("Error cargando datos");
                 }
             };
-    
+
             loadData();
         }, []); */
 
@@ -54,9 +54,9 @@ export function useCreateBrand() {
             const filtered = subCategories.filter(
                 (sub) => Number(sub.categoryId) === Number(formData.categoryId),
             );
-    
+
             setFilteredSubCategories(filtered);
-    
+
             // reset subcategoría cuando cambia categoría
             setFormData((prev) => ({
                 ...prev,

@@ -1,6 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-// 👇 IMPORTAMOS EL GUARDIÁN
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 import ProductsPage from "@/pages/management/products";
@@ -19,6 +17,8 @@ import CatalogPage from "@/pages/public/catalog";
 import HomePage from "@/pages/public";
 import CartPage from "@/pages/public/cart";
 import LoginPage from "@/pages/auth";
+import RecoverPasswordPage from "@/pages/auth/RecoverPasswordPage";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import ContactoPage from "@/pages/public/contacto";
 import ArrepentimientoPage from "@/pages/public/legal/ArrepentimientoPage";
 import LibroQuejasPage from "@/pages/public/legal/LibroQuejasPage";
@@ -30,7 +30,7 @@ export const AppRoutes = () => {
         <BrowserRouter>
             <Routes>
                 {/* RUTAS PÚBLICAS (Clientes y Visitantes) */}
-                
+
                 {/* HOME */}
                 <Route path="/" element={<HomePage />} />
 
@@ -58,8 +58,14 @@ export const AppRoutes = () => {
                 {/* Shopping Cart */}
                 <Route path="/cart" element={<CartPage />} />
 
-                {/* Login */}
+                {/* Auth Flow */}
                 <Route path="/auth/login" element={<LoginPage />} />
+                {/* 👇 AGREGADAS: Rutas de recuperación */}
+                <Route path="/auth/recover" element={<RecoverPasswordPage />} />
+                <Route
+                    path="/auth/reset/:token"
+                    element={<ResetPasswordPage />}
+                />
 
                 {/* RUTAS PRIVADAS (Solo Administradores - ERP) */}
                 <Route element={<ProtectedRoute />}>

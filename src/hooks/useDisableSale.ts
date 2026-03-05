@@ -14,7 +14,7 @@ export function useDisableSale(
         try {
             // Llamada al API
             await saleApi.update(id.toString(), {
-                status: "CANCELLED", 
+                status: "CANCELLED",
             });
 
             // Actualiza la lista local
