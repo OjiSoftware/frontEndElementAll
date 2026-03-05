@@ -66,7 +66,7 @@ export default function CartPage() {
                         </p>
                         <button
                             className="px-6 py-2 bg-[#16a34a] text-white font-semibold rounded-lg hover:bg-[#15803d] transition w-full cursor-pointer"
-                            onClick={() => navigate("/catalog")}
+                            onClick={() => navigate("/catalogo")}
                         >
                             Explorar tienda
                         </button>
@@ -85,7 +85,7 @@ export default function CartPage() {
                 {/* BOTÓN VOLVER (Nuevo) */}
                 <div className="mb-2">
                     <button
-                        onClick={() => navigate("/catalog")}
+                        onClick={() => navigate("/catalogo")}
                         className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                         <ChevronLeftIcon className="w-4 h-4" />

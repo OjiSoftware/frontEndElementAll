@@ -11,35 +11,47 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    // Estados
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<LoginError>({});
     const [loading, setLoading] = useState(false);
-    // Estado para el mensaje dinámico
     const [loginStatus, setLoginStatus] = useState("Iniciar Sesión");
+
+    const handleInputChange = (
+        field: keyof LoginError,
+        value: string,
+        setter: (v: string) => void,
+    ) => {
+        setter(value);
+        if (errors[field]) {
+            setErrors((prev) => ({ ...prev, [field]: undefined }));
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrors({});
 
-        const emailErr = validateEmail(email);
-        const passErr = validatePassword(password);
+        const emailRes = validateEmail(email);
+        const passRes = validatePassword(password);
 
-        if (emailErr.email || passErr.password1) {
-            setErrors({ ...emailErr, ...passErr });
+        const freshErrors: LoginError = {
+            email: emailRes.email || undefined,
+            password1: passRes.password1 || undefined,
+            api: undefined,
+        };
+
+        setErrors(freshErrors);
+
+        if (freshErrors.email || freshErrors.password1) {
             return;
         }
 
         setLoading(true);
-        setLoginStatus("Verificando credenciales...");
-
-        // Helper para el delay artificial
+        setLoginStatus("Verificando...");
         const wait = (ms: number) =>
             new Promise((resolve) => setTimeout(resolve, ms));
 
         try {
-            // Ejecutamos el fetch y el delay en paralelo
             const [res] = await Promise.all([
                 fetch("http://localhost:3000/api/auth/login", {
                     method: "POST",
@@ -47,15 +59,13 @@ export default function LoginPage() {
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
                 }),
-                wait(1000), // Un segundo para que se aprecien los mensajes
+                wait(1000),
             ]);
 
             const data = await res.json();
-
             if (res.ok) {
-                setLoginStatus("Iniciando sistema...");
-                await wait(400); // Respiro final para la transición
-
+                setLoginStatus("Iniciando...");
+                await wait(400);
                 login(data.user);
                 navigate("/management/products");
             } else {
@@ -68,7 +78,7 @@ export default function LoginPage() {
                 setLoginStatus("Iniciar Sesión");
             }
         } catch (error) {
-            setErrors({ api: "Error de conexión con el servidor." });
+            setErrors({ api: "Error de conexión." });
             setLoginStatus("Iniciar Sesión");
         } finally {
             setLoading(false);
@@ -76,140 +86,169 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center px-6 py-12 lg:px-8">
-            {/* Logo y Encabezado */}
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
-                <img
-                    src={logo}
-                    alt="ElementAll"
-                    className="h-16 w-auto block mx-auto mb-6 object-contain"
-                />
-                <p className="mt-2 text-sm text-slate-400">
-                    Bienvenido, ingresa tus credenciales
-                </p>
-            </div>
+        <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
+            {/* Contenedor principal que agrupa todo para un centrado real */}
+            <div className="w-full max-w-md flex flex-col items-center">
+                {/* Logo y Encabezado */}
+                <div className="w-full text-center mb-10">
+                    <img
+                        src={logo}
+                        alt="ElementAll"
+                        className="h-14 sm:h-16 w-auto block mx-auto mb-4 object-contain"
+                    />
+                    <p className="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-[0.2em]">
+                        Gestión Empresarial Integral
+                    </p>
+                </div>
 
-            {/* Card del Formulario */}
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-                <form
-                    onSubmit={handleLogin}
-                    className="bg-slate-800/80 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-md space-y-6"
-                >
-                    {/* Mensaje de error de la API */}
-                    {errors.api && (
-                        <div className="rounded-lg bg-red-500/10 border border-red-500/50 p-3">
-                            <p className="text-sm font-medium text-red-400 text-center">
-                                {errors.api}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Campo Email */}
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2"
-                        >
-                            Email
-                        </label>
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail
-                                    className={`h-4 w-4 transition-colors ${errors.email ? "text-red-400" : "text-slate-500 group-focus-within:text-indigo-400"}`}
-                                />
-                            </div>
-                            <input
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="tu@email.com"
-                                className={`w-full bg-slate-700/50 border rounded-lg pl-10 pr-3 py-2.5 text-sm text-white outline-none transition-all
-                                    ${
-                                        errors.email
-                                            ? "border-red-500/50 focus:ring-2 focus:ring-red-500/20"
-                                            : "border-white/10 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
-                                    }`}
-                            />
-                        </div>
-                        {errors.email && (
-                            <p className="mt-1.5 text-xs text-red-400 font-medium">
-                                {errors.email}
-                            </p>
-                        )}
+                {/* Card del Formulario */}
+                <div className="w-full bg-gray-800/50 border border-white/10 p-6 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-xl">
+                    <div className="mb-8 text-center">
+                        <h2 className="text-2xl font-bold text-white tracking-tight">
+                            Iniciar Sesión
+                        </h2>
+                        <p className="text-gray-400 text-sm mt-2">
+                            Ingresa tus credenciales de acceso
+                        </p>
                     </div>
 
-                    {/* Campo Contraseña */}
-                    <div>
-                        <div className="flex items-center justify-between mb-2">
+                    <form
+                        onSubmit={handleLogin}
+                        className="space-y-6"
+                        noValidate
+                    >
+                        {errors.api && (
+                            <div className="rounded-lg bg-red-500/10 border border-red-500/50 p-3 mb-6">
+                                <p className="text-xs font-medium text-red-400 text-center">
+                                    {errors.api}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Campo Email */}
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-gray-200 ml-1"
+                            >
+                                Correo electrónico
+                            </label>
+                            <div className="relative group flex items-center">
+                                <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1.5px]">
+                                    <Mail
+                                        className={`h-4 w-4 transition-colors ${errors.email ? "text-red-400" : "text-gray-500 group-focus-within:text-indigo-400"}`}
+                                    />
+                                </div>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "email",
+                                            e.target.value,
+                                            setEmail,
+                                        )
+                                    }
+                                    placeholder="tu@correo.com"
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
+                                        ${
+                                            errors.email
+                                                ? "border-red-500/50 focus:ring-1 focus:ring-red-500 placeholder:text-red-400/60 text-red-400"
+                                                : "border-white/10 focus:border-indigo-500 placeholder:text-gray-500 text-white"
+                                        }`}
+                                />
+                            </div>
+                            {errors.email && (
+                                <p className="text-[10px] text-red-400 font-medium ml-1">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Campo Contraseña */}
+                        <div className="space-y-2">
                             <label
                                 htmlFor="password"
-                                className="block text-xs font-semibold text-indigo-400 uppercase tracking-wider"
+                                title="password"
+                                className="block text-sm font-medium text-gray-200 ml-1"
                             >
                                 Contraseña
                             </label>
-                            <a
-                                href="/auth/recover"
-                                className="text-xs font-bold text-slate-400 hover:text-indigo-400 transition-colors"
-                            >
-                                ¿Olvidaste tu contraseña?
-                            </a>
-                        </div>
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock
-                                    className={`h-4 w-4 transition-colors ${errors.password1 ? "text-red-400" : "text-slate-500 group-focus-within:text-indigo-400"}`}
+                            <div className="relative group flex items-center">
+                                <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1px]">
+                                    <Lock
+                                        className={`h-4 w-4 transition-colors ${errors.password1 ? "text-red-400" : "text-gray-500 group-focus-within:text-indigo-400"}`}
+                                    />
+                                </div>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "password1",
+                                            e.target.value,
+                                            setPassword,
+                                        )
+                                    }
+                                    placeholder="••••••••"
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
+                                        ${
+                                            errors.password1
+                                                ? "border-red-500/50 focus:ring-1 focus:ring-red-500 placeholder:text-red-400/60 text-red-400"
+                                                : "border-white/10 focus:border-indigo-500 placeholder:text-gray-500 text-white"
+                                        }`}
                                 />
                             </div>
-                            <input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className={`w-full bg-slate-700/50 border rounded-lg pl-10 pr-3 py-2.5 text-sm text-white outline-none transition-all
-                                    ${
-                                        errors.password1
-                                            ? "border-red-500/50 focus:ring-2 focus:ring-red-500/20"
-                                            : "border-white/10 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
-                                    }`}
-                            />
+
+                            <div className="flex flex-col sm:flex-row justify-between gap-2 pt-1">
+                                {errors.password1 ? (
+                                    <p className="text-[10px] text-red-400 font-medium order-2 sm:order-1 ml-1">
+                                        {errors.password1}
+                                    </p>
+                                ) : (
+                                    <div className="hidden sm:block"></div>
+                                )}
+                                <a
+                                    href="/auth/recover"
+                                    className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 order-1 sm:order-2 self-end sm:self-auto"
+                                >
+                                    ¿Olvidaste tu contraseña?
+                                </a>
+                            </div>
                         </div>
-                        {errors.password1 && (
-                            <p className="mt-1.5 text-xs text-red-400 font-medium">
-                                {errors.password1}
-                            </p>
-                        )}
-                    </div>
 
-                    {/* Botón Submit */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-lg bg-indigo-600 text-white text-sm font-bold transition-all duration-300 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                                <span className="ml-2">{loginStatus}</span>
-                            </>
-                        ) : (
-                            <>
-                                <LogIn className="h-4 w-4" />
-                                <span>Iniciar Sesión</span>
-                            </>
-                        )}
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-lg bg-indigo-600 text-white text-sm font-semibold shadow-sm hover:bg-indigo-500 transition-all duration-300 active:scale-95 disabled:opacity-50 cursor-pointer"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <span>{loginStatus}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <LogIn className="h-4 w-4" />
+                                    <span>Entrar al Sistema</span>
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </div>
 
-                {/* Footer del login */}
-                <p className="mt-8 text-center text-sm text-slate-500">
-                    ¿No tienes acceso?{" "}
+                {/* Footer de OjiSoftware */}
+                <p className="mt-8 text-center text-xs text-gray-500">
+                    Desarrollado por{" "}
+                    <span className="font-bold text-gray-400">OjiSoftware</span>{" "}
+                    © 2026 •{" "}
                     <a
-                        href="mailto:soporte@elementall.com"
+                        href="mailto:soporte@ojisoftware.com"
                         className="font-semibold text-indigo-400 hover:text-indigo-300"
                     >
-                        Contacta a soporte
+                        Soporte técnico
                     </a>
                 </p>
             </div>
