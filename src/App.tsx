@@ -1,13 +1,16 @@
 import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext"; // <-- Agregamos tu AuthProvider
 import { AppRoutes } from "./routes/AppRoutes";
 import ToastProvider from "@/components/ToastProvider";
 
 function App() {
     return (
-        <CartProvider>
-            <AppRoutes />
-            <ToastProvider />
-        </CartProvider>
+        <AuthProvider>
+            <CartProvider>
+                <AppRoutes />
+                <ToastProvider />
+            </CartProvider>
+        </AuthProvider>
     );
 }
 

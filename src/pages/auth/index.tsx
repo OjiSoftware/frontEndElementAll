@@ -1,155 +1,215 @@
-
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LoginError } from '../../types/errors';
-import { emailValidator, validateLoginPassword } from '../../../helpers/validations';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn, Loader2 } from "lucide-react";
+import { LoginError } from "../../types/errors.types";
+import { validateEmail } from "../../helpers/email.validator";
+import { validatePassword } from "../../helpers/password.validator";
+import logo from "../../assets/logo_elementAll.png";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     // Estados
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<LoginError>({});
     const [loading, setLoading] = useState(false);
+    // Estado para el mensaje dinámico
+    const [loginStatus, setLoginStatus] = useState("Iniciar Sesión");
 
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault(); // Evita que la página se recargue
+        e.preventDefault();
         setErrors({});
 
-        const validationErrors: LoginError = {};
+        const emailErr = validateEmail(email);
+        const passErr = validatePassword(password);
 
-
-        //!TRAER Y USAR LOS HELPERS ACA
-        if (!email) {
-            validationErrors.email = 'El email es obligatorio.';
-        } else if (!/\S+@\S+\.\S+/.test(email)) {
-            validationErrors.email = 'El formato del email no es válido.';
-        }
-
-        if (!password) {
-            validationErrors.password1 = 'La contraseña es obligatoria.';
-        }
-
-
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+        if (emailErr.email || passErr.password1) {
+            setErrors({ ...emailErr, ...passErr });
             return;
         }
 
         setLoading(true);
+        setLoginStatus("Verificando credenciales...");
+
+        // Helper para el delay artificial
+        const wait = (ms: number) =>
+            new Promise((resolve) => setTimeout(resolve, ms));
 
         try {
-            const res = await fetch('http://localhost:4000/api/auth/login', {
-                method: 'POST',
-                body: JSON.stringify({ email, password }),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-            });
+            // Ejecutamos el fetch y el delay en paralelo
+            const [res] = await Promise.all([
+                fetch("http://localhost:3000/api/auth/login", {
+                    method: "POST",
+                    body: JSON.stringify({ email, password }),
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                }),
+                wait(1000), // Un segundo para que se aprecien los mensajes
+            ]);
+
+            const data = await res.json();
 
             if (res.ok) {
-                navigate('/management/products');
+                setLoginStatus("Iniciando sistema...");
+                await wait(400); // Respiro final para la transición
+
+                login(data.user);
+                navigate("/management/products");
             } else {
-                setErrors({ api: 'Credenciales incorrectas. Por favor, inténtalo de nuevo.' });
+                setErrors({
+                    api:
+                        data.error ||
+                        data.message ||
+                        "Credenciales incorrectas.",
+                });
+                setLoginStatus("Iniciar Sesión");
             }
         } catch (error) {
-            setErrors({ api: 'Error de conexión. Intenta más tarde.' });
+            setErrors({ api: "Error de conexión con el servidor." });
+            setLoginStatus("Iniciar Sesión");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center px-6 py-12 lg:px-8">
+            {/* Logo y Encabezado */}
+            <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
                 <img
-                    alt="ELEMENTALL"
-                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                    className="mx-auto h-10 w-auto"
+                    src={logo}
+                    alt="ElementAll"
+                    className="h-16 w-auto block mx-auto mb-6 object-contain"
                 />
-                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
-                    Sign in to your account
-                </h2>
+                <p className="mt-2 text-sm text-slate-400">
+                    Bienvenido, ingresa tus credenciales
+                </p>
             </div>
 
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form onSubmit={handleLogin} className="space-y-6">
+            {/* Card del Formulario */}
+            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+                <form
+                    onSubmit={handleLogin}
+                    className="bg-slate-800/80 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-md space-y-6"
+                >
+                    {/* Mensaje de error de la API */}
+                    {errors.api && (
+                        <div className="rounded-lg bg-red-500/10 border border-red-500/50 p-3">
+                            <p className="text-sm font-medium text-red-400 text-center">
+                                {errors.api}
+                            </p>
+                        </div>
+                    )}
+
                     {/* Campo Email */}
                     <div>
-                        <label htmlFor="email" className="block text-sm/6 font-medium text-gray-100">
-                            Email address
+                        <label
+                            htmlFor="email"
+                            className="block text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2"
+                        >
+                            Email
                         </label>
-                        <div className="mt-2">
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail
+                                    className={`h-4 w-4 transition-colors ${errors.email ? "text-red-400" : "text-slate-500 group-focus-within:text-indigo-400"}`}
+                                />
+                            </div>
                             <input
                                 id="email"
-                                name="email"
                                 type="email"
-                                autoComplete="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className={`block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6 ${errors.email ? 'outline-red-500 focus:outline-red-500' : 'outline-white/10 focus:outline-indigo-500'
+                                placeholder="tu@email.com"
+                                className={`w-full bg-slate-700/50 border rounded-lg pl-10 pr-3 py-2.5 text-sm text-white outline-none transition-all
+                                    ${
+                                        errors.email
+                                            ? "border-red-500/50 focus:ring-2 focus:ring-red-500/20"
+                                            : "border-white/10 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
                                     }`}
                             />
-                            {/* Mensaje de error de email */}
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                            )}
                         </div>
+                        {errors.email && (
+                            <p className="mt-1.5 text-xs text-red-400 font-medium">
+                                {errors.email}
+                            </p>
+                        )}
                     </div>
 
                     {/* Campo Contraseña */}
                     <div>
-                        <div className="flex items-center justify-between">
-                            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-100">
-                                Password
+                        <div className="flex items-center justify-between mb-2">
+                            <label
+                                htmlFor="password"
+                                className="block text-xs font-semibold text-indigo-400 uppercase tracking-wider"
+                            >
+                                Contraseña
                             </label>
-                            <div className="text-sm">
-                                <a href="/recover-password" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                                    Forgot password?
-                                </a>
-                            </div>
+                            <a
+                                href="/auth/recover"
+                                className="text-xs font-bold text-slate-400 hover:text-indigo-400 transition-colors"
+                            >
+                                ¿Olvidaste tu contraseña?
+                            </a>
                         </div>
-                        <div className="mt-2">
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock
+                                    className={`h-4 w-4 transition-colors ${errors.password1 ? "text-red-400" : "text-slate-500 group-focus-within:text-indigo-400"}`}
+                                />
+                            </div>
                             <input
                                 id="password"
-                                name="password"
                                 type="password"
-                                autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className={`block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6 ${errors.password1 ? 'outline-red-500 focus:outline-red-500' : 'outline-white/10 focus:outline-indigo-500'
+                                placeholder="••••••••"
+                                className={`w-full bg-slate-700/50 border rounded-lg pl-10 pr-3 py-2.5 text-sm text-white outline-none transition-all
+                                    ${
+                                        errors.password1
+                                            ? "border-red-500/50 focus:ring-2 focus:ring-red-500/20"
+                                            : "border-white/10 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
                                     }`}
                             />
-                            {/* Mensaje de error de contraseña */}
-                            {errors.password1 && (
-                                <p className="mt-1 text-sm text-red-500">{errors.password1}</p>
-                            )}
                         </div>
+                        {errors.password1 && (
+                            <p className="mt-1.5 text-xs text-red-400 font-medium">
+                                {errors.password1}
+                            </p>
+                        )}
                     </div>
-
-                    {/* Mensaje de error de la API */}
-                    {errors.api && (
-                        <div className="rounded-md bg-red-50 p-4">
-                            <p className="text-sm font-medium text-red-800 text-center">{errors.api}</p>
-                        </div>
-                    )}
 
                     {/* Botón Submit */}
-                    <div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? 'Cargando...' : 'Sign in'}
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-lg bg-indigo-600 text-white text-sm font-bold transition-all duration-300 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                                <span className="ml-2">{loginStatus}</span>
+                            </>
+                        ) : (
+                            <>
+                                <LogIn className="h-4 w-4" />
+                                <span>Iniciar Sesión</span>
+                            </>
+                        )}
+                    </button>
                 </form>
 
-                <p className="mt-10 text-center text-sm/6 text-gray-400">
-                    Not a member?{' '}
-                    <a href="/register" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                        Start a 14 day free trial
+                {/* Footer del login */}
+                <p className="mt-8 text-center text-sm text-slate-500">
+                    ¿No tienes acceso?{" "}
+                    <a
+                        href="mailto:soporte@elementall.com"
+                        className="font-semibold text-indigo-400 hover:text-indigo-300"
+                    >
+                        Contacta a soporte
                     </a>
                 </p>
             </div>

@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+// 👇 IMPORTAMOS EL GUARDIÁN
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+
 import ProductsPage from "@/pages/management/products";
 import CreateProductPage from "@/pages/management/products/CreateProductPage";
 import EditProductPage from "@/pages/management/products/EditProductPage";
@@ -26,59 +29,76 @@ export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
+                {/* RUTAS PÚBLICAS (Clientes y Visitantes) */}
+                
                 {/* HOME */}
                 <Route path="/" element={<HomePage />} />
-
-                {/* PRODUCTS */}
-                <Route path="/management/products" element={<ProductsPage />} />
-                <Route
-                    path="/management/products/create"
-                    element={<CreateProductPage />}
-                />
-                <Route
-                    path="/management/products/edit/:id"
-                    element={<EditProductPage />}
-                />
-
-                {/* BRANDS */}
-                <Route path="/management/brands" element={<BrandsPage />} />
-                <Route
-                    path="/management/brands/create"
-                    element={<CreateBrandPage />}
-                />
-                <Route
-                    path="/management/brands/edit/:id"
-                    element={<EditBrandPage />}
-                />
-
-                {/* SALES */}
-                <Route path="/management/sales" element={<SalesPage />} />
-                <Route
-                    path="/management/sales/create"
-                    element={<CreateSalesPage />}
-                />
-                <Route
-                    path="/management/sales/edit/:id"
-                    element={<EditSAlesPage />}
-                />
 
                 {/* Contacto */}
                 <Route path="/contacto" element={<ContactoPage />} />
 
                 {/* Legales */}
-                <Route path="/arrepentimiento" element={<ArrepentimientoPage />} />
+                <Route
+                    path="/arrepentimiento"
+                    element={<ArrepentimientoPage />}
+                />
                 <Route path="/libro-quejas" element={<LibroQuejasPage />} />
-                <Route path="/terminos-condiciones" element={<TerminosPage />} />
-                <Route path="/politicas-privacidad" element={<PrivacidadPage />} />
+                <Route
+                    path="/terminos-condiciones"
+                    element={<TerminosPage />}
+                />
+                <Route
+                    path="/politicas-privacidad"
+                    element={<PrivacidadPage />}
+                />
 
                 {/* Catalog */}
-                <Route path="/catalog" element={<CatalogPage />} />
+                <Route path="/catalogo" element={<CatalogPage />} />
 
                 {/* Shopping Cart */}
                 <Route path="/cart" element={<CartPage />} />
 
                 {/* Login */}
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/auth/login" element={<LoginPage />} />
+
+                {/* RUTAS PRIVADAS (Solo Administradores - ERP) */}
+                <Route element={<ProtectedRoute />}>
+                    {/* PRODUCTS */}
+                    <Route
+                        path="/management/products"
+                        element={<ProductsPage />}
+                    />
+                    <Route
+                        path="/management/products/create"
+                        element={<CreateProductPage />}
+                    />
+                    <Route
+                        path="/management/products/edit/:id"
+                        element={<EditProductPage />}
+                    />
+
+                    {/* BRANDS */}
+                    <Route path="/management/brands" element={<BrandsPage />} />
+                    <Route
+                        path="/management/brands/create"
+                        element={<CreateBrandPage />}
+                    />
+                    <Route
+                        path="/management/brands/edit/:id"
+                        element={<EditBrandPage />}
+                    />
+
+                    {/* SALES */}
+                    <Route path="/management/sales" element={<SalesPage />} />
+                    <Route
+                        path="/management/sales/create"
+                        element={<CreateSalesPage />}
+                    />
+                    <Route
+                        path="/management/sales/edit/:id"
+                        element={<EditSAlesPage />}
+                    />
+                </Route>
             </Routes>
         </BrowserRouter>
     );
