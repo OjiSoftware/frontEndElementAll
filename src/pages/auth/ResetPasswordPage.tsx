@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // 👈 Agregamos useEffect
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     Lock,
@@ -27,11 +27,20 @@ export default function ResetPasswordPage() {
     }>({});
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-
-    // 1. Estado para la verificación inicial del token
     const [isChecking, setIsChecking] = useState(true);
 
-    // 2. Efecto para verificar el token apenas carga la página
+    // Lógica para calcular la fuerza de la contraseña
+    const getPasswordStrength = (password: string) => {
+        if (!password) return 0;
+        let strength = 0;
+        if (password.length >= 6) strength += 25;
+        if (password.length >= 10) strength += 25;
+        if (/[A-Z]/.test(password)) strength += 25;
+        if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password))
+            strength += 25;
+        return strength;
+    };
+
     useEffect(() => {
         const verifyToken = async () => {
             try {
@@ -51,12 +60,12 @@ export default function ResetPasswordPage() {
             } catch (err) {
                 setErrors({ api: "Error al conectar con el servidor." });
             } finally {
-                // Pequeño delay opcional para que la transición no sea brusca
-                setTimeout(() => setIsChecking(false), 500);
+                setTimeout(() => setIsChecking(false), 800);
             }
         };
 
         if (token) verifyToken();
+        else setIsChecking(false);
     }, [token]);
 
     const handleInputChange = (
@@ -73,6 +82,7 @@ export default function ResetPasswordPage() {
         e.preventDefault();
         const newErrors: any = {};
         const p1Validation = validatePassword(pass);
+
         if (p1Validation.password1) newErrors.p1 = p1Validation.password1;
 
         if (!confirmPass) {
@@ -110,6 +120,8 @@ export default function ResetPasswordPage() {
         }
     };
 
+    const strength = getPasswordStrength(pass);
+
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans text-white">
             <div className="w-full max-w-md flex flex-col items-center">
@@ -124,8 +136,7 @@ export default function ResetPasswordPage() {
                     </p>
                 </div>
 
-                <div className="w-full bg-gray-800/50 border border-white/10 p-6 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-xl min-h-[300px] flex flex-col justify-center">
-                    {/* 3. Renderizado Condicional según el estado de verificación */}
+                <div className="w-full bg-gray-800/50 border border-white/10 p-6 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-xl min-h-[400px] flex flex-col justify-center">
                     {isChecking ? (
                         <div className="flex flex-col items-center animate-pulse">
                             <Loader2 className="h-10 w-10 animate-spin text-indigo-500 mb-4" />
@@ -134,8 +145,7 @@ export default function ResetPasswordPage() {
                             </p>
                         </div>
                     ) : errors.api && !success ? (
-                        /* 4. Si el token falló de entrada, mostramos el error y el botón de rescate */
-                        <div className="text-center py-4">
+                        <div className="text-center py-4 animate-in fade-in duration-500">
                             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
                             <h2 className="text-xl font-bold mb-2">
                                 Enlace no válido
@@ -166,7 +176,7 @@ export default function ResetPasswordPage() {
                                 className="space-y-6"
                                 noValidate
                             >
-                                {/* ... Tus campos de contraseña iguales a antes ... */}
+                                {/* Nueva contraseña */}
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-200 ml-1">
                                         Nueva contraseña
@@ -190,6 +200,7 @@ export default function ResetPasswordPage() {
                                                 )
                                             }
                                             placeholder="••••••••"
+                                            autoComplete="new-password"
                                             className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
                                                 ${errors.p1 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                         />
@@ -199,6 +210,16 @@ export default function ResetPasswordPage() {
                                                 setShowPass(!showPass)
                                             }
                                             className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 cursor-pointer"
+                                            title={
+                                                showPass
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
+                                            aria-label={
+                                                showPass
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
                                         >
                                             {showPass ? (
                                                 <EyeOff className="h-4 w-4" />
@@ -207,6 +228,47 @@ export default function ResetPasswordPage() {
                                             )}
                                         </button>
                                     </div>
+
+                                    {/* Barra de Fuerza Visual */}
+                                    {pass.length > 0 && (
+                                        <div className="mt-2 px-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
+                                                    Seguridad
+                                                </span>
+                                                <span
+                                                    className={`text-[10px] font-bold transition-colors ${
+                                                        strength <= 25
+                                                            ? "text-red-400"
+                                                            : strength <= 50
+                                                              ? "text-yellow-400"
+                                                              : "text-green-400"
+                                                    }`}
+                                                >
+                                                    {strength <= 25
+                                                        ? "DÉBIL"
+                                                        : strength <= 50
+                                                          ? "MEDIA"
+                                                          : "FUERTE"}
+                                                </span>
+                                            </div>
+                                            <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full transition-all duration-500 ease-out ${
+                                                        strength <= 25
+                                                            ? "bg-red-500"
+                                                            : strength <= 50
+                                                              ? "bg-yellow-500"
+                                                              : "bg-green-500"
+                                                    }`}
+                                                    style={{
+                                                        width: `${strength}%`,
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {errors.p1 && (
                                         <p className="text-[10px] text-red-400 font-medium ml-1">
                                             {errors.p1}
@@ -214,6 +276,7 @@ export default function ResetPasswordPage() {
                                     )}
                                 </div>
 
+                                {/* Confirmar contraseña */}
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-200 ml-1">
                                         Confirmar contraseña
@@ -239,6 +302,7 @@ export default function ResetPasswordPage() {
                                                 )
                                             }
                                             placeholder="••••••••"
+                                            autoComplete="new-password"
                                             className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
                                                 ${errors.p2 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                         />
@@ -248,6 +312,16 @@ export default function ResetPasswordPage() {
                                                 setShowConfirm(!showConfirm)
                                             }
                                             className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 cursor-pointer"
+                                            title={
+                                                showConfirm
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
+                                            aria-label={
+                                                showConfirm
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
                                         >
                                             {showConfirm ? (
                                                 <EyeOff className="h-4 w-4" />
