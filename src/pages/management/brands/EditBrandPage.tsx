@@ -1,41 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useBrandEdit } from "@/hooks/useBrandEdit";
-import { brandApi } from "@/services/BrandService";
 import { SquarePen } from "lucide-react";
 
 export default function EditBrandPage() {
     const navigate = useNavigate();
-    const {
-        id,
-        name,
-        setName,
-        /*         subCategoryId,
-                setSubCategoryId, */
-        loading,
-        handleSubmit,
-    } = useBrandEdit();
+    const { id, name, setName, loading, handleSubmit } = useBrandEdit();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    /*     const [subCategories, setSubCategories] = useState<
-            { id: number; name: string }[]
-        >([]); */
 
     if (!id) return null;
-
-    /*    useEffect(() => {
-            const fetchSubCategories = async () => {
-                try {
-                    const data = await brandApi.getSubCategories();
-                    setSubCategories(data);
-                } catch (error) {
-                    console.error("Error cargando subcategorías:", error);
-                }
-            };
-            fetchSubCategories();
-        }, []); */
 
     return (
         <DashboardLayout>
@@ -89,32 +65,10 @@ export default function EditBrandPage() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Ingrese el nombre de la marca"
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                             required
                         />
                     </div>
-
-                    {/* Subcategoría */}
-                    {/* <div>
-                        <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                            Subcategoría
-                        </label>
-                        <select
-                            value={subCategoryId}
-                            onChange={(e) =>
-                                setSubCategoryId(parseInt(e.target.value))
-                            }
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
-                            required
-                        >
-                            <option value="">Seleccionar...</option>
-                            {subCategories.map((sc) => (
-                                <option key={sc.id} value={sc.id}>
-                                    {sc.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div> */}
 
                     {/* Botones */}
                     <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">

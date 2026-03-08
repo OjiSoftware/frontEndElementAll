@@ -23,7 +23,7 @@ export default function CreateProductPage() {
     // ---------------- Handlers ----------------
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const raw = e.target.value;
-        setPriceInput(raw); // actualiza el input visible
+        setPriceInput(raw);
 
         const numericValue = parseFloat(
             raw.replace(/\./g, "").replace(",", "."),
@@ -68,9 +68,7 @@ export default function CreateProductPage() {
 
     return (
         <DashboardLayout>
-            {/* Contenedor principal con max-w-5xl para ganar ancho y px-4 */}
             <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
-                {/* Volver y Encabezado más compactos */}
                 <div className="flex justify-between items-end mb-4">
                     <div>
                         <div className="mb-2">
@@ -94,7 +92,6 @@ export default function CreateProductPage() {
                     </p>
                 </div>
 
-                {/* Card de preview más pequeña */}
                 <div className="flex items-center gap-4 mb-4 bg-slate-800/30 p-3 rounded-xl border border-white/10 shadow-lg">
                     <div className="w-16 h-16 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500 p-0.5">
                         <div className="w-full h-full rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center">
@@ -122,7 +119,6 @@ export default function CreateProductPage() {
                     </div>
                 </div>
 
-                {/* Formulario Compacto */}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -161,7 +157,7 @@ export default function CreateProductPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Teclado Mecánico RGB"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                 required
                             />
                         </div>
@@ -175,7 +171,7 @@ export default function CreateProductPage() {
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Características..."
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24 placeholder:text-gray-500"
                                 required
                             />
                         </div>
@@ -190,7 +186,7 @@ export default function CreateProductPage() {
                                 value={formData.imageUrl}
                                 onChange={handleChange}
                                 placeholder="Pegar URL"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400 placeholder:text-gray-500"
                             />
                         </div>
                     </div>
@@ -210,10 +206,12 @@ export default function CreateProductPage() {
                                     name="categoryId"
                                     value={formData.categoryId || ""}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
                                     required
                                 >
-                                    <option value="">Seleccionar...</option>
+                                    <option value="" className="text-gray-500">
+                                        Seleccionar...
+                                    </option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>
                                             {cat.name}
@@ -231,10 +229,15 @@ export default function CreateProductPage() {
                                         name="subCategoryId"
                                         value={formData.subCategoryId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
                                         required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <option
+                                            value=""
+                                            className="text-gray-500"
+                                        >
+                                            Seleccionar...
+                                        </option>
                                         {filteredSubCategories.map((sub) => (
                                             <option key={sub.id} value={sub.id}>
                                                 {sub.name}
@@ -250,10 +253,15 @@ export default function CreateProductPage() {
                                         name="brandId"
                                         value={formData.brandId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
                                         required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <option
+                                            value=""
+                                            className="text-gray-500"
+                                        >
+                                            Seleccionar...
+                                        </option>
                                         {brands.map((brand) => (
                                             <option
                                                 key={brand.id}
@@ -276,7 +284,7 @@ export default function CreateProductPage() {
                                         name="stock"
                                         value={formData.stock}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         required
                                     />
                                 </div>
@@ -291,7 +299,7 @@ export default function CreateProductPage() {
                                         onChange={handlePriceChange}
                                         onBlur={handlePriceBlur}
                                         placeholder="0,00"
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         required
                                     />
                                 </div>

@@ -6,7 +6,6 @@ import { validateEmail } from "../../helpers/email.validator";
 import { validatePassword } from "../../helpers/password.validator";
 import logo from "../../assets/logo_elementAll.png";
 
-// Extendemos LoginError para sumar el campo del nombre
 interface RegisterError extends LoginError {
     name?: string;
 }
@@ -19,13 +18,23 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    // Estados independientes para cada ojito
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [errors, setErrors] = useState<RegisterError>({});
     const [loading, setLoading] = useState(false);
     const [registerStatus, setRegisterStatus] = useState("Crear cuenta");
+
+    // 🚩 Lógica para calcular la fuerza (Igual que en Reset)
+    const getPasswordStrength = (pass: string) => {
+        if (!pass) return 0;
+        let strength = 0;
+        if (pass.length >= 6) strength += 25;
+        if (pass.length >= 10) strength += 25;
+        if (/[A-Z]/.test(pass)) strength += 25;
+        if (/[0-9]/.test(pass) || /[^A-Za-z0-9]/.test(pass)) strength += 25;
+        return strength;
+    };
 
     const handleInputChange = (
         field: keyof RegisterError,
@@ -40,11 +49,9 @@ export default function RegisterPage() {
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const emailRes = validateEmail(email);
         const passRes = validatePassword(password);
 
-        // 1. Iniciamos el objeto de errores
         const freshErrors: RegisterError = {
             name: !name.trim() ? "El nombre es obligatorio." : undefined,
             email: emailRes.email || undefined,
@@ -52,7 +59,6 @@ export default function RegisterPage() {
             api: undefined,
         };
 
-        // 2. Aplicamos la misma lógica que usaste en ResetPasswordPage
         if (!confirmPassword) {
             freshErrors.password2 = "Por favor, repetí la contraseña.";
         } else if (password !== confirmPassword) {
@@ -77,7 +83,7 @@ export default function RegisterPage() {
                     body: JSON.stringify({ name, email, password }),
                     headers: { "Content-Type": "application/json" },
                 }),
-                wait(1000), // Mantenemos el mismo delay estético del login
+                wait(1000),
             ]);
 
             const data = await res.json();
@@ -103,10 +109,11 @@ export default function RegisterPage() {
         }
     };
 
+    const strength = getPasswordStrength(password);
+
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
             <div className="w-full max-w-md flex flex-col items-center">
-                {/* Header Logo - Exactamente igual */}
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
@@ -118,7 +125,6 @@ export default function RegisterPage() {
                     </p>
                 </div>
 
-                {/* Card Container */}
                 <div className="w-full bg-gray-800/50 border border-white/10 p-6 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-xl">
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -131,7 +137,7 @@ export default function RegisterPage() {
 
                     <form
                         onSubmit={handleRegister}
-                        className="space-y-5" // Un poco menos de espacio que el login para que entren los 4 inputs sin hacer la card gigante
+                        className="space-y-5"
                         noValidate
                     >
                         {errors.api && (
@@ -142,7 +148,7 @@ export default function RegisterPage() {
                             </div>
                         )}
 
-                        {/* Campo Nombre */}
+                        {/* Nombre */}
                         <div className="space-y-2">
                             <label
                                 htmlFor="name"
@@ -168,8 +174,7 @@ export default function RegisterPage() {
                                         )
                                     }
                                     placeholder="Juan Pérez"
-                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
-                                        ${errors.name ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all ${errors.name ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
                             </div>
                             {errors.name && (
@@ -179,7 +184,7 @@ export default function RegisterPage() {
                             )}
                         </div>
 
-                        {/* Campo Email */}
+                        {/* Email */}
                         <div className="space-y-2">
                             <label
                                 htmlFor="email"
@@ -205,8 +210,7 @@ export default function RegisterPage() {
                                         )
                                     }
                                     placeholder="tu@correo.com"
-                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
-                                        ${errors.email ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all ${errors.email ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
                             </div>
                             {errors.email && (
@@ -216,7 +220,7 @@ export default function RegisterPage() {
                             )}
                         </div>
 
-                        {/* Campo Contraseña 1 */}
+                        {/* Contraseña */}
                         <div className="space-y-2">
                             <label
                                 htmlFor="password"
@@ -241,26 +245,15 @@ export default function RegisterPage() {
                                             setPassword,
                                         )
                                     }
-                                    placeholder="Mínimo 6 caracteres"
-                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
-                                        ${errors.password1 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
+                                    placeholder="••••••••"
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all ${errors.password1 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
                                 <button
                                     type="button"
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 transition-colors z-30 cursor-pointer focus:outline-none"
-                                    title={
-                                        showPassword
-                                            ? "Ocultar contraseña"
-                                            : "Mostrar contraseña"
-                                    }
-                                    aria-label={
-                                        showPassword
-                                            ? "Ocultar contraseña"
-                                            : "Mostrar contraseña"
-                                    }
+                                    className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 z-30 cursor-pointer"
                                 >
                                     {showPassword ? (
                                         <EyeOff className="h-4 w-4" />
@@ -269,6 +262,33 @@ export default function RegisterPage() {
                                     )}
                                 </button>
                             </div>
+
+                            {/* 🚩 BARRA DE FUERZA VISUAL */}
+                            {password.length > 0 && (
+                                <div className="mt-2 px-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
+                                            Seguridad
+                                        </span>
+                                        <span
+                                            className={`text-[10px] font-bold transition-colors ${strength <= 25 ? "text-red-400" : strength <= 50 ? "text-yellow-400" : "text-green-400"}`}
+                                        >
+                                            {strength <= 25
+                                                ? "DÉBIL"
+                                                : strength <= 50
+                                                  ? "MEDIA"
+                                                  : "FUERTE"}
+                                        </span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-gray-900 rounded-full overflow-hidden border border-white/5">
+                                        <div
+                                            className={`h-full transition-all duration-500 ease-out ${strength <= 25 ? "bg-red-500" : strength <= 50 ? "bg-yellow-500" : "bg-green-500"}`}
+                                            style={{ width: `${strength}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
                             {errors.password1 && (
                                 <p className="text-[10px] text-red-400 font-medium ml-1">
                                     {errors.password1}
@@ -276,7 +296,7 @@ export default function RegisterPage() {
                             )}
                         </div>
 
-                        {/* Campo Confirmar Contraseña (¡Con ojito!) */}
+                        {/* Confirmar Contraseña */}
                         <div className="space-y-2">
                             <label
                                 htmlFor="confirmPassword"
@@ -305,9 +325,8 @@ export default function RegisterPage() {
                                             setConfirmPassword,
                                         )
                                     }
-                                    placeholder="Repetí tu contraseña"
-                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
-                                        ${errors.password2 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
+                                    placeholder="••••••••"
+                                    className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all ${errors.password2 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
                                 <button
                                     type="button"
@@ -316,17 +335,7 @@ export default function RegisterPage() {
                                             !showConfirmPassword,
                                         )
                                     }
-                                    className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 transition-colors z-30 cursor-pointer focus:outline-none"
-                                    title={
-                                        showConfirmPassword
-                                            ? "Ocultar contraseña"
-                                            : "Mostrar contraseña"
-                                    }
-                                    aria-label={
-                                        showConfirmPassword
-                                            ? "Ocultar contraseña"
-                                            : "Mostrar contraseña"
-                                    }
+                                    className="absolute right-0 pr-3 flex items-center text-gray-500 hover:text-indigo-400 z-30 cursor-pointer"
                                 >
                                     {showConfirmPassword ? (
                                         <EyeOff className="h-4 w-4" />
@@ -342,7 +351,6 @@ export default function RegisterPage() {
                             )}
                         </div>
 
-                        {/* Botón Submit */}
                         <div className="pt-2">
                             <button
                                 type="submit"
@@ -364,7 +372,6 @@ export default function RegisterPage() {
                         </div>
                     </form>
 
-                    {/* Enlace al Login */}
                     <div className="mt-6 text-center border-t border-white/5 pt-6">
                         <p className="text-sm text-gray-400">
                             ¿Ya tenés una cuenta?{" "}
@@ -378,17 +385,10 @@ export default function RegisterPage() {
                     </div>
                 </div>
 
-                {/* Footer - Exactamente igual */}
                 <p className="mt-8 text-center text-xs text-gray-500">
                     Desarrollado por{" "}
                     <span className="font-bold text-gray-400">OjiSoftware</span>{" "}
-                    © 2026 •{" "}
-                    <a
-                        href="mailto:soporte@ojisoftware.com"
-                        className="font-semibold text-indigo-400 hover:text-indigo-300"
-                    >
-                        Soporte técnico
-                    </a>
+                    © 2026
                 </p>
             </div>
         </div>

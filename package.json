@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@mercadopago/sdk-react": "^1.0.7",
     "@tailwindcss/vite": "^4.1.18",
     "flowbite": "^4.0.1",
     "flowbite-react": "^0.12.17",

@@ -22,8 +22,6 @@ export default function CreateBrandPage() {
         await handleSubmit();
     };
 
-
-
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto px-4 h-full flex flex-col justify-center">
@@ -67,10 +65,6 @@ export default function CreateBrandPage() {
                         e.preventDefault();
                         if (!formData.name.trim())
                             return toast.error("El nombre es obligatorio");
-                        /* if (!formData.categoryId || !formData.subCategoryId)
-                            return toast.error(
-                                "Selecciona Categoría y Subcategoría",
-                            ); */
                         setShowConfirmModal(true);
                     }}
                     className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
@@ -91,58 +85,14 @@ export default function CreateBrandPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Samsung"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
+                                // 👇 Se agregó la clase para el color del placeholder
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                 required
                             />
                         </div>
                     </div>
 
-                    {/* Columna derecha: Categorías */}
                     <div className="space-y-4 md:col-span-2">
-                        {/*                         <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
-                            Categorización
-                        </h3> */}
-
-                        {/*                         <div>
-                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Categoría
-                            </label>
-                            <select
-                                name="categoryId"
-                                value={formData.categoryId || ""}
-                                onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
-                                required
-                            >
-                                <option value="">Seleccionar...</option>
-                                {categories.map((c) => (
-                                    <option key={c.id} value={c.id}>
-                                        {c.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Subcategoría
-                            </label>
-                            <select
-                                name="subCategoryId"
-                                value={formData.subCategoryId || ""}
-                                onChange={handleChange}
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
-                                required
-                            >
-                                <option value="">Seleccionar...</option>
-                                {filteredSubCategories.map((sub) => (
-                                    <option key={sub.id} value={sub.id}>
-                                        {sub.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div> */}
-
                         {/* Botones */}
                         <div className="flex gap-3 mt-6 pt-4 border-t border-white/10">
                             <button

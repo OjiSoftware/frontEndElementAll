@@ -3,12 +3,7 @@ import { useSaleForm } from "@/hooks/useSaleForm";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
-import {
-    ShoppingCart,
-    ChevronDown,
-    ChevronUp,
-    UserPlus,
-} from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronUp, UserPlus } from "lucide-react";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import ProductSelector from "@/components/ProductsSelector";
 import { saleApi } from "@/services/SaleService";
@@ -29,7 +24,6 @@ export default function CreateSalePage() {
         isLoading,
     } = useSaleForm();
 
-    // Función para eliminar un producto de la lista actual
     const removeItem = (productId: number) => {
         const itemToRemove = formData.details.find(
             (d) => d.productId === productId,
@@ -58,14 +52,12 @@ export default function CreateSalePage() {
                 return;
             }
 
-            // Validar formato del DNI (7 a 8 dígitos numéricos)
             const dniRegex = /^\d{7,8}$/;
             if (!dniRegex.test(formData.dni)) {
                 alert("El DNI debe tener entre 7 y 8 números sin puntos.");
                 return;
             }
 
-            // Validar formato del Email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.email)) {
                 alert("Por favor, ingresa un correo electrónico válido.");
@@ -80,7 +72,7 @@ export default function CreateSalePage() {
                 alert("Por favor, selecciona un estado para la venta.");
                 return;
             }
-            // 1. Crear el cliente
+
             const clientPayload = {
                 name: formData.name,
                 surname: formData.surname,
@@ -102,7 +94,6 @@ export default function CreateSalePage() {
             const clientResponse = await clientApi.create(clientPayload);
             const newClientId = clientResponse.id || clientResponse.client?.id;
 
-            // 2. Crear la venta con el ID del cliente generado
             const payload = {
                 clientId: newClientId,
                 status: formData.status,
@@ -113,15 +104,11 @@ export default function CreateSalePage() {
             };
 
             await saleApi.create(payload);
-
-            console.log("Venta procesada con éxito:", payload);
             setShowConfirmModal(false);
             navigate("/management/sales");
         } catch (error) {
             console.error("Error al crear la venta o el cliente", error);
-            alert(
-                "Hubo un error al registrar la venta. Verifica que los datos del cliente no estén duplicados o incompletos.",
-            );
+            alert("Hubo un error al registrar la venta.");
         }
     };
 
@@ -145,25 +132,15 @@ export default function CreateSalePage() {
                         </h1>
                     </div>
 
-                    {/* Selector de Estado */}
                     <div className="flex flex-col items-start md:items-end">
                         <label className="block text-xs font-medium text-gray-300 mb-1">
                             Estado
                         </label>
-
-                        {/* Selector de Estado (único) */}
                         <select
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
-                            className="
-                            bg-slate-700/90 border border-gray-500 rounded-lg
-                              px-3 py-2 text-sm text-white
-                              focus:ring-2 focus:ring-indigo-400 outline-none
-                              cursor-pointer
-                              w-full md:w-auto
-                              md:min-w-[160px]
-                            "
+                            className="bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer w-full md:w-auto md:min-w-[160px]"
                         >
                             <option value="PENDING">Pendiente</option>
                             <option value="IN_PROGRESS">En progreso</option>
@@ -173,9 +150,7 @@ export default function CreateSalePage() {
                     </div>
                 </div>
 
-                {/* Card Principal */}
                 <div className="bg-slate-800/80 border border-white/20 p-4 md:p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6">
-                    {/* Datos del Cliente Desplegable */}
                     <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-800/50">
                         <button
                             type="button"
@@ -220,8 +195,8 @@ export default function CreateSalePage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ej: Juan"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -234,8 +209,8 @@ export default function CreateSalePage() {
                                             value={formData.surname}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ej: Pérez"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -248,8 +223,8 @@ export default function CreateSalePage() {
                                             value={formData.dni}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Sin puntos"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -262,8 +237,8 @@ export default function CreateSalePage() {
                                             value={formData.phoneNumber}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="+54 9 11..."
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div className="md:col-span-2">
@@ -276,8 +251,8 @@ export default function CreateSalePage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="correo@ejemplo.com"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                 </div>
@@ -296,8 +271,8 @@ export default function CreateSalePage() {
                                             value={formData.street}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ej: Av. Rivadavia"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -310,8 +285,8 @@ export default function CreateSalePage() {
                                             value={formData.number}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Altura"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -324,8 +299,8 @@ export default function CreateSalePage() {
                                                 name="floor"
                                                 value={formData.floor}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                                 placeholder="Opcional"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                             />
                                         </div>
                                         <div>
@@ -337,12 +312,11 @@ export default function CreateSalePage() {
                                                 name="apartment"
                                                 value={formData.apartment}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                                 placeholder="Opcional"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                             />
                                         </div>
                                     </div>
-
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
                                             Ciudad / Localidad
@@ -353,8 +327,8 @@ export default function CreateSalePage() {
                                             value={formData.city}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ciudad"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -367,8 +341,8 @@ export default function CreateSalePage() {
                                             value={formData.province}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Provincia"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -381,8 +355,8 @@ export default function CreateSalePage() {
                                             value={formData.postalCode}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ej: 1000"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -395,8 +369,8 @@ export default function CreateSalePage() {
                                             value={formData.country}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="País"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                     <div className="md:col-span-4">
@@ -408,8 +382,8 @@ export default function CreateSalePage() {
                                             name="reference"
                                             value={formData.reference}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all"
                                             placeholder="Ej: Esquina con pared azul..."
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
                                         />
                                     </div>
                                 </div>
@@ -417,7 +391,6 @@ export default function CreateSalePage() {
                         )}
                     </div>
 
-                    {/* Selector de Productos */}
                     <div>
                         <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4">
                             Productos de la venta
@@ -428,21 +401,18 @@ export default function CreateSalePage() {
                         />
                     </div>
 
-                    {/* MOBILE → Cards */}
+                    {/* MOBILE cards */}
                     <div className="md:hidden space-y-3">
                         {formData.details.map((item) => (
                             <div
                                 key={item.productId}
                                 className="bg-slate-800/60 border border-white/10 rounded-xl p-4 space-y-3"
                             >
-                                {/* nombre */}
                                 <div className="flex justify-between items-start">
                                     <div className="font-semibold text-white">
                                         {item.name}
                                     </div>
-
                                     <button
-                                        title="Eliminar producto"
                                         className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                         onClick={() =>
                                             removeItem(item.productId)
@@ -451,13 +421,10 @@ export default function CreateSalePage() {
                                         <TrashIcon className="w-5 h-5" />
                                     </button>
                                 </div>
-
-                                {/* cantidad */}
                                 <div className="flex justify-between items-center">
                                     <span className="text-xs text-slate-400">
                                         Cantidad
                                     </span>
-
                                     <input
                                         type="number"
                                         min="1"
@@ -471,8 +438,6 @@ export default function CreateSalePage() {
                                         className="w-20 bg-slate-700 border border-gray-500 rounded-lg px-2 py-1 text-sm text-white text-center"
                                     />
                                 </div>
-
-                                {/* precio */}
                                 <div className="flex justify-between text-sm">
                                     <span className="text-slate-400">
                                         Precio
@@ -481,8 +446,6 @@ export default function CreateSalePage() {
                                         ${item.price.toLocaleString()}
                                     </span>
                                 </div>
-
-                                {/* subtotal */}
                                 <div className="flex justify-between font-bold">
                                     <span className="text-slate-400">
                                         Subtotal
@@ -496,15 +459,9 @@ export default function CreateSalePage() {
                                 </div>
                             </div>
                         ))}
-
-                        {formData.details.length === 0 && (
-                            <div className="text-center text-slate-500 italic py-6">
-                                No hay productos añadidos aún
-                            </div>
-                        )}
                     </div>
 
-                    {/* DESKTOP → Tabla */}
+                    {/* DESKTOP Table */}
                     <div className="hidden md:block overflow-x-auto bg-slate-800/50 rounded-xl border border-white/10">
                         <table className="w-full text-left text-gray-300 text-sm">
                             <thead className="text-xs uppercase bg-slate-700/50 text-slate-400">
@@ -524,14 +481,12 @@ export default function CreateSalePage() {
                                     </th>
                                 </tr>
                             </thead>
-
                             <tbody className="divide-y divide-white/5">
                                 {formData.details.map((item) => (
                                     <tr key={item.productId}>
                                         <td className="px-4 py-3 font-medium text-white">
                                             {item.name}
                                         </td>
-
                                         <td className="px-4 py-3 text-left">
                                             <input
                                                 type="number"
@@ -548,21 +503,17 @@ export default function CreateSalePage() {
                                                 className="w-16 bg-slate-700 border border-gray-500 rounded-lg px-2 py-1 text-center text-white"
                                             />
                                         </td>
-
                                         <td className="px-4 py-3 text-left">
                                             ${item.price.toLocaleString()}
                                         </td>
-
                                         <td className="px-4 py-3 text-left font-bold text-indigo-300">
                                             $
                                             {(
                                                 item.price * item.quantity
                                             ).toLocaleString()}
                                         </td>
-
                                         <td className="px-4 py-3 text-center">
                                             <button
-                                                title="Eliminar producto"
                                                 className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                                 onClick={() =>
                                                     removeItem(item.productId)
@@ -577,16 +528,13 @@ export default function CreateSalePage() {
                         </table>
                     </div>
 
-                    {/* Resumen Final y Botones */}
                     <div className="flex flex-col md:flex-row justify-between items-end md:items-center pt-4 border-t border-white/10 gap-4">
                         <div className="text-xl font-bold text-white self-end md:self-auto">
-                            {" "}
                             Total:{" "}
                             <span className="text-green-400">
                                 ${formData.total}
                             </span>
                         </div>
-
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 type="button"
@@ -595,7 +543,6 @@ export default function CreateSalePage() {
                             >
                                 Cancelar
                             </button>
-
                             <button
                                 onClick={() => setShowConfirmModal(true)}
                                 disabled={formData.details.length === 0}
@@ -607,7 +554,6 @@ export default function CreateSalePage() {
                     </div>
                 </div>
 
-                {/* Modal Confirmación de Venta */}
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Confirmar Venta"
