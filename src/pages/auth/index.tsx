@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from "lucide-react";
 import { LoginError } from "../../types/errors.types";
 import { validateEmail } from "../../helpers/email.validator";
@@ -17,6 +17,10 @@ export default function LoginPage() {
     const [errors, setErrors] = useState<LoginError>({});
     const [loading, setLoading] = useState(false);
     const [loginStatus, setLoginStatus] = useState("Iniciar sesión");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [showRegisteredMsg, setShowRegisteredMsg] = useState(
+        searchParams.get("registered") === "true",
+    );
 
     const handleInputChange = (
         field: keyof LoginError,
@@ -32,8 +36,14 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (showRegisteredMsg) {
+            setShowRegisteredMsg(false);
+            searchParams.delete("registered");
+            setSearchParams(searchParams);
+        }
+
         const emailRes = validateEmail(email);
-        const passRes = validatePassword(password);
+        const passRes = validatePassword(password, false);
 
         const freshErrors: LoginError = {
             email: emailRes.email || undefined,
@@ -68,7 +78,12 @@ export default function LoginPage() {
                 setLoginStatus("Iniciando...");
                 await wait(400);
                 login(data.user);
-                navigate("/management/products");
+                navigate("/management/products", {
+                    state: {
+                        welcome: true,
+                        userName: data.user.name || "Usuario",
+                    },
+                });
             } else {
                 setErrors({
                     api:
@@ -109,6 +124,16 @@ export default function LoginPage() {
                             Ingresa tus credenciales de acceso
                         </p>
                     </div>
+
+                    {/* 👇 Usamos el estado en lugar de la variable cruda */}
+                    {showRegisteredMsg && (
+                        <div className="rounded-lg bg-green-500/10 border border-green-500/50 p-3 mb-6">
+                            <p className="text-xs font-medium text-green-400 text-center">
+                                ¡Cuenta creada con éxito! Ya podés iniciar
+                                sesión.
+                            </p>
+                        </div>
+                    )}
 
                     <form
                         onSubmit={handleLogin}
@@ -190,7 +215,6 @@ export default function LoginPage() {
                                     className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-10 text-sm outline-none transition-all
                                         ${errors.password1 ? "border-red-500/50 focus:ring-1 focus:ring-red-500 text-red-400 placeholder:text-red-400/60" : "border-white/10 focus:border-indigo-500 text-white placeholder:text-gray-500"}`}
                                 />
-                                {/* Botón del ojo */}
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -251,6 +275,18 @@ export default function LoginPage() {
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-6 text-center border-t border-white/5 pt-6">
+                        <p className="text-sm text-gray-400">
+                            ¿No tenés una cuenta?{" "}
+                            <a
+                                href="/auth/register"
+                                className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                            >
+                                Registrate acá
+                            </a>
+                        </p>
+                    </div>
                 </div>
 
                 <p className="mt-8 text-center text-xs text-gray-500">

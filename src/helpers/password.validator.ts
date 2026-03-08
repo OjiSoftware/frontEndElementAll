@@ -1,6 +1,9 @@
 import { PasswordError } from "../types/errors.types";
 
-export const validatePassword = (password: string): PasswordError => {
+export const validatePassword = (
+  password: string,
+  checkLength = true,
+): PasswordError => {
     const tempErrors: PasswordError = {};
 
     // 1. Validamos si está vacío o solo contiene espacios
@@ -10,7 +13,7 @@ export const validatePassword = (password: string): PasswordError => {
     }
 
     // 2. Validamos longitud mínima (ignorando espacios al inicio/final si preferís)
-    if (password.length < 6) {
+    if (checkLength && password.length < 6) {
         tempErrors.password1 = "Debe tener al menos 6 caracteres.";
         return tempErrors;
     }

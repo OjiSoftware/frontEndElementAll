@@ -1,24 +1,30 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
+// Productos
 import ProductsPage from "@/pages/management/products";
 import CreateProductPage from "@/pages/management/products/CreateProductPage";
 import EditProductPage from "@/pages/management/products/EditProductPage";
 
+// Marcas
 import BrandsPage from "@/pages/management/brands";
 import CreateBrandPage from "@/pages/management/brands/CreateBrandPage";
 import EditBrandPage from "@/pages/management/brands/EditBrandPage";
 
+// Ventas
 import SalesPage from "@/pages/management/sales";
 import CreateSalesPage from "@/pages/management/sales/CreateSalesPage";
 import EditSAlesPage from "@/pages/management/sales/EditSalesPage";
 
+// Login
+import RecoverPasswordPage from "@/pages/auth/RecoverPasswordPage";
+import LoginPage from "@/pages/auth";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
+
 import CatalogPage from "@/pages/public/catalog";
 import HomePage from "@/pages/public";
 import CartPage from "@/pages/public/cart";
-import LoginPage from "@/pages/auth";
-import RecoverPasswordPage from "@/pages/auth/RecoverPasswordPage";
-import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import ContactoPage from "@/pages/public/contacto";
 import ArrepentimientoPage from "@/pages/public/legal/ArrepentimientoPage";
 import LibroQuejasPage from "@/pages/public/legal/LibroQuejasPage";
@@ -60,12 +66,12 @@ export const AppRoutes = () => {
 
                 {/* Auth Flow */}
                 <Route path="/auth/login" element={<LoginPage />} />
-                {/* 👇 AGREGADAS: Rutas de recuperación */}
                 <Route path="/auth/recover" element={<RecoverPasswordPage />} />
                 <Route
                     path="/auth/reset/:token"
                     element={<ResetPasswordPage />}
                 />
+                <Route path="/auth/register" element={<RegisterPage/>} />
 
                 {/* RUTAS PRIVADAS (Solo Administradores - ERP) */}
                 <Route element={<ProtectedRoute />}>
