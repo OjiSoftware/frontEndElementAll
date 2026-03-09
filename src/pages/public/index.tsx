@@ -3,6 +3,7 @@ import logoElementAll3 from '@/assets/logo_elementAll3.png';
 import { useState } from "react";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import CheckoutButton from "../../components/CheckoutButton";
 
 import { TagIcon, CreditCardIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -13,6 +14,10 @@ export default function HomePage() {
 
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5]">
+            <div className="p-10">
+                <h1>Test de Pago</h1>
+                <CheckoutButton saleId={1} />
+            </div>
             {/* Sección Superior (Navbar + Hero) - Se estira para cubrir el resto de la pantalla, pero manteniendo como mínimo el 61.8% del alto */}
             <div className="flex flex-col h-[61.8vh] flex-grow">
                 <div>
@@ -125,14 +130,17 @@ export default function HomePage() {
                             <div className="relative mb-3 md:mb-4 text-[#3ba732] flex items-center justify-center w-[60px] h-[60px] md:w-20 md:h-20">
                                 <TagIcon className="w-12 h-12 md:w-16 md:h-16 stroke-[1.5] -rotate-45" />
                                 <div className="absolute inset-0 flex items-center justify-center -mt-1 md:-mt-2 ml-1 md:ml-2">
-                                    <span className="text-lg md:text-2xl font-bold font-sans">$</span>
+                                    <span className="text-lg md:text-2xl font-bold font-sans">
+                                        $
+                                    </span>
                                 </div>
                             </div>
                             <h3 className="text-[14px] md:text-[1.1rem] font-bold text-[#3d3d3d] mb-1 md:mb-2 font-lato">
                                 Precios competitivos
                             </h3>
                             <p className="text-gray-500 text-[12px] md:text-[15px] leading-snug px-4 md:px-2 max-w-[280px]">
-                                Potenciamos la productividad de tu campo minimizando tus gastos.
+                                Potenciamos la productividad de tu campo
+                                minimizando tus gastos.
                             </p>
                         </div>
 
@@ -160,8 +168,18 @@ export default function HomePage() {
                                     <div className="relative">
                                         <MagnifyingGlassIcon className="w-6 h-6 md:w-8 md:h-8 stroke-[2.5]" />
                                         <div className="absolute inset-0 flex items-center justify-center pb-0.5 md:pb-1 pr-0.5 md:pr-1">
-                                            <svg className="w-3 h-3 md:w-4 md:h-4 text-[#3ba732]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                            <svg
+                                                className="w-3 h-3 md:w-4 md:h-4 text-[#3ba732]"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M5 13l4 4L19 7"
+                                                />
                                             </svg>
                                         </div>
                                     </div>
@@ -171,7 +189,8 @@ export default function HomePage() {
                                 Trazabilidad garantizada
                             </h3>
                             <p className="text-gray-500 text-[12px] md:text-[15px] leading-snug px-4 md:px-2 max-w-[280px]">
-                                Garantizamos el origen y la calidad de cada lote.
+                                Garantizamos el origen y la calidad de cada
+                                lote.
                             </p>
                         </div>
                     </div>

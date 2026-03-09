@@ -237,6 +237,7 @@ export default function RegisterPage() {
                                 <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
+                                    autoComplete="new-password"
                                     value={password}
                                     onChange={(e) =>
                                         handleInputChange(
@@ -318,6 +319,7 @@ export default function RegisterPage() {
                                             : "password"
                                     }
                                     value={confirmPassword}
+                                    autoComplete="new-password"
                                     onChange={(e) =>
                                         handleInputChange(
                                             "password2",
