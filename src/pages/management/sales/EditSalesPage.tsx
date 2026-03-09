@@ -211,7 +211,7 @@ export default function EditSalesPage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Ej: Juan"
                                         />
                                     </div>
@@ -225,7 +225,7 @@ export default function EditSalesPage() {
                                             value={formData.surname}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Ej: Pérez"
                                         />
                                     </div>
@@ -239,7 +239,7 @@ export default function EditSalesPage() {
                                             value={formData.dni}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Sin puntos"
                                         />
                                     </div>
@@ -253,7 +253,7 @@ export default function EditSalesPage() {
                                             value={formData.phoneNumber}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="+54 9 11..."
                                         />
                                     </div>
@@ -267,7 +267,7 @@ export default function EditSalesPage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="correo@ejemplo.com"
                                         />
                                     </div>
@@ -287,7 +287,7 @@ export default function EditSalesPage() {
                                             value={formData.street}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Ej: Av. Rivadavia"
                                         />
                                     </div>
@@ -301,7 +301,7 @@ export default function EditSalesPage() {
                                             value={formData.number}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Altura"
                                         />
                                     </div>
@@ -315,7 +315,7 @@ export default function EditSalesPage() {
                                                 name="floor"
                                                 value={formData.floor}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                                 placeholder="Opc."
                                             />
                                         </div>
@@ -328,7 +328,7 @@ export default function EditSalesPage() {
                                                 name="apartment"
                                                 value={formData.apartment}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                                 placeholder="Opc."
                                             />
                                         </div>
@@ -344,7 +344,7 @@ export default function EditSalesPage() {
                                             value={formData.city}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Ciudad"
                                         />
                                     </div>
@@ -358,7 +358,7 @@ export default function EditSalesPage() {
                                             value={formData.province}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Provincia"
                                         />
                                     </div>
@@ -371,7 +371,7 @@ export default function EditSalesPage() {
                                             name="postalCode"
                                             value={formData.postalCode}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="1000"
                                         />
                                     </div>
@@ -384,7 +384,7 @@ export default function EditSalesPage() {
                                             name="country"
                                             value={formData.country}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="País"
                                         />
                                     </div>
@@ -397,7 +397,7 @@ export default function EditSalesPage() {
                                             name="reference"
                                             value={formData.reference}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             placeholder="Ej: Esquina con pared azul..."
                                         />
                                     </div>
@@ -457,7 +457,7 @@ export default function EditSalesPage() {
                                                         ) || 1,
                                                     )
                                                 }
-                                                className="w-16 bg-slate-700/90 border border-gray-500 rounded-lg px-2 py-1 text-sm text-center text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                                className="w-16 bg-slate-700/90 border border-gray-500 rounded-lg px-2 py-1 text-sm text-center text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </td>
                                         <td className="px-4 py-3 text-right">

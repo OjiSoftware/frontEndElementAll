@@ -9,7 +9,7 @@ import { ConfirmDeleteModal } from "../../../components/ConfirmDeleteModal";
 import { saleApi } from "@/services/SaleService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { useDisableSale }  from "@/hooks/useDisableSale";
+import { useDisableSale } from "@/hooks/useDisableSale";
 
 export default function SalesPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -20,16 +20,21 @@ export default function SalesPage() {
     const itemsPerPage = useItemsPerpage();
     const { disableSale, loading } = useDisableSale(setSales);
 
-    // ---------------- Filtrado ----------------
-    const filteredSales = sales
-        .filter((s) => s.status);
+    const filteredSales = sales.filter((s) => {
+        const matchesStatus = s.status;
+        const searchTerm = query.trim().toLowerCase();
 
-    // ---------------- Paginación ----------------
+        const matchesQuery =
+            s.id.toString().includes(searchTerm) ||
+            s.client?.name?.toLowerCase().includes(searchTerm);
+
+        return matchesStatus && matchesQuery;
+    });
+
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentSales = filteredSales.slice(firstIndex, lastIndex);
 
-    // ---------------- Fetch ----------------
     useEffect(() => {
         const fetchSales = async () => {
             try {
@@ -42,7 +47,6 @@ export default function SalesPage() {
         fetchSales();
     }, []);
 
-    // Resetear página al cambiar itemsPerPage o query
     useEffect(() => setCurrentPage(1), [itemsPerPage, query]);
 
     return (
@@ -52,36 +56,41 @@ export default function SalesPage() {
             actions={
                 <button
                     onClick={() => navigate(ROUTES.sales.create)}
-                    className="flex-1 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                    className="flex-1 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
                 >
                     + Nueva venta
                 </button>
             }
         >
-            <div className="space-y-4">
-                {/* SEARCH BAR */}
+            <div className="space-y-6">
                 <SearchBar
                   value={query}
                   onChange={setQuery}
-                  placeholder="Buscar marcas"
+                  placeholder="Buscar..." // Cambiá el texto según la página
                   containerClassName="max-w-full"
                   inputClassName="
-                    bg-gray-900
+                    bg-transparent
                     text-white
-                    border-gray-700
-                    placeholder-gray-500
+                    border-white/10
+                    placeholder:text-slate-500
+                    focus:border-indigo-500
+                    focus:ring-1
                     focus:ring-indigo-500
+                    transition-all
+                    rounded-xl
+                    h-11
                   "
-                  iconClassName="text-gray-400"
-              />
-
-                {/* PRODUCTS TABLE */}
-                <SalesTable
-                    sales={currentSales}
-                    onDelete={(sales) => setSaleToDelete(sales)}
+                  iconClassName="text-slate-500 group-focus-within:text-indigo-400"
                 />
 
-                {/* PAGINATION */}
+                {/* TABLE - Ajustado el radius a rounded-xl para matchear con la SearchBar */}
+                <div className="border border-white/10 rounded-xl overflow-hidden shadow-2xl bg-gray-900/20">
+                    <SalesTable
+                        sales={currentSales}
+                        onDelete={(sales) => setSaleToDelete(sales)}
+                    />
+                </div>
+
                 <Pagination
                     totalItems={filteredSales.length}
                     itemsPerPage={itemsPerPage}
@@ -89,7 +98,6 @@ export default function SalesPage() {
                     onPageChange={setCurrentPage}
                 />
 
-                {/* MODAL DE CONFIRMACIÓN */}
                 {saleToDelete && (
                     <ConfirmDeleteModal
                         isOpen={true}
@@ -98,14 +106,9 @@ export default function SalesPage() {
                         onCancel={() => setSaleToDelete(null)}
                         onConfirm={async () => {
                             await disableSale(saleToDelete.id);
-
-                            if (
-                                currentSales.length === 1 &&
-                                currentPage > 1
-                            ) {
+                            if (currentSales.length === 1 && currentPage > 1) {
                                 setCurrentPage((prev) => prev - 1);
                             }
-
                             setSaleToDelete(null);
                         }}
                     />

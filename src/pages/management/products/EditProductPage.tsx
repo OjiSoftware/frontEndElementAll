@@ -208,7 +208,7 @@ export default function EditProductPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Teclado Mecánico RGB"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                 required
                             />
                         </div>
@@ -222,7 +222,7 @@ export default function EditProductPage() {
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Características..."
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24 placeholder:text-gray-500"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all resize-none h-24 placeholder:text-gray-400"
                                 required
                             />
                         </div>
@@ -237,7 +237,7 @@ export default function EditProductPage() {
                                 value={formData.imageUrl}
                                 onChange={handleChange}
                                 placeholder="Pegar URL"
-                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400 placeholder:text-gray-500"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-400 placeholder:text-gray-400"
                             />
                         </div>
                     </div>
@@ -257,7 +257,7 @@ export default function EditProductPage() {
                                     name="categoryId"
                                     value={formData.categoryId || ""}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
                                     required
                                 >
                                     <option value="">Seleccionar...</option>
@@ -278,7 +278,7 @@ export default function EditProductPage() {
                                         name="subCategoryId"
                                         value={formData.subCategoryId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
                                         required
                                     >
                                         <option value="">Seleccionar...</option>
@@ -297,7 +297,7 @@ export default function EditProductPage() {
                                         name="brandId"
                                         value={formData.brandId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-500"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
                                         required
                                     >
                                         <option value="">Seleccionar...</option>
@@ -323,7 +323,7 @@ export default function EditProductPage() {
                                         name="stock"
                                         value={formData.stock}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         required
                                     />
                                 </div>
@@ -338,7 +338,7 @@ export default function EditProductPage() {
                                         onChange={handlePriceChange}
                                         onBlur={handlePriceBlur}
                                         placeholder="0,00"
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         required
                                     />
                                 </div>

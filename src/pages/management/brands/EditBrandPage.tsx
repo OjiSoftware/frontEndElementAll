@@ -65,7 +65,7 @@ export default function EditBrandPage() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Ingrese el nombre de la marca"
-                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                             required
                         />
                     </div>

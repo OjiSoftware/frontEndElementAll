@@ -196,7 +196,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Ej: Juan"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -210,7 +210,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Ej: Pérez"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -224,7 +224,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Sin puntos"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -238,7 +238,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="+54 9 11..."
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="md:col-span-2">
@@ -252,7 +252,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="correo@ejemplo.com"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                 </div>
@@ -272,7 +272,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Ej: Av. Rivadavia"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -286,7 +286,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Altura"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -300,7 +300,7 @@ export default function CreateSalePage() {
                                                 value={formData.floor}
                                                 onChange={handleChange}
                                                 placeholder="Opcional"
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
                                         <div>
@@ -313,7 +313,7 @@ export default function CreateSalePage() {
                                                 value={formData.apartment}
                                                 onChange={handleChange}
                                                 placeholder="Opcional"
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
                                     </div>
@@ -328,7 +328,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Ciudad"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -342,7 +342,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Provincia"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -356,7 +356,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="Ej: 1000"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -370,7 +370,7 @@ export default function CreateSalePage() {
                                             onChange={handleChange}
                                             required
                                             placeholder="País"
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="md:col-span-4">
@@ -383,7 +383,7 @@ export default function CreateSalePage() {
                                             value={formData.reference}
                                             onChange={handleChange}
                                             placeholder="Ej: Esquina con pared azul..."
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-500"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                 </div>

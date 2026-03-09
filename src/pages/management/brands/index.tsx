@@ -21,9 +21,14 @@ export default function BrandsPage() {
     const { disableBrand, loading } = useDisableBrand(setBrands);
 
     // ---------------- Filtrado ----------------
-    const filteredBrands = brands
-        .filter((b) => b.status !== false) // solo marcas activas
-        .filter((b) => b.name.toLowerCase().includes(query.toLowerCase()));
+    const filteredBrands = brands.filter((b) => {
+        const isActive = b.status !== false;
+        const matchesQuery = b.name
+            .toLowerCase()
+            .includes(query.trim().toLowerCase());
+
+        return isActive && matchesQuery;
+    });
 
     // ---------------- Paginación ----------------
     const lastIndex = currentPage * itemsPerPage;
@@ -82,16 +87,21 @@ export default function BrandsPage() {
                 <SearchBar
                     value={query}
                     onChange={setQuery}
-                    placeholder="Buscar marcas"
+                    placeholder="Buscar..." // Cambiá el texto según la página
                     containerClassName="max-w-full"
                     inputClassName="
-                      bg-gray-900
-                      text-white
-                      border-gray-700
-                      placeholder-gray-500
-                      focus:ring-indigo-500
-                    "
-                    iconClassName="text-gray-400"
+                    bg-transparent
+                    text-white
+                    border-white/10
+                    placeholder:text-slate-500
+                    focus:border-indigo-500
+                    focus:ring-1
+                    focus:ring-indigo-500
+                    transition-all
+                    rounded-xl
+                    h-11
+                  "
+                    iconClassName="text-slate-500 group-focus-within:text-indigo-400"
                 />
 
                 <BrandsTable
