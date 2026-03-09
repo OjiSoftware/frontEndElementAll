@@ -41,15 +41,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 (item) => item.product.id === product.id,
             );
 
+            const currentQuantity = existing ? existing.quantity : 0;
+            const newTotalQuantity = currentQuantity + quantity;
+
+            if (product.stock !== undefined && newTotalQuantity > product.stock) {
+                throw new Error(`Solo hay ${product.stock} unidades disponibles en stock.`);
+            }
+
             if (existing) {
                 return prev.map((item) =>
                     item.product.id === product.id
-                        ? { ...item, quantity: item.quantity + quantity }
+                        ? { ...item, quantity: newTotalQuantity }
                         : item,
                 );
             }
 
-            return [...prev, { product, quantity }];
+            return [...prev, { product, quantity: newTotalQuantity }];
         });
     };
 
@@ -63,11 +70,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        setCart((prev) =>
-            prev.map((item) =>
+        setCart((prev) => {
+            const existing = prev.find((item) => item.product.id === productId);
+            if (!existing) return prev;
+
+            if (existing.product.stock !== undefined && quantity > existing.product.stock) {
+                throw new Error(`Solo hay ${existing.product.stock} unidades disponibles en stock.`);
+            }
+
+            return prev.map((item) =>
                 item.product.id === productId ? { ...item, quantity } : item,
-            ),
-        );
+            );
+        });
     };
 
     const clearCart = () => {

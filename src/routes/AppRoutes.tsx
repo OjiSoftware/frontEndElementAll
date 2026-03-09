@@ -30,6 +30,7 @@ import ArrepentimientoPage from "@/pages/public/legal/ArrepentimientoPage";
 import LibroQuejasPage from "@/pages/public/legal/LibroQuejasPage";
 import TerminosPage from "@/pages/public/legal/TerminosPage";
 import PrivacidadPage from "@/pages/public/legal/PrivacidadPage";
+import ProductDetailPage from "@/pages/public/product";
 
 export const AppRoutes = () => {
     return (
@@ -58,8 +59,9 @@ export const AppRoutes = () => {
                     element={<PrivacidadPage />}
                 />
 
-                {/* Catalog */}
+                {/* Catalog & Product */}
                 <Route path="/catalogo" element={<CatalogPage />} />
+                <Route path="/producto/:id" element={<ProductDetailPage />} />
 
                 {/* Shopping Cart */}
                 <Route path="/cart" element={<CartPage />} />
@@ -71,7 +73,7 @@ export const AppRoutes = () => {
                     path="/auth/reset/:token"
                     element={<ResetPasswordPage />}
                 />
-                <Route path="/auth/register" element={<RegisterPage/>} />
+                <Route path="/auth/register" element={<RegisterPage />} />
 
                 {/* RUTAS PRIVADAS (Solo Administradores - ERP) */}
                 <Route element={<ProtectedRoute />}>

@@ -297,7 +297,7 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                             Contacto
                         </NavLink>
                         <NavLink
-                            to="/catalog"
+                            to="/catalogo"
                             onClick={() => setIsMenuOpen(false)}
                             className={({ isActive }) =>
                                 `transition-colors ${isActive ? "text-[#f9c72a]" : "text-white hover:text-[#f9c72a]"}`
