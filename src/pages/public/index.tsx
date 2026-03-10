@@ -14,10 +14,6 @@ export default function HomePage() {
 
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5]">
-            <div className="p-10">
-                <h1>Test de Pago</h1>
-                <CheckoutButton saleId={1} />
-            </div>
             {/* Sección Superior (Navbar + Hero) - Se estira para cubrir el resto de la pantalla, pero manteniendo como mínimo el 61.8% del alto */}
             <div className="flex flex-col h-[61.8vh] flex-grow">
                 <div>

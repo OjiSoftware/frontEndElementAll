@@ -24,7 +24,12 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 
 import CatalogPage from "@/pages/public/catalog";
 import HomePage from "@/pages/public";
+
+// Cart
 import CartPage from "@/pages/public/cart";
+import CheckoutPage from "@/pages/public/cart/CheckoutPage";
+import CheckoutStatus from "@/pages/public/cart/CheckoutStatusPage";
+
 import ContactoPage from "@/pages/public/contacto";
 import ArrepentimientoPage from "@/pages/public/legal/ArrepentimientoPage";
 import LibroQuejasPage from "@/pages/public/legal/LibroQuejasPage";
@@ -63,9 +68,11 @@ export const AppRoutes = () => {
                 <Route path="/catalogo" element={<CatalogPage />} />
                 <Route path="/producto/:id" element={<ProductDetailPage />} />
 
-                {/* Shopping Cart */}
+                {/* Shopping Cartm, Checkout and Checkout Status */}
                 <Route path="/cart" element={<CartPage />} />
-
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/checkout/status" element={<CheckoutStatus />} />
+                
                 {/* Auth Flow */}
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/recover" element={<RecoverPasswordPage />} />

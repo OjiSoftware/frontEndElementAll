@@ -2,7 +2,7 @@ import { useState } from "react";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { Loader2, CreditCard } from "lucide-react";
 
-// Inicializamos con la Public Key
+// Inicializamos Mercado Pago
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: "es-AR" });
 
 export default function CheckoutButton({ saleId }: { saleId: number }) {
@@ -15,70 +15,70 @@ export default function CheckoutButton({ saleId }: { saleId: number }) {
         e.preventDefault();
         e.stopPropagation();
 
-        // Obtenemos el token (Ojo: Si el carrito es público para invitados, quizás debas quitar esta validación)
-        const token = localStorage.getItem("token");
-
         setLoading(true);
         try {
+            // Petición limpia y pública: solo enviamos el ID de la venta
             const res = await fetch(`${API_URL}/payments/create-preference`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // Solo enviamos el token si existe y es necesario
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
-                body: JSON.stringify({ saleId: Number(saleId) }),
+                body: JSON.stringify({ saleId }),
             });
 
-            if (res.status === 401) {
-                throw new Error("Sesión expirada. Volvé a loguearte.");
-            }
-
-            if (!res.ok) throw new Error("Error al generar el pago");
+            if (!res.ok)
+                throw new Error(
+                    "Error al comunicarse con el servidor de pagos.",
+                );
 
             const data = await res.json();
 
             if (data.preferenceId) {
                 setPreferenceId(data.preferenceId);
             } else {
-                console.error("No se recibió preferenceId del backend");
+                throw new Error(
+                    "El servidor no devolvió el ID de preferencia.",
+                );
             }
         } catch (error) {
             console.error("❌ ERROR AL GENERAR PAGO:", error);
-            alert(error instanceof Error ? error.message : "Error de conexión");
+            alert(
+                error instanceof Error ? error.message : "Error de conexión.",
+            );
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="w-full mt-6 border-t border-gray-200 pt-6">
+        <div className="w-full mt-6 border-t border-gray-100 pt-6">
             {!preferenceId ? (
                 <button
                     onClick={handleGeneratePayment}
                     disabled={loading}
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold py-3.5 px-6 rounded-xl shadow-sm transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                 >
                     {loading ? (
                         <>
                             <Loader2 className="animate-spin h-5 w-5" />
-                            <span>Conectando de forma segura...</span>
+                            <span>Conectando con Mercado Pago...</span>
                         </>
                     ) : (
                         <>
                             <CreditCard className="w-5 h-5" />
-                            <span>Proceder al Pago</span>
+                            <span>Pagar de forma segura</span>
                         </>
                     )}
                 </button>
             ) : (
-                <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                    <p className="text-sm text-gray-500 text-center mb-4">
-                        Seleccioná tu método de pago preferido
+                <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500 bg-gray-50/50 p-4 rounded-xl border border-gray-200">
+                    <p className="text-sm text-gray-500 text-center mb-3 font-lato">
+                        Elegí cómo querés pagar
                     </p>
-                    {/* El contenedor del Wallet se expandirá al 100% de este div */}
-                    <Wallet initialization={{ preferenceId }} />
+                    <Wallet
+                        initialization={{ preferenceId }}
+                    />
                 </div>
             )}
         </div>

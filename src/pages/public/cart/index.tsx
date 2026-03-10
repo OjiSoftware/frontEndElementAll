@@ -4,7 +4,7 @@ import CartTable from "@/components/CartTable";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeftIcon } from "@heroicons/react/20/solid"; // Importamos un icono para que quede mejor
+import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 export default function CartPage() {
     const { cart, totalItems, totalPrice, clearCart } = useCart();
@@ -12,46 +12,7 @@ export default function CartPage() {
     const navigate = useNavigate();
     const [showConfirmClear, setShowConfirmClear] = useState(false);
 
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    //!Cambios para mp NO TOCAR
-
-    const handleCheckout = async () => {
-        setIsProcessing(true)
-
-        try {
-            const itemsToPay = cart.map((item) => ({
-                title: item.product.name,
-                unit_price: Number(item.product.price),
-                quantity: item.quantity,
-                currency_id: 'ARS',
-            }));
-
-            const response = await fetch("http://localhost:3000/create-preference", {
-                method: "POST",
-                headers: { "Content-Type": "aplication/json" },
-                body: JSON.stringify({ items: itemsToPay }),
-            })
-
-            const data = await response.json();
-
-
-            if (data.init_point) {
-                window.location.href = data.init_point;
-            } else {
-                throw new Error("No se recibio la URL de pago")
-            }
-        } catch (error) {
-            console.error("Error al procesar  el pago: ", error)
-            alert("No se pudo conectar con el servidor de pagos)")
-        } finally {
-            setIsProcessing(false)
-        }
-
-    }
-    //!---------------------------------------------------------------------------------------------
-
-
+    // Si el carrito está vacío, mostramos el estado inicial
     if (cart.length === 0) {
         return (
             <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5]">
@@ -82,7 +43,7 @@ export default function CartPage() {
             <Navbar search={search} setSearch={setSearch} />
 
             <div className="w-full max-w-[1187px] mx-auto py-6 flex-grow px-2 sm:px-4">
-                {/* BOTÓN VOLVER (Nuevo) */}
+                {/* BOTÓN VOLVER */}
                 <div className="mb-2">
                     <button
                         onClick={() => navigate("/catalogo")}
@@ -148,22 +109,15 @@ export default function CartPage() {
                                 })}
                             </div>
                         </div>
-//!Cambios para mp NO TOCAR
+
+                        {/* BOTÓN HACIA CHECKOUT: Aquí es donde cambiamos la lógica */}
                         <button
-                            className="w-full py-3 bg-[#16a34a] text-white text-[0.95rem] font-bold rounded-lg hover:bg-[#15803d] transition shadow-md flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={handleCheckout}
-                            disabled={isProcessing}
+                            className="w-full py-3 bg-[#16a34a] text-white text-[0.95rem] font-bold rounded-lg hover:bg-[#15803d] transition shadow-md flex items-center justify-center gap-2 mt-2 cursor-pointer"
+                            onClick={() => navigate("/checkout")}
                         >
-                            {isProcessing ? (
-                                <>
-                                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                                    Procesando...
-                                </>
-                            ) : (
-                                "Ir a pagar"
-                            )}
+                            Finalizar compra
                         </button>
-//!--------------------------------------------------------------
+
                         <p className="text-[11px] text-gray-500 text-center leading-tight">
                             * Los recargos por financiación en cuotas con
                             tarjeta de crédito corren por cuenta del cliente.
