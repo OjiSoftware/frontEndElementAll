@@ -23,7 +23,7 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
     const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-    // ---------------- Sort ----------------
+    // ---------------- Sort Logic ----------------
     const handleSort = (column: SortColumn) => {
         if (sortColumn !== column) {
             setSortColumn(column);
@@ -38,15 +38,15 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
 
     const renderSortArrow = (column: SortColumn) => {
         const isActive = sortColumn === column;
-
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 inline-block text-gray-400 transition-all duration-150 ${isActive
-                    ? sortDirection === "desc"
-                        ? "rotate-180 opacity-100"
-                        : "opacity-100"
-                    : "opacity-0"
-                    }`}
+                className={`w-3 h-3 transition-all duration-150 ${
+                    isActive
+                        ? sortDirection === "desc"
+                            ? "rotate-180 opacity-100"
+                            : "opacity-100"
+                        : "opacity-0"
+                }`}
             />
         );
     };
@@ -55,16 +55,8 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
         if (!sortColumn) return brands;
 
         return [...brands].sort((a, b) => {
-            let aValue: any;
-            let bValue: any;
-
-            /*             if (sortColumn === "subCategory.name") {
-                            aValue = a.subCategory?.name || "";
-                            bValue = b.subCategory?.name || "";
-                        } else { */
-            aValue = a[sortColumn as keyof Brand];
-            bValue = b[sortColumn as keyof Brand];
-            /*             } */
+            let aValue = a[sortColumn as keyof Brand];
+            let bValue = b[sortColumn as keyof Brand];
 
             if (sortColumn === "id" || typeof aValue === "number") {
                 return sortDirection === "asc"
@@ -81,31 +73,30 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
         });
     }, [brands, sortColumn, sortDirection]);
 
-    // ---------------- Class constants ----------------
+    // ---------------- Style Constants ----------------
     const thClasses = "px-2 py-3 md:px-4 select-none";
     const tdBase = "px-2 py-3 md:px-4";
-    const hiddenOnMobile = "hidden md:table-cell!";
-    const flexTh = "flex items-center";
-    const flexTdIcons = "flex justify-center items-center gap-3";
 
-    // ---------------- Column widths ----------------
+    // Clases para que la columna de acciones quede pegada a la derecha
+    const stickyActionsTh = "sticky right-0 bg-gray-50 dark:bg-gray-700 z-10";
+    const stickyActionsTd = "sticky right-0 bg-white dark:bg-gray-800 z-10";
+
     const colWidths = {
         id: "w-1/5 md:w-1/6! lg:w-1/12!",
-        name: "w-1/2 md:w-1/4!",
-        subCategory: "w-1/4",
-        actions: "w-28",
+        name: "w-1/2 md:w-3/4!", // El nombre ocupa el resto para empujar las acciones
+        actions: "w-24 md:w-28!",
     };
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <Table hoverable className="table-fixed">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 relative">
+            <Table hoverable className="table-fixed min-w-full">
                 <TableHead>
                     <TableRow>
                         <TableHeadCell
                             className={`${thClasses} ${colWidths.id} cursor-pointer`}
                             onClick={() => handleSort("id")}
                         >
-                            <div className={flexTh}>
+                            <div className="flex items-center">
                                 # {renderSortArrow("id")}
                             </div>
                         </TableHeadCell>
@@ -114,27 +105,19 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                             className={`${thClasses} ${colWidths.name} cursor-pointer`}
                             onClick={() => handleSort("name")}
                         >
-                            <div className={flexTh}>
-                                Nombre {renderSortArrow("name")}
+                            <div className="relative flex items-center justify-start">
+                                <span>Nombre</span>
+                                <div className="absolute translate-x-16">
+                                    {renderSortArrow("name")}
+                                </div>
                             </div>
                         </TableHeadCell>
 
-                        {/* <TableHeadCell
-                            className={`${thClasses} ${colWidths.subCategory} ${hiddenOnMobile} cursor-pointer`}
-                            onClick={() => handleSort("subCategory.name")}
-                        >
-                            <div className={flexTh}>
-                                Subcategoría{" "}
-                                {renderSortArrow("subCategory.name")}
-                            </div>
-                        </TableHeadCell>
- */}
+                        {/* ACCIONES: Sticky a la derecha */}
                         <TableHeadCell
-                            className={`${thClasses} ${colWidths.actions}`}
+                            className={`${thClasses} ${colWidths.actions} ${stickyActionsTh} text-center`}
                         >
-                            <div className={`${flexTh} justify-center`}>
-                                Acciones
-                            </div>
+                            Acciones
                         </TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -157,26 +140,21 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
                                 {brand.name}
                             </TableCell>
 
-                            {/*  <TableCell
-                                className={`${tdBase} ${colWidths.subCategory} ${hiddenOnMobile}`}
-                            >
-                                {brand.subCategory?.name || "Sin subcategoría"}
-                            </TableCell> */}
-
+                            {/* CELDA DE ACCIONES: Sticky a la derecha */}
                             <TableCell
-                                className={`${tdBase} ${colWidths.actions}`}
+                                className={`${tdBase} ${colWidths.actions} ${stickyActionsTd}`}
                             >
-                                <div className={flexTdIcons}>
+                                <div className="flex justify-center items-center gap-3">
                                     <Link
                                         to={ROUTES.brands.edit(brand.id)}
                                         title="Editar marca"
-                                        className="text-blue-500 hover:text-blue-400 transition"
+                                        className="text-blue-500 hover:text-blue-400 transition active:scale-95"
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
                                         title="Eliminar marca"
-                                        className="text-red-500 hover:text-red-400 transition cursor-pointer"
+                                        className="text-red-500 hover:text-red-400 transition cursor-pointer active:scale-95"
                                         onClick={() => onDelete(brand)}
                                     >
                                         <TrashIcon className="w-5 h-5" />

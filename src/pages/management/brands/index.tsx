@@ -10,6 +10,7 @@ import { useDisableBrand } from "@/hooks/useDisableBrand";
 import { brandApi } from "@/services/BrandService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { PlusIcon } from "lucide-react";
 
 export default function BrandsPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -57,29 +58,10 @@ export default function BrandsPage() {
             actions={
                 <button
                     onClick={() => navigate(ROUTES.brands.create)}
-                    className="px-3 py-3 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                    title="Crear nuevo producto"
+                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
                 >
-                    <span className="md:hidden">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="text-white"
-                        >
-                            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-                            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-                            <path d="M9 15h6" />
-                            <path d="M12 18v-6" />
-                        </svg>
-                    </span>
-                    <span className="hidden md:inline">+ Nueva marca</span>{" "}
+                    <PlusIcon size={18} />
+                    <span className="hidden md:inline">Nueva marca</span>
                 </button>
             }
         >
@@ -87,7 +69,7 @@ export default function BrandsPage() {
                 <SearchBar
                     value={query}
                     onChange={setQuery}
-                    placeholder="Buscar..." // Cambiá el texto según la página
+                    placeholder="Buscar por nombre de la marca..."
                     containerClassName="max-w-full"
                     inputClassName="
                     bg-transparent

@@ -10,6 +10,7 @@ import { saleApi } from "@/services/SaleService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { useDisableSale } from "@/hooks/useDisableSale";
+import { PlusIcon } from "lucide-react";
 
 export default function SalesPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -56,19 +57,20 @@ export default function SalesPage() {
             actions={
                 <button
                     onClick={() => navigate(ROUTES.sales.create)}
-                    className="flex-1 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
+                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
                 >
-                    + Nueva venta
+                    <PlusIcon size={18} />
+                    <span className="hidden md:inline">Nueva venta</span>
                 </button>
             }
         >
             <div className="space-y-6">
                 <SearchBar
-                  value={query}
-                  onChange={setQuery}
-                  placeholder="Buscar..." // Cambiá el texto según la página
-                  containerClassName="max-w-full"
-                  inputClassName="
+                    value={query}
+                    onChange={setQuery}
+                    placeholder="Buscar por ID o nombre del cliente..."
+                    containerClassName="max-w-full"
+                    inputClassName="
                     bg-transparent
                     text-white
                     border-white/10
@@ -80,16 +82,13 @@ export default function SalesPage() {
                     rounded-xl
                     h-11
                   "
-                  iconClassName="text-slate-500 group-focus-within:text-indigo-400"
+                    iconClassName="text-slate-500 group-focus-within:text-indigo-400"
                 />
 
-                {/* TABLE - Ajustado el radius a rounded-xl para matchear con la SearchBar */}
-                <div className="border border-white/10 rounded-xl overflow-hidden shadow-2xl bg-gray-900/20">
-                    <SalesTable
-                        sales={currentSales}
-                        onDelete={(sales) => setSaleToDelete(sales)}
-                    />
-                </div>
+                <SalesTable
+                    sales={currentSales}
+                    onDelete={(sales) => setSaleToDelete(sales)}
+                />
 
                 <Pagination
                     totalItems={filteredSales.length}

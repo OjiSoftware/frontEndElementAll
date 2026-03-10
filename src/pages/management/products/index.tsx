@@ -20,7 +20,9 @@ export default function ProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState("");
     const [products, setProducts] = useState<Product[]>([]);
-    const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+    const [productToDelete, setProductToDelete] = useState<Product | null>(
+        null,
+    );
 
     // ---------------- Estados del Toast ----------------
     const [showWelcome, setShowWelcome] = useState(false);
@@ -114,7 +116,7 @@ export default function ProductsPage() {
                     <SearchBar
                         value={query}
                         onChange={setQuery}
-                        placeholder="Buscar..." // Cambiá el texto según la página
+                        placeholder="Buscar por nombre del producto..."
                         containerClassName="max-w-full"
                         inputClassName="
                         bg-transparent
@@ -131,13 +133,10 @@ export default function ProductsPage() {
                         iconClassName="text-slate-500 group-focus-within:text-indigo-400"
                     />
 
-                    {/* PRODUCTS TABLE - Rounded-xl para coherencia visual */}
-                    <div className="border border-white/10 rounded-xl overflow-hidden shadow-2xl bg-slate-900/20">
-                        <ProductsTable
-                            products={currentProducts}
-                            onDelete={(product) => setProductToDelete(product)}
-                        />
-                    </div>
+                    <ProductsTable
+                        products={currentProducts}
+                        onDelete={(product) => setProductToDelete(product)}
+                    />
 
                     {/* PAGINATION */}
                     <Pagination
