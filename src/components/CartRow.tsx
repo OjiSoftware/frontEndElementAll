@@ -11,6 +11,9 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
     const { updateQuantity, removeFromCart } = useCart();
     const [isExpanded, setIsExpanded] = useState(false);
 
+    const maxStock = item.product.stock ?? Infinity;
+    const isAtMaxStock = item.quantity >= maxStock;
+
     const imageUrl =
         item.product.imageUrl ||
         "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg";
@@ -125,7 +128,7 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                                 if (!isNaN(val)) {
                                     updateQuantity(
                                         item.product.id,
-                                        Math.max(0, val),
+                                        Math.min(Math.max(0, val), maxStock),
                                     );
                                 }
                             }}
@@ -138,13 +141,19 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
 
                         <button
                             type="button"
-                            className="w-6 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-green-600 transition-colors cursor-pointer active:bg-gray-100"
-                            onClick={() =>
-                                updateQuantity(
-                                    item.product.id,
-                                    item.quantity + 1,
-                                )
-                            }
+                            disabled={isAtMaxStock}
+                            className={`w-6 h-full flex items-center justify-center transition-colors active:bg-gray-100 ${isAtMaxStock
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
+                                }`}
+                            onClick={() => {
+                                if (!isAtMaxStock) {
+                                    updateQuantity(
+                                        item.product.id,
+                                        item.quantity + 1,
+                                    );
+                                }
+                            }}
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -259,7 +268,7 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                                     if (!isNaN(val)) {
                                         updateQuantity(
                                             item.product.id,
-                                            Math.max(0, val),
+                                            Math.min(Math.max(0, val), maxStock),
                                         );
                                     }
                                 }}
@@ -273,13 +282,19 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                             {/* Botón Más */}
                             <button
                                 type="button"
-                                className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-green-600 transition-colors cursor-pointer active:bg-gray-100"
-                                onClick={() =>
-                                    updateQuantity(
-                                        item.product.id,
-                                        item.quantity + 1,
-                                    )
-                                }
+                                disabled={isAtMaxStock}
+                                className={`w-8 h-full flex items-center justify-center transition-colors active:bg-gray-100 ${isAtMaxStock
+                                        ? "text-gray-300 cursor-not-allowed"
+                                        : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
+                                    }`}
+                                onClick={() => {
+                                    if (!isAtMaxStock) {
+                                        updateQuantity(
+                                            item.product.id,
+                                            item.quantity + 1,
+                                        );
+                                    }
+                                }}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

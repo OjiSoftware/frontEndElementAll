@@ -21,6 +21,7 @@ export function useProductEdit() {
         showingInCatalog: false,
         stock: 0,
         imageUrl: "",
+        unit: "",
     });
 
     const [priceInput, setPriceInput] = useState<string>("0,00");
@@ -73,6 +74,7 @@ export function useProductEdit() {
                     showingInCatalog: productData.showingInCatalog ?? false,
                     stock: productData.stock || 0,
                     imageUrl: productData.imageUrl || "",
+                    unit: productData.unit || "",
                 };
 
                 setFormData(newFormData);

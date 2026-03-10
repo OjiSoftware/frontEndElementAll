@@ -29,6 +29,7 @@ export interface ProductEditFrontend {
     description: string;
     showingInCatalog: boolean;
     imageUrl: string;
+    unit: string;
 }
 
 export type ProductEditBackend = Omit<ProductEditFrontend, "categoryId">;

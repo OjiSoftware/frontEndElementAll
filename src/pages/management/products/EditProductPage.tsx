@@ -112,6 +112,7 @@ export default function EditProductPage() {
                 description: formData.description,
                 showingInCatalog: formData.showingInCatalog,
                 imageUrl: formData.imageUrl,
+                unit: formData.unit,
             };
 
             await productApi.update(id!, payload);
@@ -208,6 +209,21 @@ export default function EditProductPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Teclado Mecánico RGB"
+                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                                Unidad por bulto
+                            </label>
+                            <input
+                                type="text"
+                                name="unit"
+                                value={formData.unit}
+                                onChange={handleChange}
+                                placeholder="Ej: 24 unidades"
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                 required
                             />

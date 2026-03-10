@@ -62,17 +62,17 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     }, [maxAvailable, minQuantity, productQuantity]);
 
     return (
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col hover:shadow-md transition-shadow duration-300 w-full max-w-full sm:max-w-60">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full max-w-full sm:max-w-60 group/card">
             {/* Imagen del Producto */}
-            <Link to={`/producto/${product.id}`} className="w-full h-40 flex items-center justify-center mb-4 cursor-pointer relative group">
+            <Link to={`/producto/${product.id}`} className="w-full h-40 flex items-center justify-center mb-4 cursor-pointer relative group p-2 bg-gray-50/50 rounded-lg">
                 <img
                     src={product.imageUrl || "https://via.placeholder.com/150"}
                     alt={product.name || "Nombre del producto"}
-                    className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                 />
                 {/* Badge de cantidad en carrito */}
                 {quantityInCart > 0 && (
-                    <div className="absolute top-0 left-0 bg-[#661414] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md z-10 flex items-center gap-1">
+                    <div className="absolute top-1 left-1 bg-[#661414] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-10 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
                             <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
                         </svg>
@@ -82,19 +82,42 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             </Link>
 
             {/* Información */}
-            <div className="grow">
+            <div className="grow flex flex-col justify-start mt-1">
+                {/* Marca (Confianza) */}
+                {product.brand && (
+                    <span className="text-[10px] text-gray-400 font-lato font-extrabold uppercase tracking-widest mb-1.5">
+                        {product.brand.name}
+                    </span>
+                )}
+
                 <Link to={`/producto/${product.id}`}>
                     <h3
                         title={product.name}
-                        // Eliminamos 'line-clamp-2' y 'min-h-8' para que el texto crezca libremente
-                        className="text-gray-600 font-lato text-sm font-normal tracking-tight hover:text-[#4caf50] transition-colors"
+                        // El texto crece libremente, pero con mayor peso visual (Bold/Color Oscuro)
+                        className="text-[#1e293b] font-lato text-[15px] font-bold leading-snug tracking-tight hover:text-[#4caf50] transition-colors"
                     >
                         {product.name}
                     </h3>
                 </Link>
-                <p className="text-black font-lato font-bold text-lg mt-2">
+
+                {/* Badge de empaque (Claridad de oferta B2B) */}
+                {product.unit && (
+                    <div className="mt-2 text-[11px] font-bold text-green-800 bg-green-50 px-2 py-1 rounded w-fit border border-green-200 uppercase tracking-wide">
+                        {product.unit}
+                    </div>
+                )}
+            </div>
+
+            {/* Precio Anclado y Gatillos de Escasez */}
+            <div className="mt-4 mb-3 flex flex-col">
+                <p className="text-[#0f172a] font-lato font-black text-[22px] tracking-tighter leading-none">
                     {formatPrice(product.price)}
                 </p>
+                {maxAvailable > 0 && maxAvailable <= 5 && (
+                    <p className="text-rose-600 text-[10px] font-bold mt-1.5 uppercase tracking-wider animate-pulse flex items-center gap-1">
+                        ¡Solo {maxAvailable} disponibles!
+                    </p>
+                )}
             </div>
 
             {/* Selector de Cantidad */}

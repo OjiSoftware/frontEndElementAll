@@ -69,21 +69,13 @@ export const useProductForm = () => {
         const { name, value, type } = e.target as HTMLInputElement;
         const numericFields = ["price", "stock", "categoryId", "subCategoryId", "brandId"];
 
-        let finalValue: string | number | boolean;
+        let finalValue: string | number | boolean = value;
 
         if (type === "checkbox") {
             finalValue = (e.target as HTMLInputElement).checked
         } else if (numericFields.includes(name)) {
             finalValue = value === "" ? "" : Number(value);
-        } else {
-            finalValue = value;
-        }
-
-
-
-
-        if (typeof finalValue === "number") {
-            if (name === "stock" || name === "price") {
+            if (typeof finalValue === "number" && (name === "stock" || name === "price")) {
                 finalValue = Math.max(0, finalValue);
             }
         }

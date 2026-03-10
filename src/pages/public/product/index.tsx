@@ -147,7 +147,7 @@ export default function ProductDetailPage() {
             <img
               src={product.imageUrl || "https://via.placeholder.com/400"}
               alt={product.name}
-              className="w-full h-auto max-h-[350px] object-contain"
+              className="w-full h-auto object-contain"
             />
 
             {/* IN CART BADGE */}
@@ -169,16 +169,16 @@ export default function ProductDetailPage() {
 
           {/* RIGHT COLUMN: Info */}
           <div className="w-full md:w-1/2 flex flex-col justify-center">
-            <h1 className="text-2xl md:text-3xl text-gray-800 font-bold font-lato tracking-tight mb-2">
+            <h1 className="text-2xl md:text-3xl text-gray-800 font-bold font-lato tracking-tight mb-1">
               {product.name}
             </h1>
+            <div className="text-xl text-gray-800 font-lato mb-1">
+              {product.unit}
+            </div>
 
             <div className="flex items-end gap-3 my-3">
               <div className="text-[#4caf50] font-lato font-extrabold text-2xl md:text-3xl">
                 {formatPrice(product.price)}
-              </div>
-              <div className="text-sm text-gray-400 font-lato mb-1">
-                Precio Unit.
               </div>
             </div>
 
@@ -188,12 +188,6 @@ export default function ProductDetailPage() {
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-gray-800">Marca:</span>
                   <span>{product.brand.name}</span>
-                </div>
-              )}
-              {product.unit && (
-                <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-gray-800">Unidad:</span>
-                  <span>{product.unit}</span>
                 </div>
               )}
               <div className="flex items-center gap-1.5">
@@ -229,7 +223,7 @@ export default function ProductDetailPage() {
             {/* ADD TO CART CONTROLS */}
             <div className="flex flex-col sm:flex-row items-center gap-3 mt-2">
               {/* Quantity Selector */}
-              <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg h-10 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden w-full sm:w-auto shrink-0">
+              <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg h-10 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden w-fit mx-auto sm:w-auto sm:mx-0 shrink-0">
                 <button
                   type="button"
                   className="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer active:bg-gray-100"

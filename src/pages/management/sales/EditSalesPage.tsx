@@ -448,6 +448,7 @@ export default function EditSalesPage() {
                                             <input
                                                 type="number"
                                                 min="1"
+                                                max={item.stock ?? undefined}
                                                 value={item.quantity}
                                                 onChange={(e) =>
                                                     updateProductQuantity(

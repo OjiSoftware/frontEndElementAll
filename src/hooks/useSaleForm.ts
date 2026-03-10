@@ -58,15 +58,20 @@ export const useSaleForm = () => {
 
       let newDetails;
       if (existingItem) {
-        newDetails = prev.details.map(d =>
-          d.productId === product.id ? { ...d, quantity: d.quantity + 1 } : d
-        );
+        newDetails = prev.details.map(d => {
+          if (d.productId === product.id) {
+            const maxStock = d.stock ?? Infinity;
+            return { ...d, quantity: Math.min(d.quantity + 1, maxStock) };
+          }
+          return d;
+        });
       } else {
         newDetails = [...prev.details, {
           productId: product.id,
           name: product.name,
           price: product.price,
-          quantity: 1
+          quantity: 1,
+          stock: product.stock
         }];
       }
 
@@ -85,9 +90,13 @@ export const useSaleForm = () => {
     setFormData((prev) => {
       if (quantity < 1) return prev;
 
-      const newDetails = prev.details.map(d =>
-        d.productId === productId ? { ...d, quantity } : d
-      );
+      const newDetails = prev.details.map(d => {
+        if (d.productId === productId) {
+          const maxStock = d.stock ?? Infinity;
+          return { ...d, quantity: Math.min(quantity, maxStock) };
+        }
+        return d;
+      });
 
       const newTotal = newDetails.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
       const roundedTotal = Number(newTotal.toFixed(2));

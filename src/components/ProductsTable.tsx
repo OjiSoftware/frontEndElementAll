@@ -50,13 +50,12 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
         const isActive = sortColumn === column;
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 transition-all duration-150 ${
-                    isActive
-                        ? sortDirection === "desc"
-                            ? "rotate-180 opacity-100"
-                            : "opacity-100"
-                        : "opacity-0"
-                }`}
+                className={`w-3 h-3 transition-all duration-150 ${isActive
+                    ? sortDirection === "desc"
+                        ? "rotate-180 opacity-100"
+                        : "opacity-100"
+                    : "opacity-0"
+                    }`}
             />
         );
     };
@@ -73,6 +72,9 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
             } else if (sortColumn === "subCategory.category.name") {
                 aValue = a.subCategory?.category?.name || "";
                 bValue = b.subCategory?.category?.name || "";
+            } else if (sortColumn === "unit") {
+                aValue = a.unit || "";
+                bValue = b.unit || "";
             } else {
                 aValue = a[sortColumn as keyof Product];
                 bValue = b[sortColumn as keyof Product];
@@ -98,13 +100,14 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     const hiddenOnMobile = "hidden md:table-cell!";
 
     const colWidths = {
-        id: "w-1/5 md:w-1/6! lg:w-1/12!",
-        name: "w-1/2 md:w-1/3!",
-        brand: "w-1/4",
-        category: "w-1/3",
-        price: "w-1/3 md:w-1/3",
-        actions: "w-20 lg:w-28!",
-        catalog: "w-28 md:w-32!",
+        id: "w-1/5 md:w-[5%]! lg:w-[4%]!",
+        name: "w-1/2 md:w-[30%]! lg:w-[30%]!",
+        unit: "w-1/5 md:w-[12%]! lg:w-[14%]!",
+        brand: "w-1/5 md:w-[10%]! lg:w-[10%]!",
+        category: "w-1/5 md:w-[10%]! lg:w-[10%]!",
+        price: "w-1/5 md:w-[13%]! lg:w-[15%]!",
+        actions: "w-24 md:w-[10%]! lg:w-[8%]!",
+        catalog: "w-28 md:w-[10%]! lg:w-[9%]!",
     };
 
     return (
@@ -129,6 +132,18 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 <span>Nombre</span>
                                 <div className="absolute translate-x-16">
                                     {renderSortArrow("name")}
+                                </div>
+                            </div>
+                        </TableHeadCell>
+
+                        <TableHeadCell
+                            className={`${thClasses} ${colWidths.unit} ${hiddenOnMobile} cursor-pointer`}
+                            onClick={() => handleSort("unit")}
+                        >
+                            <div className="relative flex items-center justify-center">
+                                <span>Unidad por bulto</span>
+                                <div className="absolute translate-x-10">
+                                    {renderSortArrow("unit")}
                                 </div>
                             </div>
                         </TableHeadCell>
@@ -209,6 +224,14 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 className={`${tdBase} ${colWidths.name} text-gray-900 dark:text-white`}
                             >
                                 <div className="xl:pl-10!">{product.name}</div>
+                            </TableCell>
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.unit} ${hiddenOnMobile}`}
+                            >
+                                <div className="text-center text-gray-600 dark:text-gray-400">
+                                    {product.unit || "-"}
+                                </div>
                             </TableCell>
 
                             <TableCell
