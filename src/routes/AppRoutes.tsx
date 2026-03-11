@@ -68,11 +68,11 @@ export const AppRoutes = () => {
                 <Route path="/catalogo" element={<CatalogPage />} />
                 <Route path="/producto/:id" element={<ProductDetailPage />} />
 
-                {/* Shopping Cartm, Checkout and Checkout Status */}
+                {/* Shopping Cart, Checkout and Checkout Status */}
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/checkout/status" element={<CheckoutStatus />} />
-                
+
                 {/* Auth Flow */}
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/recover" element={<RecoverPasswordPage />} />

@@ -104,7 +104,19 @@ export function SaleDetailsModal({
               <div className="bg-slate-700/30 p-4 rounded-lg border border-slate-600/50">
                 <h3 className="text-sm font-semibold text-indigo-400 mb-3 uppercase tracking-wider">Detalle del Comprobante</h3>
                 <div className="space-y-2 text-sm text-gray-300">
-                  <p><strong className="text-gray-400 font-medium">Fecha:</strong> {sale.createdAt ? new Date(sale.createdAt).toLocaleDateString('es-AR') : "Sin fecha"}</p>
+                  <p>
+                    <strong className="text-gray-400 font-medium">Fecha y Hora:</strong>{" "}
+                    {sale.createdAt
+                      ? new Date(sale.createdAt).toLocaleString('es-AR', {
+                          timeZone: 'America/Argentina/Buenos_Aires',
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) + ' hs'
+                      : "Sin fecha"}
+                  </p>
                   <p><strong className="text-gray-400 font-medium">Estado:</strong> {sale.status}</p>
                   <p><strong className="text-gray-400 font-medium">Monto Total:</strong> <span className="text-green-400 font-bold">${sale.total}</span></p>
                 </div>

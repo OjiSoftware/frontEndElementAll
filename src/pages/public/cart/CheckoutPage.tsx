@@ -36,7 +36,7 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         if (cart.length === 0 && !saleId) {
-            navigate("/carrito");
+            navigate("/cart");
         }
     }, [cart, navigate, saleId]);
 
@@ -105,7 +105,7 @@ export default function CheckoutPage() {
             <div className="w-full max-w-[1187px] mx-auto py-6 flex-grow px-2 sm:px-4">
                 <div className="mb-2">
                     <button
-                        onClick={() => navigate("/carrito")}
+                        onClick={() => navigate("/cart")}
                         className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                         <ChevronLeftIcon className="w-4 h-4" />

@@ -159,7 +159,7 @@ export default function EditSalesPage() {
                             className="bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer min-w-[150px]"
                         >
                             <option value="PENDING">Pendiente</option>
-                            <option value="IN_PROGRESS">En Progreso</option>
+                            <option value="IN_PROGRESS">En progreso</option>
                             <option value="COMPLETED">Completada</option>
                             <option value="CANCELLED">Cancelada</option>
                         </select>

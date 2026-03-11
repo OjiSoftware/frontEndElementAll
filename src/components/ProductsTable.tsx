@@ -13,7 +13,12 @@ import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { CheckCircle } from "lucide-react";
 
-type SortColumn = keyof Product | "brand.name" | "subCategory.category.name";
+// 🔥 1. Agregado "stock" a las columnas ordenables
+type SortColumn =
+    | keyof Product
+    | "brand.name"
+    | "subCategory.category.name"
+    | "stock";
 
 interface ProductsTableProps {
     products: Product[];
@@ -100,19 +105,20 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     const hiddenOnMobile = "hidden md:table-cell!";
 
     const colWidths = {
-        id: "w-1/5 md:w-[5%]! lg:w-[4%]!",
-        name: "w-1/2 md:w-[30%]! lg:w-[30%]!",
-        unit: "w-1/5 md:w-[12%]! lg:w-[14%]!",
-        brand: "w-1/5 md:w-[10%]! lg:w-[10%]!",
-        category: "w-1/5 md:w-[10%]! lg:w-[10%]!",
-        price: "w-1/5 md:w-[13%]! lg:w-[15%]!",
-        actions: "w-24 md:w-[10%]! lg:w-[8%]!",
-        catalog: "w-28 md:w-[10%]! lg:w-[9%]!",
+        id: "w-[15%] md:w-[5%] xl:w-[5%]",
+        name: "w-[35%] md:w-[20%] xl:w-[25%]",
+        unit: "w-[15%] md:w-[12%] xl:w-[10%]",
+        brand: "w-[15%] md:w-[12%] xl:w-[15%]",
+        category: "w-[15%] md:w-[13%] xl:w-[15%]",
+        stock: "w-[10%] md:w-[8%] xl:w-[10%]",
+        price: "w-[15%] md:w-[15%] xl:w-[10%]",
+        actions: "w-[25%] md:w-[15%] xl:w-[10%]",
+        catalog: "w-[25%] md:w-[12%] xl:w-[10%]",
     };
 
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <Table hoverable className="table-fixed">
+            <Table hoverable className="table-fixed w-full min-w-[1000px]">
                 <TableHead>
                     <TableRow>
                         <TableHeadCell
@@ -172,6 +178,19 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     {renderSortArrow(
                                         "subCategory.category.name",
                                     )}
+                                </div>
+                            </div>
+                        </TableHeadCell>
+
+                        {/* 🔥 3. Nueva columna Head de Stock (Oculta en mobile) */}
+                        <TableHeadCell
+                            className={`${thClasses} ${colWidths.stock} ${hiddenOnMobile} cursor-pointer`}
+                            onClick={() => handleSort("stock")}
+                        >
+                            <div className="relative flex items-center justify-center">
+                                <span>Stock</span>
+                                <div className="absolute translate-x-10">
+                                    {renderSortArrow("stock")}
                                 </div>
                             </div>
                         </TableHeadCell>
@@ -249,6 +268,16 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                     {product.subCategory?.category?.name ||
                                         "Sin categoría"}
                                 </div>
+                            </TableCell>
+
+                            <TableCell
+                                className={`${tdBase} ${colWidths.stock} ${hiddenOnMobile} font-medium text-center`}
+                            >
+                                <span
+                                    className={`${(product.stock ?? 0) <= 5 ? "text-red-500" : "text-gray-900 dark:text-gray-300"}`}
+                                >
+                                    {product.stock ?? 0}
+                                </span>
                             </TableCell>
 
                             <TableCell
