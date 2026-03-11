@@ -128,6 +128,25 @@ export default function EditSalesPage() {
         );
     }
 
+    if (formData.status === "CANCELLED") {
+        return (
+            <DashboardLayout>
+                <div className="flex h-full flex-col items-center justify-center text-white gap-4 min-h-[60vh]">
+                    <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md text-center space-y-4">
+                        <h2 className="text-2xl font-bold text-rose-400">Venta Cancelada</h2>
+                        <p className="text-gray-300">Esta venta está cancelada y no puede ser editada.</p>
+                        <button
+                            onClick={() => navigate("/management/sales")}
+                            className="px-6 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:opacity-90 transition cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)]"
+                        >
+                            Volver a la lista
+                        </button>
+                    </div>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
         <DashboardLayout>
             <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center py-6">
@@ -161,7 +180,6 @@ export default function EditSalesPage() {
                             <option value="PENDING">Pendiente</option>
                             <option value="IN_PROGRESS">En progreso</option>
                             <option value="COMPLETED">Completada</option>
-                            <option value="CANCELLED">Cancelada</option>
                         </select>
                     </div>
                 </div>

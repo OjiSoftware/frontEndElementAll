@@ -86,13 +86,12 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
         const isActive = sortColumn === column;
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 transition-all duration-150 ${
-                    isActive
+                className={`w-3 h-3 ms-1 transition-all duration-150 ${isActive
                         ? sortDirection === "desc"
                             ? "rotate-180 opacity-100"
                             : "opacity-100"
                         : "opacity-0"
-                }`}
+                    }`}
             />
         );
     };
@@ -214,8 +213,8 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                             <TableCell className="hidden md:table-cell! text-center text-gray-600 dark:text-gray-400">
                                 {sale.createdAt
                                     ? new Date(
-                                          sale.createdAt,
-                                      ).toLocaleDateString("es-AR")
+                                        sale.createdAt,
+                                    ).toLocaleDateString("es-AR")
                                     : "---"}
                             </TableCell>
 
@@ -266,17 +265,37 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                     >
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
-                                    <Link
-                                        to={ROUTES.sales.edit(sale.id)}
-                                        title="Editar venta"
-                                        className="text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
-                                    >
-                                        <PencilIcon className="w-5 h-5" />
-                                    </Link>
+                                    {sale.status !== "CANCELLED" ? (
+                                        <Link
+                                            to={ROUTES.sales.edit(sale.id)}
+                                            title="Editar venta"
+                                            className="text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
+                                        >
+                                            <PencilIcon className="w-5 h-5" />
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            title="No se puede editar una venta cancelada"
+                                            className="text-gray-400 cursor-not-allowed"
+                                        >
+                                            <PencilIcon className="w-5 h-5" />
+                                        </div>
+                                    )}
                                     <button
-                                        title="Eliminar venta"
-                                        className="text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
-                                        onClick={() => onDelete(sale)}
+                                        title={
+                                            sale.status === "CANCELLED"
+                                                ? "Venta ya cancelada"
+                                                : "Cancelar venta"
+                                        }
+                                        className={`${sale.status === "CANCELLED"
+                                                ? "text-gray-400 cursor-not-allowed"
+                                                : "text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
+                                            }`}
+                                        onClick={() =>
+                                            sale.status !== "CANCELLED" &&
+                                            onDelete(sale)
+                                        }
+                                        disabled={sale.status === "CANCELLED"}
                                     >
                                         <TrashIcon className="w-5 h-5" />
                                     </button>

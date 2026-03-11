@@ -5,12 +5,12 @@ import Pagination from "@/components/PaginationManagement";
 import { Sale } from "@/types/sale.types";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
 import SearchBar from "../../../components/SearchBar";
-import { ConfirmDeleteModal } from "../../../components/ConfirmDeleteModal";
 import { saleApi } from "@/services/SaleService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { useDisableSale } from "@/hooks/useDisableSale";
 import { PlusIcon } from "lucide-react";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 export default function SalesPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -98,9 +98,16 @@ export default function SalesPage() {
                 />
 
                 {saleToDelete && (
-                    <ConfirmDeleteModal
+                    <ConfirmModal
                         isOpen={true}
-                        itemName={`Venta #${saleToDelete.id}`}
+                        title="Confirmar cancelación"
+                        message={
+                            <span>
+                                ¿Estás seguro de que querés cancelar la{" "}
+                                <b>Venta #{saleToDelete.id}</b>? Esta acción
+                                no se puede deshacer.
+                            </span>
+                        }
                         isLoading={loading}
                         onCancel={() => setSaleToDelete(null)}
                         onConfirm={async () => {
@@ -110,6 +117,8 @@ export default function SalesPage() {
                             }
                             setSaleToDelete(null);
                         }}
+                        confirmText="Confirmar"
+                        cancelText="Volver"
                     />
                 )}
             </div>
