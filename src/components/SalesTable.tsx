@@ -227,11 +227,18 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                         style: "bg-gray-500/10 text-gray-400 border-gray-500/20",
                                     };
                                     return (
-                                        <span
-                                            className={`px-2.5 py-1 rounded-md text-xs font-bold border ${statusInfo.style}`}
-                                        >
-                                            {statusInfo.label}
-                                        </span>
+                                        <div className="flex flex-col items-center gap-1">
+                                            <span
+                                                className={`px-2.5 py-1 rounded-md text-xs font-bold border ${statusInfo.style}`}
+                                            >
+                                                {statusInfo.label}
+                                            </span>
+                                            {sale.transaction?.paymentMethod && (
+                                                <span className="text-[10px] uppercase font-bold text-gray-400">
+                                                    {sale.transaction.paymentMethod}
+                                                </span>
+                                            )}
+                                        </div>
                                     );
                                 })()}
                             </TableCell>

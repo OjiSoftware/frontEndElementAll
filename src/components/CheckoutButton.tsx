@@ -44,7 +44,7 @@ export default function CheckoutButton({
 
             if (!res.ok) {
                 toast.error(
-                    (t) => (
+                    () => (
                         <span>
                             {data.error === "Stock insuficiente" ? (
                                 <>

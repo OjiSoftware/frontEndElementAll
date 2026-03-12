@@ -11,6 +11,13 @@ export interface Sale {
     quantity: number;
   }[];
   createdAt: string;
+  transaction?: {
+    status: string;
+    mpId?: string;
+    paymentMethod?: string;
+    paymentType?: string;
+    cardLastFour?: string;
+  };
 }
 
 export interface EditSale {

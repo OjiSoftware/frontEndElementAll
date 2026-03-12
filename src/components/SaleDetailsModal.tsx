@@ -141,6 +141,21 @@ export function SaleDetailsModal({
                                           ${sale.total}
                                       </span>
                                   </p>
+                                  {fullSale?.transaction && (
+                                      <p>
+                                          <strong className="text-gray-400 font-medium">
+                                              Pago:
+                                          </strong>{" "}
+                                          <span className="text-indigo-300 font-semibold capitalize">
+                                              {fullSale.transaction.paymentMethod || "N/A"}
+                                          </span>
+                                          {fullSale.transaction.cardLastFour && (
+                                              <span className="text-xs text-gray-500 ml-1">
+                                                  (Terminado en {fullSale.transaction.cardLastFour})
+                                              </span>
+                                          )}
+                                      </p>
+                                  )}
                               </div>
                           </div>
 
