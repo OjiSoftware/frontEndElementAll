@@ -64,7 +64,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     return (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full max-w-full sm:max-w-60 group/card">
             {/* Imagen del Producto */}
-            <Link to={`/producto/${product.id}`} className="w-full h-40 flex items-center justify-center mb-4 cursor-pointer relative group p-2 bg-gray-50/50 rounded-lg">
+            <Link to={`/producto/${product.id}`} className="w-full h-45 flex items-center justify-center mb-2 cursor-pointer relative group  bg-gray-50/50 rounded-lg">
                 <img
                     src={product.imageUrl || "https://via.placeholder.com/150"}
                     alt={product.name || "Nombre del producto"}
@@ -113,11 +113,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 <p className="text-[#0f172a] font-lato font-black text-[22px] tracking-tighter leading-none">
                     {formatPrice(product.price)}
                 </p>
-                {maxAvailable > 0 && maxAvailable <= 5 && (
-                    <p className="text-rose-600 text-[10px] font-bold mt-1.5 uppercase tracking-wider animate-pulse flex items-center gap-1">
-                        ¡Solo {maxAvailable} disponibles!
-                    </p>
-                )}
+
             </div>
 
             {/* Selector de Cantidad */}
@@ -126,7 +122,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                     {quantityInCart > 0 ? (
                         <span className="text-orange-600">Límite alcanzado</span>
                     ) : (
-                        <span className="text-red-500">Agotado</span>
+                        <span className="text-red-500">Sin stock</span>
                     )}
                 </div>
             )}

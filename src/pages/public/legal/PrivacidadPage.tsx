@@ -22,36 +22,51 @@ export default function PrivacidadPage() {
                 <strong>Última actualización:</strong> {new Date().toLocaleDateString('es-AR')}
               </p>
 
-              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">1. Introducción</h3>
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">1. Introducción y Registro de Base de Datos</h3>
               <p>
-                En ElementAll (en adelante, "la Empresa"), respetamos y protegemos la privacidad de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, utilizamos, almacenamos y compartimos la información personal de los usuarios que visitan y utilizan nuestro sitio web. Al utilizar nuestros servicios, usted acepta las prácticas descritas en esta política, de conformidad con la Ley de Protección de Datos Personales N° 25.326 de la República Argentina.
+                En ElementAll S.R.L. respetamos y protegemos la privacidad de nuestros usuarios ('Datos Personales'). Esta Política de Privacidad describe cómo recopilamos, utilizamos, almacenamos y compartimos la información. Los datos proporcionados se incluirán en una Base de Datos de clientes de nuestra titularidad, y serán tratados según las disposiciones de la Ley 25.326 de Protección de Datos Personales y su Decreto Reglamentario 1558/2001.
               </p>
 
               <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">2. Recopilación de Información</h3>
               <p>
-                Recopilamos información personal que usted nos proporciona voluntariamente al registrarse, realizar una compra o completar formularios en nuestro sitio (como su nombre, dirección de correo electrónico, DNI, número de teléfono y dirección). Asimismo, recopilamos automáticamente cierta información sobre su dispositivo y comportamiento de navegación a través de cookies y herramientas similares.
+                Podremos solicitarle: i) datos de identificación (tipo y número de documento, nombre y apellido, CUIT), y ii) datos de contacto (teléfono, domicilio, correo electrónico). Al registrarse para adquirir bienes, también podremos requerir datos impositivos (categoría de IVA) y datos de pagos necesarios para efectuar transacciones. De negarse a proporcionar los Datos Personales requeridos, la consecuencia será que no podrá registrarse ni realizar contrataciones en el sitio.
               </p>
 
-              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">3. Uso de la Información</h3>
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">3. Finalidad y Uso de la Información</h3>
               <p>
                 La información personal recopilada se utiliza para:
               </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Procesar y gestionar sus pedidos y pagos.</li>
-                <li>Brindarle atención al cliente y responder a sus consultas.</li>
-                <li>Mejorar nuestra plataforma y personalizar su experiencia de usuario.</li>
-                <li>Enviar comunicaciones informativas y promocionales (puede optar por no recibirlas en cualquier momento).</li>
-                <li>Cumplir con obligaciones legales y regulatorias.</li>
+              <ul className="list-disc pl-6 space-y-2 mt-2">
+                <li>Verificar su identidad y cumplir con nuestras obligaciones legales y contractuales.</li>
+                <li>Procesar sus compras, emitir comprobantes y registrar la entrega de los productos.</li>
+                <li>Elaborar estadísticas, estudios de mercado y perfiles de consumo.</li>
+                <li>Remitir publicidad, newsletters, novedades e información de marketing promocional (de la cual puede desuscribirse en cualquier momento).</li>
+                <li>Brindarle atención al cliente y gestionar quejas o sugerencias.</li>
               </ul>
 
-              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">4. Derechos del Titular de los Datos</h3>
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">4. Plazo de Conservación de los Datos</h3>
               <p>
-                De acuerdo con la legislación vigente, usted tiene el derecho de acceder, rectificar, actualizar o solicitar la eliminación de sus datos personales. Para ejercer estos derechos, puede contactarnos a través de los canales informados en nuestra sección de Contacto.
+                ElementAll conservará sus Datos Personales por el tiempo necesario para el cumplimiento de las finalidades descritas en la presente Política y de las obligaciones legales/fiscales. Su información será destruida cuando haya dejado de ser necesaria, salvo obligación legal de conservarla por un término mayor.
               </p>
 
-              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">5. Seguridad</h3>
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">5. Derechos del Titular (Acceso, Rectificación y Supresión)</h3>
               <p>
-                La Empresa implementa medidas de seguridad técnicas y organizativas adecuadas para proteger su información personal contra accesos no autorizados, alteraciones, divulgación o destrucción. No obstante, ninguna transmisión de datos a través de Internet o sistema de almacenamiento electrónico es 100% segura.
+                Usted tiene la facultad de ejercer el derecho de acceso a sus Datos Personales en forma gratuita a intervalos no inferiores a seis meses. Asimismo, tiene derecho a solicitar la rectificación, actualización o supresión de sus datos, contactándose mediante nuestra sección de Contacto o enviando un e-mail a contacto@elementall.com.ar, previa acreditación de su identidad.
+              </p>
+
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">6. Uso de Cookies</h3>
+              <p>
+                El Sitio Web utiliza una tecnología de identificación basada en "cookies", necesaria para brindar un mejor servicio. Las cookies son ficheros de texto que quedan almacenados en su navegador. No sirven para identificar indirectamente a una persona determinada de forma inequívoca al navegar genéricamente, pero mejoran la funcionalidad. Usted puede configurar su navegador para no aceptar cookies, aunque esto podría afectar el correcto funcionamiento del sitio.
+              </p>
+
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">7. Cesión de Datos a Terceros</h3>
+              <p>
+                ElementAll no vende su información. Sin embargo, para cumplir con obligaciones asumidas (ej. compras), necesitamos compartir sus Datos Personales con terceros estrictamente necesarios para la prestación del servicio (proveedores de logística/envíos, procesadores de pago como MercadoPago, proveedores de hosting). Éstos deberán adoptar las medidas técnicas para garantizar la confidencialidad de los mismos.
+              </p>
+
+              <h3 className="text-[0.8rem] lg:text-[0.9rem] font-bold font-poppins text-[#2f3027] mt-8 mb-3">8. Seguridad</h3>
+              <p>
+                Implementamos medidas de seguridad técnicas y organizativas adecuadas para proteger su información personal contra accesos no autorizados o alteraciones. No obstante, ninguna transmisión a través de Internet es 100% segura.
               </p>
 
 

@@ -15,7 +15,8 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
 
     // State for expanded menus
     const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
-    const [brandsExpanded, setBrandsExpanded] = useState<boolean>(true);
+    const [brandsExpanded, setBrandsExpanded] = useState<boolean>(false);
+    const [isMobileExpanded, setIsMobileExpanded] = useState<boolean>(false);
 
     const toggleCategory = (id: number) => {
         setExpandedCategories(prev => ({
@@ -43,27 +44,44 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
     }, []);
 
     return (
-        <aside className="w-64 flex-shrink-0">
+        <aside className="w-full md:w-64 flex-shrink-0">
             {/* Contenedor principal estilo Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 md:sticky md:top-8">
 
-                {/* Botón "Ver Todo" integrado dentro de la card */}
-                <button
-                    onClick={onClearFilters}
-                    className="w-full mb-8 py-2 px-4 bg-[#4caf50] hover:bg-[#8bc34a] text-white text-xs subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                {/* Encabezado Móvil (Sólo visible en pantallas pequeñas) */}
+                <div 
+                    className="md:hidden flex items-center justify-between cursor-pointer mb-4"
+                    onClick={() => setIsMobileExpanded(!isMobileExpanded)}
                 >
-                    MOSTRAR TODO
-                </button>
-
-                {/* SECCIÓN DE CATEGORÍAS */}
-                <div className="mb-8">
-                    <h2 className="text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] mb-4">
-                        Categorías
+                    <h2 className="text-[14px] text-darker font-bold font-lato uppercase tracking-[0.1rem]">
+                        Filtrar Categorías
                     </h2>
+                    {isMobileExpanded ? (
+                        <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+                    ) : (
+                        <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                    )}
+                </div>
 
-                    <ul className="space-y-6">
+                {/* Contenido (oculto en móvil si no está expandido) */}
+                <div className={`${isMobileExpanded ? 'block' : 'hidden'} md:block`}>
+                    {/* Botón "Ver Todo" integrado dentro de la card */}
+                    <button
+                        onClick={onClearFilters}
+                        className="w-full mb-6 py-2 px-4 bg-[#4caf50] hover:bg-[#8bc34a] text-white text-xs subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                    >
+                        MOSTRAR TODO
+                    </button>
+
+                    {/* SECCIÓN DE CATEGORÍAS */}
+                    <div className="mb-8">
+                        <h2 className="hidden md:block text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] mb-4">
+                            Categorías
+                        </h2>
+
+                        <ul className="space-y-6">
                         {categories.map((cat) => {
-                            const isExpanded = expandedCategories[cat.id] ?? true; // Default expanded or collapsed, adjust if needed
+                            const isExpanded = expandedCategories[cat.id] ?? false; // Default expanded or collapsed, adjust if needed
                             return (
                                 <li key={cat.id}>
                                     {/* Nombre de Línea (Hogar, Jardín, etc) */}
@@ -132,6 +150,7 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
                         </ul>
                     )}
                 </div>
+                </div> {/* Cierra el div condicional para móvil */}
             </div>
         </aside>
     );

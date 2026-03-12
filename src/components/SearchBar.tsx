@@ -6,16 +6,24 @@ type Props = Pick<SearchBarProps, "value" | "onChange" | "placeholder"> & {
     containerClassName?: string;
     inputClassName?: string;
     iconClassName?: string;
+    onSubmit?: (value: string) => void;
 };
 
 export default function SearchBar({
     value,
     onChange,
-    placeholder = "Buscar productos",
+    placeholder = "Encontrá lo que tu campo necesita...",
     containerClassName = "",
     inputClassName = "",
     iconClassName = "",
+    onSubmit,
 }: Props) {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && onSubmit) {
+            onSubmit(value);
+        }
+    };
+
     return (
         <div className={`relative w-full max-w-3xl ${containerClassName}`}>
             <MagnifyingGlassIcon
@@ -26,6 +34,7 @@ export default function SearchBar({
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 className={`
                     w-full h-12 pl-10 pr-3 rounded-lg

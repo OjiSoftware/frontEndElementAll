@@ -187,6 +187,8 @@ export default function EditProductPage() {
                         e.preventDefault();
                         if (!formData.name.trim())
                             return toast.error("El nombre es obligatorio");
+                        if (!formData.unit.trim())
+                            return toast.error("La unidad por bulto es obligatoria");
                         if (formData.price <= 0)
                             return toast.error("El precio debe ser mayor a 0");
                         setShowConfirmModal(true);
@@ -235,6 +237,7 @@ export default function EditProductPage() {
                             </label>
                             <textarea
                                 name="description"
+                                maxLength={500}
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Características..."

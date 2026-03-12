@@ -34,13 +34,17 @@ const Footer: React.FC = () => {
               </a>
             </div>
 
-            <div className="flex flex-col items-start">
-              <h3 className="text-lg font-bold font-poppins mb-4">Contacto</h3>
-              <p className="text-sm text-gray-300 font-lato mb-2">
-                +54 9 35** 000000
+            <div className="flex flex-col items-start gap-2">
+              <h3 className="text-lg font-bold font-poppins mb-2 md:mb-4">Contacto</h3>
+
+              <p className="text-sm text-gray-300 font-lato">
+                <span className="font-bold text-white">Domicilio:</span> Av. Falsa 123, X5000, Córdoba Capital, Córdoba.
               </p>
               <p className="text-sm text-gray-300 font-lato">
-                email@email.com
+                <span className="font-bold text-white">Tel:</span> +54 9 351 0000000
+              </p>
+              <p className="text-sm text-gray-300 font-lato">
+                <span className="font-bold text-white">Email:</span> contacto@elementall.com.ar
               </p>
             </div>
 
@@ -67,11 +71,20 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="borde3r-t border-[#545454] mt-10 pt-6">
-          <div className="w-full max-[1187px]:px-6 max-w-[1187px] mx-auto">
-            <p className="text-xs text-gray-400 text-left">
+        <div className="border-t border-[#545454] mt-10 pt-6">
+          <div className="w-full max-[1187px]:px-6 max-w-[1187px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-gray-400 text-center md:text-left">
               © 2026 ElementAll | Todos los derechos reservados. Desarrollado por OJI Software.
             </p>
+
+            {/* AFIP Data Fiscal AFIP obligatoria */}
+            <a href="http://qr.afip.gob.ar/?qr=0000000000" target="_F960AFIPInfo" className="shrink-0 group">
+              <img
+                src="http://www.afip.gob.ar/images/f960/DATAWEB.jpg"
+                alt="Data Fiscal AFIP"
+                className="w-10 opacity-70 group-hover:opacity-100 transition-opacity"
+              />
+            </a>
           </div>
         </div>
       </div>

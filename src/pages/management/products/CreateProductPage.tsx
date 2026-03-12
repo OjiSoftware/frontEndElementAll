@@ -183,6 +183,7 @@ export default function CreateProductPage() {
                             </label>
                             <textarea
                                 name="description"
+                                maxLength={500}
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Características..."

@@ -1,9 +1,9 @@
 import homeBg from '@/assets/background_home.jpg';
 import logoElementAll3 from '@/assets/logo_elementAll3.png';
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import CheckoutButton from "../../components/CheckoutButton";
 
 import { TagIcon, CreditCardIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -11,6 +11,7 @@ import { MagnifyingGlassIcon, DocumentTextIcon } from '@heroicons/react/24/outli
 export default function HomePage() {
     // ---------------- STATE ----------------
     const [search, setSearch] = useState(""); // estado de búsqueda
+    const navigate = useNavigate();
 
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5]">
@@ -70,33 +71,35 @@ export default function HomePage() {
                         {[
                             {
                                 id: 1,
-                                name: "HERBICIDAS",
-                                image: "https://tatauy.vtexassets.com/arquivos/ids/786893/6914ea784fa5808d63a0baac.jpg?v=638985752481330000",
+                                name: "ABONOS Y FERTILIZANTES",
+                                image: "src/assets/categorias_destacadas/abono.webp",
+
                             },
                             {
                                 id: 2,
-                                name: "INSECTICIDAS",
-                                image: "https://tatauy.vtexassets.com/arquivos/ids/786893/6914ea784fa5808d63a0baac.jpg?v=638985752481330000",
+                                name: "SEMILLAS HORTALIZAS",
+                                image: "src/assets/categorias_destacadas/semillas.webp",
                             },
                             {
                                 id: 3,
-                                name: "FERTILIZANTES",
-                                image: "https://tatauy.vtexassets.com/arquivos/ids/786893/6914ea784fa5808d63a0baac.jpg?v=638985752481330000",
+                                name: "INSECTICIDAS",
+                                image: "src/assets/categorias_destacadas/insecticidas.webp",
                             },
                             {
                                 id: 4,
-                                name: "COADYUVANTES",
-                                image: "https://tatauy.vtexassets.com/arquivos/ids/786893/6914ea784fa5808d63a0baac.jpg?v=638985752481330000",
+                                name: "HORMIGUICIDAS",
+                                image: "src/assets/categorias_destacadas/hormiguicida.webp",
                             },
                             {
                                 id: 5,
-                                name: "SEMILLAS",
-                                image: "https://tatauy.vtexassets.com/arquivos/ids/786893/6914ea784fa5808d63a0baac.jpg?v=638985752481330000",
+                                name: "MANGUERAS DE RIEGO",
+                                image: "src/assets/categorias_destacadas/manguera.webp",
                             },
                         ].map((cat) => (
                             <div
                                 key={cat.id}
-                                className="bg-white rounded-xl shadow-sm p-2.5 lg:p-3 flex flex-col items-center justify-between hover:shadow-md transition-shadow aspect-[3/4] w-full min-w-[calc(50%-6px)] md:min-w-[115px] max-w-[215px] flex-auto snap-start shrink-0"
+                                onClick={() => navigate(`/catalogo?search=${encodeURIComponent(cat.name)}`)}
+                                className="bg-white rounded-xl shadow-sm p-2.5 lg:p-3 flex flex-col items-center justify-between hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer aspect-[3/4] w-full min-w-[calc(50%-6px)] md:min-w-[115px] max-w-[215px] flex-auto snap-start shrink-0"
                             >
                                 <div className="w-full h-full flex items-center justify-center mb-1.5 overflow-hidden">
                                     <img

@@ -274,7 +274,7 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                                 className={`${tdBase} ${colWidths.stock} ${hiddenOnMobile} font-medium text-center`}
                             >
                                 <span
-                                    className={`${(product.stock ?? 0) <= 5 ? "text-red-500" : "text-gray-900 dark:text-gray-300"}`}
+                                    className={`text-gray-900 dark:text-gray-300`}
                                 >
                                     {product.stock ?? 0}
                                 </span>

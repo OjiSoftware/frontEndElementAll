@@ -1,5 +1,5 @@
-// CatalogPage.tsx
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { catalogApi } from "@/services/CatalogService";
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
@@ -9,11 +9,13 @@ import { Product } from "@/types/product.types";
 import Navbar from "@/components/Navbar";
 
 export default function CatalogPage() {
+    const [searchParams, setSearchParams] = useSearchParams();
+
     // ---------------- STATE ----------------
     const [catProducts, setCatProducts] = useState<Product[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [search, setSearch] = useState(""); // estado de búsqueda
+    const [search, setSearch] = useState(searchParams.get("search") || ""); // estado de búsqueda
     const itemsPerPage = 12;
 
     const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(null);
@@ -36,14 +38,24 @@ export default function CatalogPage() {
         loadCatalog();
     }, []);
 
+    // Sincronizar búsqueda desde URL si cambia (ej. al presionar enter en Navbar)
+    useEffect(() => {
+        setSearch(searchParams.get("search") || "");
+    }, [searchParams]);
+
     // ---------------- BUSQUEDA Y FILTROS ----------------
     useEffect(() => {
         let filtered = catProducts;
 
         if (search.trim() !== "") {
-            filtered = filtered.filter((p) =>
-                p.name.toLowerCase().includes(search.toLowerCase()),
-            );
+            const searchLower = search.toLowerCase();
+            filtered = filtered.filter((p) => {
+                const matchName = p.name.toLowerCase().includes(searchLower);
+                const matchSubCategory = p.subCategory?.name.toLowerCase().includes(searchLower) ?? false;
+                const matchCategory = p.subCategory?.category?.name.toLowerCase().includes(searchLower) ?? false;
+                
+                return matchName || matchSubCategory || matchCategory;
+            });
         }
 
         if (selectedSubCategory !== null) {
@@ -76,6 +88,10 @@ export default function CatalogPage() {
         setSelectedBrand(null);
         setSelectedBrandName(null);
         setSearch("");
+        if (searchParams.has("search")) {
+            searchParams.delete("search");
+            setSearchParams(searchParams);
+        }
     };
 
     // ---------------- PAGINACIÓN ----------------

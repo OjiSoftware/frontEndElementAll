@@ -104,7 +104,7 @@ export default function CheckoutStatus() {
                     <div className="flex flex-col sm:flex-row gap-3">
                         {(status === "rejected" || status === "null") && (
                             <button
-                                onClick={() => navigate("/carrito")}
+                                onClick={() => navigate("/cart")}
                                 className="flex-1 py-3 px-4 bg-[#2f3027] text-white font-bold rounded-xl hover:bg-black transition cursor-pointer"
                             >
                                 Volver a intentar
@@ -112,11 +112,10 @@ export default function CheckoutStatus() {
                         )}
                         <button
                             onClick={() => window.location.href = "/"} // Forzamos recarga total si querés que "limpie" todo
-                            className={`flex-1 py-3 px-4 font-bold rounded-xl transition shadow-sm cursor-pointer ${
-                                status === "rejected" || status === "null"
+                            className={`flex-1 py-3 px-4 font-bold rounded-xl transition shadow-sm cursor-pointer ${status === "rejected" || status === "null"
                                     ? "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                                     : "bg-[#16a34a] text-white hover:bg-[#15803d]"
-                            }`}
+                                }`}
                         >
                             Volver a la tienda
                         </button>

@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import logo from "@/assets/logo_elementAll2.png";
 import SearchBar from "@/components/SearchBar";
 import { catalogApi } from "@/services/CatalogService";
 import { Product } from "@/types/product.types";
 import { useCart } from "@/context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { MagnifyingGlassIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface NavbarProps {
-    search: string;
-    setSearch: (value: string) => void;
+    search?: string;
+    setSearch?: (value: string) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
+const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: externalSetSearch }) => {
+    const [searchParams] = useSearchParams();
+    const [localSearch, setLocalSearch] = useState(searchParams.get("search") || "");
+    const search = externalSearch !== undefined ? externalSearch : localSearch;
+    const setSearch = externalSetSearch || setLocalSearch;
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [catProducts, setCatProducts] = useState<Product[]>([]);
     const [suggestions, setSuggestions] = useState<Product[]>([]);
@@ -52,6 +57,15 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
 
         setSuggestions(filtered.slice(0, 5));
         setIsDropdownOpen(filtered.length > 0);
+    };
+
+    const handleSearchSubmit = (value: string) => {
+        if (value.trim()) {
+            setIsDropdownOpen(false);
+            navigate(`/catalogo?search=${encodeURIComponent(value.trim())}`);
+        } else {
+            navigate(`/catalogo`);
+        }
     };
 
     // Cerrar dropdown al click fuera
@@ -110,10 +124,11 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                     </div>
 
                     {/* Bloque Central */}
-                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px] mt-1">
+                    <div className="hidden md:flex flex-1 flex-col items-center max-w-[650px] mt-1 relative" ref={wrapperRef}>
                         <SearchBar
                             value={search}
                             onChange={handleSearchChange}
+                            onSubmit={handleSearchSubmit}
                             placeholder="¿Qué estás buscando?"
                             containerClassName="w-full mb-3"
                             inputClassName="
@@ -129,22 +144,38 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         />
 
                         {isDropdownOpen && (
-                            <div className="absolute top-[55px] center w-[650px] bg-white shadow-lg font-lato text-sm rounded-md mt-1 max-h-60 overflow-y-auto z-20">
+                            <div className="absolute top-[55px] center w-[650px] bg-white shadow-xl rounded-xl mt-1 max-h-80 overflow-y-auto z-20 border border-gray-100 divide-y divide-gray-50">
                                 {suggestions.map((p) => (
                                     <div
                                         key={p.id}
-                                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors group"
                                         onClick={() => {
                                             setSearch(p.name);
                                             setIsDropdownOpen(false);
+                                            navigate(`/catalogo?search=${encodeURIComponent(p.name)}`);
                                         }}
                                     >
-                                        {p.name}
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-gray-100 p-2 rounded-full text-gray-500 group-hover:bg-green-50 group-hover:text-[#4caf50] transition-colors">
+                                                <MagnifyingGlassIcon className="w-4 h-4" />
+                                            </div>
+                                            <span className="font-medium text-gray-700 font-poppins text-[14px]">{p.name}</span>
+                                        </div>
+                                        <span className="text-xs font-bold text-[#4caf50] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Ver</span>
                                     </div>
                                 ))}
                                 {suggestions.length === 0 && (
-                                    <div className="px-4 py-2 text-gray-500">
-                                        No hay resultados
+                                    <div className="px-6 py-8 text-center text-gray-500 flex flex-col items-center">
+                                        <svg className="w-12 h-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <p className="font-semibold text-gray-700 mb-1 font-poppins">No encontramos lo que buscás</p>
+                                        <p className="text-sm text-gray-500 font-lato">
+                                            Intentá con otras palabras o{' '}
+                                            <NavLink to="/contacto" className="text-[#4caf50] hover:text-[#f9c72a] font-semibold underline transition-colors" onClick={() => setIsDropdownOpen(false)}>
+                                                contactanos
+                                            </NavLink>
+                                        </p>
                                     </div>
                                 )}
                             </div>
@@ -222,19 +253,27 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                         {/* Toast al lado del carrito */}
                         {showEmptyToast && cartRef.current && (
                             <div
+                                className="flex items-center gap-1.5"
                                 style={{
                                     position: "absolute",
                                     top: -2,
-                                    left: cartRef.current.offsetWidth + 20, // ahora 16px de separación
-                                    backgroundColor: "#661414",
+                                    left: cartRef.current.offsetWidth + 20,
+                                    background: "rgba(139, 0, 0, 0.7)", // Bordó semitransparente
+                                    backdropFilter: "blur(12px)",
+                                    WebkitBackdropFilter: "blur(12px)",
+                                    border: "1px solid rgba(255, 100, 100, 0.3)", // Borde rojizo sutil
                                     color: "white",
-                                    padding: "4px 8px",
-                                    borderRadius: "6px",
+                                    padding: "6px 14px",
+                                    borderRadius: "8px",
                                     zIndex: 50,
                                     whiteSpace: "nowrap",
+                                    boxShadow: "0 4px 15px rgba(139, 0, 0, 0.3)", // Sombra bordó
+                                    fontWeight: "500",
+                                    fontSize: "13px",
                                 }}
                             >
-                                El carrito está vacío
+                                <ExclamationCircleIcon className="w-5 h-5 text-red-200" strokeWidth={2} />
+                                <span>El carrito está vacío</span>
                             </div>
                         )}
 
@@ -249,7 +288,8 @@ const Navbar: React.FC<NavbarProps> = ({ search, setSearch }) => {
                     <SearchBar
                         value={search}
                         onChange={setSearch}
-                        placeholder="Buscar..."
+                        onSubmit={handleSearchSubmit}
+                        placeholder="Buscar productos..."
                         inputClassName="
                             bg-[#82C355]
                             text-white
