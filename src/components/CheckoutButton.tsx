@@ -5,9 +5,22 @@ import { toast } from "react-hot-toast";
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: "es-AR" });
 
-export default function CheckoutButton({ saleId }: { saleId: number }) {
+export default function CheckoutButton({ 
+    saleId: initialSaleId, 
+    clientData, 
+    items, 
+    total,
+    onOrderCreated 
+}: { 
+    saleId: number | null; 
+    clientData?: any;
+    items?: any[];
+    total?: number;
+    onOrderCreated?: (id: number) => void;
+}) {
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [currentSaleId, setCurrentSaleId] = useState<number | null>(initialSaleId);
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
     const handleGeneratePayment = async (e: React.MouseEvent) => {
@@ -16,31 +29,33 @@ export default function CheckoutButton({ saleId }: { saleId: number }) {
 
         setLoading(true);
         try {
+            // Enviamos el saleId existente O los datos para crear uno nuevo
+            const payload = currentSaleId 
+                ? { saleId: currentSaleId } 
+                : { clientData, items, total };
+
             const res = await fetch(`${API_URL}/payments/create-preference`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ saleId }),
+                body: JSON.stringify(payload),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-                // 🔥 NOTIFICACIÓN CON NEGRITA:
-                // Usamos una función que devuelve JSX para el toast
                 toast.error(
                     (t) => (
                         <span>
                             {data.error === "Stock insuficiente" ? (
                                 <>
-                                    Lo sentimos, el producto{" "}
+                                    Lo sentimos,{" "}
                                     <b className="font-black underline">
-                                        {data.details.split('"')[1] ||
-                                            "seleccionado"}
+                                        {data.details?.replace("Stock insuficiente para ", "") || "un producto"}
                                     </b>{" "}
                                     no tiene stock suficiente.
                                 </>
                             ) : (
-                                data.details || data.error || "Error de stock"
+                                data.details || data.error || "Error al procesar"
                             )}
                         </span>
                     ),
@@ -61,7 +76,14 @@ export default function CheckoutButton({ saleId }: { saleId: number }) {
 
             if (data.preferenceId) {
                 setPreferenceId(data.preferenceId);
-                toast.success("¡Stock verificado! Procediendo al pago...", {
+                
+                // Si acabamos de crear la venta, notificamos al padre
+                if (data.saleId && !currentSaleId) {
+                    setCurrentSaleId(data.saleId);
+                    onOrderCreated?.(data.saleId);
+                }
+
+                toast.success("¡Stock reservado! Procediendo al pago...", {
                     style: { backgroundColor: "#4caf50", color: "white" },
                     duration: 2000,
                 });

@@ -11,8 +11,9 @@ export default function CheckoutPage() {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
 
-    const [isCreatingSale, setIsCreatingSale] = useState(false);
+    const [isDataConfirmed, setIsDataConfirmed] = useState(false);
     const [saleId, setSaleId] = useState<number | null>(null);
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     // 🔥 ACTUALIZADO: Agregamos todos los campos del gestor
     const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ export default function CheckoutPage() {
         reference: "",
     });
 
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
 
     useEffect(() => {
         if (cart.length === 0 && !saleId) {
@@ -40,60 +41,39 @@ export default function CheckoutPage() {
         }
     }, [cart, navigate, saleId]);
 
+    useEffect(() => {
+        if (timeLeft === null) return;
+        if (timeLeft <= 0) {
+            alert("El tiempo para completar la compra ha expirado. Por favor, verificá el stock e intentá de nuevo.");
+            window.location.reload(); // Reiniciar todo
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => (prev !== null ? prev - 1 : null));
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeLeft]);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleConfirmData = async (e: React.FormEvent) => {
+    const handleConfirmData = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsCreatingSale(true);
+        setIsDataConfirmed(true);
+    };
 
-        try {
-            const orderItems = cart.map((item) => ({
-                productId: item.product.id,
-                quantity: item.quantity,
-                price: item.product.price,
-            }));
-
-            // 🔥 ACTUALIZADO: Estructuramos el payload igual que en CreateSalePage
-            const clientPayload = {
-                ...formData,
-                addresses: {
-                    street: formData.street,
-                    streetNum: parseInt(formData.number, 10) || 0,
-                    floor: formData.floor
-                        ? parseInt(formData.floor, 10)
-                        : undefined,
-                    apartment: formData.apartment || undefined,
-                    locality: formData.city,
-                    province: formData.province,
-                    reference: formData.reference || undefined,
-                },
-            };
-
-            const response = await fetch(`${API_URL}/sales/guest-checkout`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    clientData: clientPayload,
-                    items: orderItems,
-                    total: totalPrice,
-                }),
-            });
-
-            if (!response.ok) throw new Error("No se pudo registrar la orden.");
-
-            const data = await response.json();
-
-            if (data.saleId) {
-                setSaleId(data.saleId);
-            }
-        } catch (error) {
-            console.error("Error al crear la venta:", error);
-            alert("Hubo un problema al guardar tus datos. Intentá de nuevo.");
-        } finally {
-            setIsCreatingSale(false);
-        }
+    const handleOrderCreated = (id: number) => {
+        setSaleId(id);
+        setTimeLeft(600); // Empezar contador de 10 minutos
     };
 
     if (cart.length === 0 && !saleId) return null;
@@ -120,7 +100,7 @@ export default function CheckoutPage() {
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
                     {/* IZQUIERDA: Formulario */}
                     <div className="flex-[0_0_100%] lg:flex-[0_0_68%] bg-white rounded-2xl max-sm:rounded-none shadow-sm border border-gray-200 max-sm:border-x-0 p-6 w-full">
-                        {!saleId ? (
+                        {!isDataConfirmed ? (
                             <form
                                 onSubmit={handleConfirmData}
                                 className="flex flex-col gap-6 font-lato"
@@ -314,35 +294,69 @@ export default function CheckoutPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={isCreatingSale}
-                                    className="w-full mt-4 py-3.5 bg-[#2f3027] text-white text-[0.95rem] font-bold rounded-xl hover:bg-black transition shadow-sm cursor-pointer disabled:opacity-50 flex justify-center items-center"
+                                    className="w-full mt-4 py-3.5 bg-[#2f3027] text-white text-[0.95rem] font-bold rounded-xl hover:bg-black transition shadow-sm cursor-pointer flex justify-center items-center"
                                 >
-                                    {isCreatingSale ? (
-                                        <span className="flex items-center gap-2">
-                                            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                                            Registrando pedido...
-                                        </span>
-                                    ) : (
-                                        "Confirmar Datos"
-                                    )}
+                                    Confirmar Datos
                                 </button>
                             </form>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-10 px-4 animate-in fade-in duration-500">
-                                <CheckCircleIcon className="w-16 h-16 text-[#16a34a] mb-4" />
+                                <CheckCircleIcon className={`w-16 h-16 ${saleId ? 'text-[#16a34a]' : 'text-blue-500'} mb-4`} />
                                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                                    ¡Datos guardados!
+                                    {saleId ? '¡Stock Reservado!' : 'Datos confirmados'}
                                 </h2>
                                 <p className="text-gray-500 text-center mb-8 max-w-sm">
-                                    Tu pedido{" "}
-                                    <span className="font-bold text-gray-700">
-                                        #{saleId}
-                                    </span>{" "}
-                                    ya está registrado. Completá el pago para
-                                    finalizar la compra.
+                                    {saleId ? (
+                                        <>
+                                            Tu pedido <span className="font-bold text-gray-700">#{saleId}</span> ya está registrado y el stock reservado. Completá el pago antes de que expire el tiempo.
+                                        </>
+                                    ) : (
+                                        "Hacé clic en el botón de abajo para verificar stock y proceder al pago seguro."
+                                    )}
                                 </p>
+
+                                {timeLeft !== null && (
+                                    <div className="mb-6 flex flex-col items-center">
+                                        <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">
+                                            Reserva expira en
+                                        </p>
+                                        <div className="text-3xl font-mono font-black text-rose-500 bg-rose-50 px-4 py-2 rounded-xl border border-rose-100 shadow-inner">
+                                            {formatTime(timeLeft)}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="w-full max-w-md">
-                                    <CheckoutButton saleId={saleId} />
+                                    <CheckoutButton 
+                                        saleId={saleId} 
+                                        clientData={{
+                                            ...formData,
+                                            addresses: {
+                                                street: formData.street,
+                                                streetNum: parseInt(formData.number, 10) || 0,
+                                                floor: formData.floor ? parseInt(formData.floor, 10) : undefined,
+                                                apartment: formData.apartment || undefined,
+                                                locality: formData.city,
+                                                province: formData.province,
+                                                reference: formData.reference || undefined,
+                                            },
+                                        }}
+                                        items={cart.map((item) => ({
+                                            productId: item.product.id,
+                                            quantity: item.quantity,
+                                            price: item.product.price,
+                                        }))}
+                                        total={totalPrice}
+                                        onOrderCreated={handleOrderCreated}
+                                    />
+                                    {!saleId && (
+                                        <button 
+                                            onClick={() => setIsDataConfirmed(false)}
+                                            className="w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600 transition underline underline-offset-4"
+                                        >
+                                            Editar mis datos
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}
