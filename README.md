@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# 💻 ElementAll - Frontend App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+La interfaz de usuario de **ElementAll**, diseñada para ofrecer una experiencia administrativa y de compra rápida, moderna y responsiva.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologías
+- **React 19**: Biblioteca UI de última generación.
+- **Vite**: Herramienta de construcción ultra veloz.
+- **Tailwind CSS**: Framework CSS para diseño ágil.
+- **Flowbite React**: Componentes UI pre-construidos y estilizados.
+- **React Router Dom**: Manejo de navegación SPA.
+- **Lucide React**: Set de iconos modernos y ligeros.
 
-## React Compiler
+---
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## Características UI
+- **Dashboard Administrativo**: Gestión de ventas y productos en tiempo real.
+- **Checkout Dinámico**: Integración con el sistema de reservas y MercadoPago.
+- **Diseño Responsivo**: Adaptado para tablets y escritorio.
+- **Feedback en tiempo real**: Notificaciones visuales con `react-hot-toast`.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Instalación y Uso
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Preparación
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Configuración
+Crea un archivo `.env` en la raíz de esta carpeta con la URL de la API:
+```env
+VITE_API_URL=http://localhost:3000
 ```
+
+### 3. Ejecución
+```bash
+npm run dev
+```
+La aplicación estará disponible en la URL que indique la terminal (por defecto `http://localhost:5173`).
+
+---
+
+## Estructura de Carpetas (`/src`)
+- **`components/`**: Componentes reutilizables (Botones, Modales, Tablas).
+- **`pages/`**: Vistas principales de la aplicación.
+- **`services/`**: Cliente de API y funciones de fetch.
+- **`hooks/`**: Lógica de React personalizada.
+- **`types/`**: Interfaces de TypeScript compartidas con el backend.
+- **`context/`**: Manejo de estado global (Auth, Carrito).
+
+---
+
+## Guía de Estilo
+El proyecto utiliza una paleta de colores moderna basada en HSL y el sistema de diseño de **Flowbite**. Para añadir nuevos estilos, se recomienda usar clases de Tailwind directamente en los componentes para mantener la consistencia.
+
+---
+
+Desarrollado para el ecosistema **ElementAll**.
