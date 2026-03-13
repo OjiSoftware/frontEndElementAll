@@ -7,7 +7,11 @@ import {
     MenuItem,
     MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+    Bars3Icon,
+    XMarkIcon,
+    ArrowRightOnRectangleIcon, // Agregado para el móvil
+} from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo_elementAll.png";
 import { useAuth } from "../hooks/useAuth";
@@ -19,11 +23,11 @@ const navigation = [
     { name: "Ventas", href: "/management/sales" },
 ];
 
-const userNavigation = [
+/* const userNavigation = [
     { name: "Mi perfil", href: "#" },
     { name: "Configuración", href: "#" },
     { name: "Cerrar sesión", href: "logout" },
-];
+]; */
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -44,7 +48,6 @@ export default function DashboardLayout({
     const navigate = useNavigate();
     const { user, logout } = useAuth();
 
-    // Solo mantenemos el booleano para bloquear el botón durante el proceso
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleLogout = async (e: React.MouseEvent) => {
@@ -113,13 +116,6 @@ export default function DashboardLayout({
 
                         <div className="hidden md:block">
                             <div className="ml-4 flex items-center md:ml-6">
-                                <button
-                                    type="button"
-                                    className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                                >
-                                    <BellIcon className="size-6 cursor-pointer" />
-                                </button>
-
                                 <Menu as="div" className="relative ml-3">
                                     <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                         <img
@@ -129,42 +125,50 @@ export default function DashboardLayout({
                                         />
                                     </MenuButton>
 
-                                    <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black/5 focus:outline-none border border-white/10">
-                                        {userNavigation.map((item) => (
-                                            <MenuItem key={item.name}>
-                                                {item.name ===
-                                                "Cerrar sesión" ? (
-                                                    <button
-                                                        onClick={handleLogout}
-                                                        disabled={isLoggingOut}
-                                                        className={classNames(
-                                                            isLoggingOut
-                                                                ? "opacity-50 cursor-not-allowed"
-                                                                : "cursor-pointer",
-                                                            "block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5",
-                                                        )}
-                                                    >
-                                                        {isLoggingOut
-                                                            ? "Saliendo..."
-                                                            : item.name}
-                                                    </button>
-                                                ) : (
-                                                    <a
-                                                        href={item.href}
-                                                        className="block px-4 py-2 text-sm text-white/80 hover:bg-white/5"
-                                                    >
-                                                        {item.name}
-                                                    </a>
-                                                )}
+                                    <MenuItems
+                                        transition
+                                        className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-white/10 rounded-md bg-gray-800 shadow-xl ring-1 ring-black/5 focus:outline-none border border-white/10 transition data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                                    >
+                                        {/* Parte 1: Info del Usuario */}
+                                        <div className="px-4 py-3">
+                                            <p className="text-sm text-white font-medium truncate">
+                                                {user?.name || "Admin"}
+                                            </p>
+                                            <p className="text-xs text-gray-400 truncate mt-0.5">
+                                                {user?.email}
+                                            </p>
+                                        </div>
+
+                                        {/* Parte 2: Botón de Logout */}
+                                        <div className="py-1">
+                                            <MenuItem>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    disabled={isLoggingOut}
+                                                    className={classNames(
+                                                        isLoggingOut
+                                                            ? "opacity-50 cursor-not-allowed"
+                                                            : "cursor-pointer",
+                                                        "group flex w-full items-center px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors",
+                                                    )}
+                                                >
+                                                    <ArrowRightOnRectangleIcon
+                                                        className="mr-3 size-5 text-red-400/80 group-hover:text-red-400"
+                                                        aria-hidden="true"
+                                                    />
+                                                    {isLoggingOut
+                                                        ? "Saliendo..."
+                                                        : "Cerrar sesión"}
+                                                </button>
                                             </MenuItem>
-                                        ))}
+                                        </div>
                                     </MenuItems>
                                 </Menu>
                             </div>
                         </div>
 
                         <div className="-mr-2 flex md:hidden">
-                            <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white">
+                            <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white cursor-pointer">
                                 <Bars3Icon className="block size-6 group-data-open:hidden" />
                                 <XMarkIcon className="hidden size-6 group-data-open:block" />
                             </DisclosureButton>
@@ -190,53 +194,45 @@ export default function DashboardLayout({
                             </DisclosureButton>
                         ))}
                     </div>
-                    <div className="border-t border-white/10 pt-4 pb-3">
-                        <div className="flex items-center px-5">
-                            <div className="shrink-0">
-                                <img
-                                    alt=""
-                                    src={userImage}
-                                    className="size-10 rounded-full"
+
+                    {/* Panel inferior de usuario en Móvil con el icono a la derecha */}
+                    <div className="border-t border-white/10 pt-4 pb-4">
+                        <div className="flex items-center justify-between px-5">
+                            <div className="flex items-center min-w-0 flex-1">
+                                <div className="shrink-0">
+                                    <img
+                                        alt=""
+                                        src={userImage}
+                                        className="size-10 rounded-full"
+                                    />
+                                </div>
+                                <div className="ml-3 min-w-0 flex-1">
+                                    <div className="text-base font-medium text-white truncate">
+                                        {user?.name || "Admin"}
+                                    </div>
+                                    <div className="text-sm font-medium text-gray-400 truncate">
+                                        {user?.email}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                disabled={isLoggingOut}
+                                title="Cerrar sesión"
+                                className={classNames(
+                                    isLoggingOut
+                                        ? "opacity-50 cursor-not-allowed"
+                                        : "hover:bg-white/10 hover:text-white cursor-pointer",
+                                    "ml-4 shrink-0 rounded-full p-2 text-red-400 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800",
+                                )}
+                            >
+                                <ArrowRightOnRectangleIcon
+                                    className="size-6"
+                                    aria-hidden="true"
                                 />
-                            </div>
-                            <div className="ml-3">
-                                <div className="text-base font-medium text-white">
-                                    {user?.name || "Admin"}
-                                </div>
-                                <div className="text-sm font-medium text-gray-400">
-                                    {user?.email}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-3 space-y-1 px-2">
-                            {userNavigation.map((item) => {
-                                const isLogout = item.name === "Cerrar sesión";
-                                return (
-                                    <DisclosureButton
-                                        key={item.name}
-                                        as={isLogout ? "button" : "a"}
-                                        {...(isLogout
-                                            ? {}
-                                            : { href: item.href })}
-                                        onClick={
-                                            isLogout
-                                                ? (handleLogout as any)
-                                                : undefined
-                                        }
-                                        disabled={isLogout && isLoggingOut}
-                                        className={classNames(
-                                            isLogout
-                                                ? "text-red-400"
-                                                : "text-gray-400",
-                                            "block w-full text-left rounded-md px-3 py-2 text-base font-medium hover:bg-white/5 hover:text-white",
-                                        )}
-                                    >
-                                        {isLogout && isLoggingOut
-                                            ? "Saliendo..."
-                                            : item.name}
-                                    </DisclosureButton>
-                                );
-                            })}
+                            </button>
                         </div>
                     </div>
                 </DisclosurePanel>
