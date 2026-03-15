@@ -31,7 +31,7 @@ export default function CreateSalePage() {
         if (!itemToRemove) return;
 
         const newTotal =
-            formData.total - itemToRemove.price * itemToRemove.quantity;
+            formData.total - Number(itemToRemove.price) * itemToRemove.quantity;
         setFormData({
             ...formData,
             details: formData.details.filter((d) => d.productId !== productId),
@@ -39,40 +39,36 @@ export default function CreateSalePage() {
         });
     };
 
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const dniRegex = /^\d{7,8}$/;
+        if (!dniRegex.test(formData.dni)) {
+            alert("El DNI debe tener entre 7 y 8 números sin puntos.");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert("Por favor, ingresa un correo electrónico válido.");
+            return;
+        }
+
+        if (formData.details.length === 0) {
+            alert("Por favor, agrega al menos un producto a la venta.");
+            return;
+        }
+
+        if (formData.status === "") {
+            alert("Por favor, selecciona un estado para la venta.");
+            return;
+        }
+
+        setShowConfirmModal(true);
+    };
+
     const handleConfirmSubmit = async () => {
         try {
-            if (
-                formData.name === "" ||
-                formData.surname === "" ||
-                formData.dni === "" ||
-                formData.phoneNumber === "" ||
-                formData.email === ""
-            ) {
-                alert("Por favor, completa todos los datos del cliente.");
-                return;
-            }
-
-            const dniRegex = /^\d{7,8}$/;
-            if (!dniRegex.test(formData.dni)) {
-                alert("El DNI debe tener entre 7 y 8 números sin puntos.");
-                return;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(formData.email)) {
-                alert("Por favor, ingresa un correo electrónico válido.");
-                return;
-            }
-
-            if (formData.details.length === 0) {
-                alert("Por favor, agrega al menos un producto a la venta.");
-                return;
-            }
-            if (formData.status === "") {
-                alert("Por favor, selecciona un estado para la venta.");
-                return;
-            }
-
             const clientPayload = {
                 name: formData.name,
                 surname: formData.surname,
@@ -88,6 +84,8 @@ export default function CreateSalePage() {
                     apartment: formData.apartment || undefined,
                     locality: formData.city,
                     province: formData.province,
+                    postalCode: formData.postalCode,
+                    country: formData.country,
                     reference: formData.reference || undefined,
                 },
             };
@@ -145,12 +143,14 @@ export default function CreateSalePage() {
                             <option value="PENDING">Pendiente</option>
                             <option value="IN_PROGRESS">En progreso</option>
                             <option value="COMPLETED">Completada</option>
-                            <option value="CANCELLED">Cancelada</option>
                         </select>
                     </div>
                 </div>
 
-                <div className="bg-slate-800/80 border border-white/20 p-4 md:p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6">
+                <form
+                    onSubmit={handleFormSubmit}
+                    className="bg-slate-800/80 border border-white/20 p-4 md:p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6"
+                >
                     <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-800/50">
                         <button
                             type="button"
@@ -195,6 +195,7 @@ export default function CreateSalePage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="given-name"
                                             placeholder="Ej: Juan"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -209,6 +210,7 @@ export default function CreateSalePage() {
                                             value={formData.surname}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="family-name"
                                             placeholder="Ej: Pérez"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -223,6 +225,7 @@ export default function CreateSalePage() {
                                             value={formData.dni}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="off"
                                             placeholder="Sin puntos"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -237,6 +240,7 @@ export default function CreateSalePage() {
                                             value={formData.phoneNumber}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="tel"
                                             placeholder="+54 9 11..."
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -251,6 +255,7 @@ export default function CreateSalePage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="email"
                                             placeholder="correo@ejemplo.com"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -271,6 +276,7 @@ export default function CreateSalePage() {
                                             value={formData.street}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="address-line1"
                                             placeholder="Ej: Av. Rivadavia"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -285,6 +291,7 @@ export default function CreateSalePage() {
                                             value={formData.number}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="address-line2"
                                             placeholder="Altura"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -299,7 +306,8 @@ export default function CreateSalePage() {
                                                 name="floor"
                                                 value={formData.floor}
                                                 onChange={handleChange}
-                                                placeholder="Opcional"
+                                                autoComplete="address-line3"
+                                                placeholder="Opc."
                                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
@@ -312,7 +320,8 @@ export default function CreateSalePage() {
                                                 name="apartment"
                                                 value={formData.apartment}
                                                 onChange={handleChange}
-                                                placeholder="Opcional"
+                                                autoComplete="address-line4"
+                                                placeholder="Opc."
                                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
@@ -327,6 +336,7 @@ export default function CreateSalePage() {
                                             value={formData.city}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="address-level2"
                                             placeholder="Ciudad"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -341,6 +351,7 @@ export default function CreateSalePage() {
                                             value={formData.province}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="address-level1"
                                             placeholder="Provincia"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -355,6 +366,7 @@ export default function CreateSalePage() {
                                             value={formData.postalCode}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="postal-code"
                                             placeholder="Ej: 1000"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -369,6 +381,7 @@ export default function CreateSalePage() {
                                             value={formData.country}
                                             onChange={handleChange}
                                             required
+                                            autoComplete="country-name"
                                             placeholder="País"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -382,6 +395,7 @@ export default function CreateSalePage() {
                                             name="reference"
                                             value={formData.reference}
                                             onChange={handleChange}
+                                            autoComplete="off"
                                             placeholder="Ej: Esquina con pared azul..."
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
@@ -413,6 +427,7 @@ export default function CreateSalePage() {
                                         {item.name}
                                     </div>
                                     <button
+                                        type="button"
                                         className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                         onClick={() =>
                                             removeItem(item.productId)
@@ -425,26 +440,132 @@ export default function CreateSalePage() {
                                     <span className="text-xs text-slate-400">
                                         Cantidad
                                     </span>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max={item.stock ?? undefined}
-                                        value={item.quantity}
-                                        onChange={(e) =>
-                                            updateProductQuantity(
-                                                item.productId,
-                                                parseInt(e.target.value) || 1,
-                                            )
-                                        }
-                                        className="w-20 bg-slate-700 border border-gray-500 rounded-lg px-2 py-1 text-sm text-white text-center"
-                                    />
+
+                                    {/* NUEVO SELECTOR MOBILE */}
+                                    <div className="flex items-center bg-slate-700 border border-gray-500 rounded-lg h-8 shadow-sm transition-all focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 overflow-hidden w-fit">
+                                        <button
+                                            type="button"
+                                            className="w-8 h-full flex items-center justify-center text-gray-400 hover:bg-slate-600 hover:text-red-400 transition-colors cursor-pointer active:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            onClick={() =>
+                                                updateProductQuantity(
+                                                    item.productId,
+                                                    Math.max(
+                                                        1,
+                                                        item.quantity - 1,
+                                                    ),
+                                                )
+                                            }
+                                            disabled={item.quantity <= 1}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={3}
+                                                stroke="currentColor"
+                                                className="w-3.5 h-3.5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M19.5 12h-15"
+                                                />
+                                            </svg>
+                                        </button>
+
+                                        <input
+                                            type="number"
+                                            value={
+                                                item.quantity === 0
+                                                    ? ""
+                                                    : item.quantity
+                                            }
+                                            onChange={(e) => {
+                                                const rawValue = e.target.value;
+                                                if (rawValue === "") {
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        0,
+                                                    );
+                                                    return;
+                                                }
+                                                const val = parseInt(
+                                                    rawValue,
+                                                    10,
+                                                );
+                                                if (!isNaN(val)) {
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        Math.min(
+                                                            Math.max(1, val),
+                                                            item.stock ??
+                                                                Infinity,
+                                                        ),
+                                                    );
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                if (item.quantity < 1)
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        1,
+                                                    );
+                                            }}
+                                            className="w-10 h-full text-center bg-transparent border-none font-bold text-white text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            disabled={
+                                                item.stock !== undefined &&
+                                                item.quantity >= item.stock
+                                            }
+                                            className={`w-8 h-full flex items-center justify-center transition-colors ${
+                                                item.stock !== undefined &&
+                                                item.quantity >= item.stock
+                                                    ? "text-gray-500 bg-slate-800 cursor-not-allowed"
+                                                    : "text-gray-400 hover:bg-slate-600 hover:text-green-400 cursor-pointer active:bg-slate-500"
+                                            }`}
+                                            onClick={() =>
+                                                updateProductQuantity(
+                                                    item.productId,
+                                                    Math.min(
+                                                        item.stock ?? Infinity,
+                                                        item.quantity + 1,
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={3}
+                                                stroke="currentColor"
+                                                className="w-3.5 h-3.5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    {/* FIN NUEVO SELECTOR MOBILE */}
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-slate-400">
                                         Precio
                                     </span>
                                     <span className="text-gray-300">
-                                        ${item.price.toLocaleString()}
+                                        {Number(item.price).toLocaleString(
+                                            "es-AR",
+                                            {
+                                                style: "currency",
+                                                currency: "ARS",
+                                            },
+                                        )}
                                     </span>
                                 </div>
                                 <div className="flex justify-between font-bold">
@@ -452,10 +573,12 @@ export default function CreateSalePage() {
                                         Subtotal
                                     </span>
                                     <span className="text-indigo-300">
-                                        $
                                         {(
-                                            item.price * item.quantity
-                                        ).toLocaleString()}
+                                            Number(item.price) * item.quantity
+                                        ).toLocaleString("es-AR", {
+                                            style: "currency",
+                                            currency: "ARS",
+                                        })}
                                     </span>
                                 </div>
                             </div>
@@ -464,59 +587,191 @@ export default function CreateSalePage() {
 
                     {/* DESKTOP Table */}
                     <div className="hidden md:block overflow-x-auto bg-slate-800/50 rounded-xl border border-white/10">
-                        <table className="w-full text-left text-gray-300 text-sm">
+                        {/* text-center general, pero lo vamos a pisar en las primeras columnas */}
+                        <table className="w-full text-center text-gray-300 text-sm">
                             <thead className="text-xs uppercase bg-slate-700/50 text-slate-400">
                                 <tr>
-                                    <th className="px-4 py-3">Producto</th>
-                                    <th className="px-4 py-3 text-left">
-                                        Cantidad
+                                    {/* Nueva columna # pegada a la izquierda con un ancho fijo chiquito */}
+                                    <th className="px-4 py-3 text-left w-12">
+                                        #
                                     </th>
                                     <th className="px-4 py-3 text-left">
-                                        Precio
+                                        Producto
                                     </th>
-                                    <th className="px-4 py-3 text-left">
-                                        Subtotal
-                                    </th>
-                                    <th className="px-4 py-3 text-center">
-                                        Acción
-                                    </th>
+                                    <th className="px-4 py-3">Cantidad</th>
+                                    <th className="px-4 py-3">Precio</th>
+                                    <th className="px-4 py-3">Subtotal</th>
+                                    <th className="px-4 py-3">Acción</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {formData.details.map((item) => (
+                                {/* Le agregamos el 'index' al map para poder enumerar */}
+                                {formData.details.map((item, index) => (
                                     <tr key={item.productId}>
-                                        <td className="px-4 py-3 font-medium text-white">
+                                        {/* Número de ítem (pegado a la izquierda, color grisadito sutil) */}
+                                        <td className="px-4 py-3 text-left text-gray-500 font-medium">
+                                            {index + 1}
+                                        </td>
+
+                                        {/* Producto (también a la izquierda para que acompañe bien al número) */}
+                                        <td className="px-4 py-3 text-left font-medium text-white">
                                             {item.name}
                                         </td>
-                                        <td className="px-4 py-3 text-left">
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max={item.stock ?? undefined}
-                                                value={item.quantity}
-                                                onChange={(e) =>
-                                                    updateProductQuantity(
-                                                        item.productId,
-                                                        parseInt(
-                                                            e.target.value,
-                                                        ) || 1,
-                                                    )
-                                                }
-                                                className="w-16 bg-slate-700 border border-gray-500 rounded-lg px-2 py-1 text-center text-white"
-                                            />
+
+                                        {/* Cantidad: Centrado */}
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center mx-auto bg-slate-700 border border-gray-500 rounded-lg h-8 shadow-sm transition-all focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 overflow-hidden w-fit">
+                                                <button
+                                                    type="button"
+                                                    className="w-8 h-full flex items-center justify-center text-gray-400 hover:bg-slate-600 hover:text-red-400 transition-colors cursor-pointer active:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    onClick={() =>
+                                                        updateProductQuantity(
+                                                            item.productId,
+                                                            Math.max(
+                                                                1,
+                                                                item.quantity -
+                                                                    1,
+                                                            ),
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        item.quantity <= 1
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={3}
+                                                        stroke="currentColor"
+                                                        className="w-3.5 h-3.5"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M19.5 12h-15"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                <input
+                                                    type="number"
+                                                    value={
+                                                        item.quantity === 0
+                                                            ? ""
+                                                            : item.quantity
+                                                    }
+                                                    onChange={(e) => {
+                                                        const rawValue =
+                                                            e.target.value;
+                                                        if (rawValue === "") {
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                0,
+                                                            );
+                                                            return;
+                                                        }
+                                                        const val = parseInt(
+                                                            rawValue,
+                                                            10,
+                                                        );
+                                                        if (!isNaN(val)) {
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                Math.min(
+                                                                    Math.max(
+                                                                        1,
+                                                                        val,
+                                                                    ),
+                                                                    item.stock ??
+                                                                        Infinity,
+                                                                ),
+                                                            );
+                                                        }
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (item.quantity < 1)
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                1,
+                                                            );
+                                                    }}
+                                                    className="w-10 h-full text-center bg-transparent border-none font-bold text-white text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    disabled={
+                                                        item.stock !==
+                                                            undefined &&
+                                                        item.quantity >=
+                                                            item.stock
+                                                    }
+                                                    className={`w-8 h-full flex items-center justify-center transition-colors ${
+                                                        item.stock !==
+                                                            undefined &&
+                                                        item.quantity >=
+                                                            item.stock
+                                                            ? "text-gray-500 bg-slate-800 cursor-not-allowed"
+                                                            : "text-gray-400 hover:bg-slate-600 hover:text-green-400 cursor-pointer active:bg-slate-500"
+                                                    }`}
+                                                    onClick={() =>
+                                                        updateProductQuantity(
+                                                            item.productId,
+                                                            Math.min(
+                                                                item.stock ??
+                                                                    Infinity,
+                                                                item.quantity +
+                                                                    1,
+                                                            ),
+                                                        )
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={3}
+                                                        stroke="currentColor"
+                                                        className="w-3.5 h-3.5"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M12 4.5v15m7.5-7.5h-15"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </td>
-                                        <td className="px-4 py-3 text-left">
-                                            ${item.price.toLocaleString()}
+
+                                        {/* Precio: Centrado */}
+                                        <td className="px-4 py-3">
+                                            {Number(item.price).toLocaleString(
+                                                "es-AR",
+                                                {
+                                                    style: "currency",
+                                                    currency: "ARS",
+                                                },
+                                            )}
                                         </td>
-                                        <td className="px-4 py-3 text-left font-bold text-indigo-300">
-                                            $
+
+                                        {/* Subtotal: Centrado */}
+                                        <td className="px-4 py-3 font-bold text-indigo-300">
                                             {(
-                                                item.price * item.quantity
-                                            ).toLocaleString()}
+                                                Number(item.price) *
+                                                item.quantity
+                                            ).toLocaleString("es-AR", {
+                                                style: "currency",
+                                                currency: "ARS",
+                                            })}
                                         </td>
-                                        <td className="px-4 py-3 text-center">
+
+                                        {/* Acción: Centrada */}
+                                        <td className="px-4 py-3">
                                             <button
-                                                className="text-red-500 hover:text-red-400 transition cursor-pointer"
+                                                type="button"
+                                                className="text-red-500 hover:text-red-400 transition cursor-pointer mx-auto flex"
                                                 onClick={() =>
                                                     removeItem(item.productId)
                                                 }
@@ -534,7 +789,13 @@ export default function CreateSalePage() {
                         <div className="text-xl font-bold text-white self-end md:self-auto">
                             Total:{" "}
                             <span className="text-green-400">
-                                ${formData.total}
+                                {Number(formData.total).toLocaleString(
+                                    "es-AR",
+                                    {
+                                        style: "currency",
+                                        currency: "ARS",
+                                    },
+                                )}
                             </span>
                         </div>
                         <div className="flex gap-3 w-full md:w-auto">
@@ -546,7 +807,7 @@ export default function CreateSalePage() {
                                 Cancelar
                             </button>
                             <button
-                                onClick={() => setShowConfirmModal(true)}
+                                type="submit"
                                 disabled={formData.details.length === 0}
                                 className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
                             >
@@ -554,17 +815,24 @@ export default function CreateSalePage() {
                             </button>
                         </div>
                     </div>
-                </div>
+                </form>
 
                 <ConfirmModal
                     isOpen={showConfirmModal}
-                    title="Confirmar Venta"
+                    title="Confirmar venta"
+                    variant="success"
                     message={
                         <div className="text-slate-300 text-sm">
                             ¿Estás seguro de registrar esta venta por un total
                             de
                             <b className="text-white ml-1 font-bold">
-                                ${formData.total}
+                                {Number(formData.total).toLocaleString(
+                                    "es-AR",
+                                    {
+                                        style: "currency",
+                                        currency: "ARS",
+                                    },
+                                )}
                             </b>
                             ?
                         </div>

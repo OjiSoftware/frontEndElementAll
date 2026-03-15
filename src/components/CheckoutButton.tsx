@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { Loader2, CreditCard } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: "es-AR" });
 
-export default function CheckoutButton({ 
-    saleId: initialSaleId, 
-    clientData, 
-    items, 
+function CheckoutButton({
+    saleId: initialSaleId,
+    clientData,
+    items,
     total,
-    onOrderCreated 
-}: { 
-    saleId: number | null; 
+    onOrderCreated,
+}: {
+    saleId: number | null;
     clientData?: any;
     items?: any[];
     total?: number;
@@ -20,7 +20,9 @@ export default function CheckoutButton({
 }) {
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [currentSaleId, setCurrentSaleId] = useState<number | null>(initialSaleId);
+    const [currentSaleId, setCurrentSaleId] = useState<number | null>(
+        initialSaleId,
+    );
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
     const handleGeneratePayment = async (e: React.MouseEvent) => {
@@ -30,8 +32,8 @@ export default function CheckoutButton({
         setLoading(true);
         try {
             // Enviamos el saleId existente O los datos para crear uno nuevo
-            const payload = currentSaleId 
-                ? { saleId: currentSaleId } 
+            const payload = currentSaleId
+                ? { saleId: currentSaleId }
                 : { clientData, items, total };
 
             const res = await fetch(`${API_URL}/payments/create-preference`, {
@@ -50,12 +52,17 @@ export default function CheckoutButton({
                                 <>
                                     Lo sentimos,{" "}
                                     <b className="font-black underline">
-                                        {data.details?.replace("Stock insuficiente para ", "") || "un producto"}
+                                        {data.details?.replace(
+                                            "Stock insuficiente para ",
+                                            "",
+                                        ) || "un producto"}
                                     </b>{" "}
                                     no tiene stock suficiente.
                                 </>
                             ) : (
-                                data.details || data.error || "Error al procesar"
+                                data.details ||
+                                data.error ||
+                                "Error al procesar"
                             )}
                         </span>
                     ),
@@ -76,7 +83,7 @@ export default function CheckoutButton({
 
             if (data.preferenceId) {
                 setPreferenceId(data.preferenceId);
-                
+
                 // Si acabamos de crear la venta, notificamos al padre
                 if (data.saleId && !currentSaleId) {
                     setCurrentSaleId(data.saleId);
@@ -130,3 +137,5 @@ export default function CheckoutButton({
         </div>
     );
 }
+
+export default memo(CheckoutButton);

@@ -37,7 +37,7 @@ export default function EditProductPage() {
                         Producto no encontrado
                     </h1>
                     <button
-                        onClick={() => navigate("/management")}
+                        onClick={() => navigate("/management/products")}
                         className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
                     >
                         Volver
@@ -103,16 +103,17 @@ export default function EditProductPage() {
         const loadingToast = toast.loading("Guardando cambios...");
 
         try {
+            // Implementación de blindaje igual al Create
             const payload: ProductEditBackend = {
                 brandId: formData.brandId,
                 subCategoryId: formData.subCategoryId,
-                name: formData.name,
-                stock: formData.stock,
+                name: formData.name.trim(),
+                stock: Math.max(0, Math.floor(Number(formData.stock) || 0)),
                 price: Math.max(0, formData.price),
-                description: formData.description,
+                description: formData.description.trim(),
                 showingInCatalog: formData.showingInCatalog,
-                imageUrl: formData.imageUrl,
-                unit: formData.unit,
+                imageUrl: formData.imageUrl?.trim() || "",
+                unit: formData.unit.trim(),
             };
 
             await productApi.update(id!, payload);
@@ -185,12 +186,31 @@ export default function EditProductPage() {
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
-                        if (!formData.name.trim())
+                        const {
+                            categoryId,
+                            subCategoryId,
+                            brandId,
+                            name,
+                            unit,
+                            price,
+                        } = formData;
+
+                        // Validaciones reforzadas (Igual que el Create)
+                        if (!name.trim())
                             return toast.error("El nombre es obligatorio");
-                        if (!formData.unit.trim())
-                            return toast.error("La unidad por bulto es obligatoria");
-                        if (formData.price <= 0)
+                        if (!unit.trim())
+                            return toast.error(
+                                "La unidad por bulto es obligatoria",
+                            );
+                        if (!categoryId)
+                            return toast.error("Selecciona una Categoría");
+                        if (!subCategoryId)
+                            return toast.error("Selecciona una Subcategoría");
+                        if (!brandId)
+                            return toast.error("Selecciona una Marca");
+                        if (price <= 0)
                             return toast.error("El precio debe ser mayor a 0");
+
                         setShowConfirmModal(true);
                     }}
                     className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
@@ -208,6 +228,7 @@ export default function EditProductPage() {
                             <input
                                 type="text"
                                 name="name"
+                                autoComplete="off"
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Teclado Mecánico RGB"
@@ -223,6 +244,7 @@ export default function EditProductPage() {
                             <input
                                 type="text"
                                 name="unit"
+                                autoComplete="off"
                                 value={formData.unit}
                                 onChange={handleChange}
                                 placeholder="Ej: 24 unidades"
@@ -253,6 +275,7 @@ export default function EditProductPage() {
                             <input
                                 type="url"
                                 name="imageUrl"
+                                autoComplete="off"
                                 value={formData.imageUrl}
                                 onChange={handleChange}
                                 placeholder="Pegar URL"
@@ -276,10 +299,12 @@ export default function EditProductPage() {
                                     name="categoryId"
                                     value={formData.categoryId || ""}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                     required
                                 >
-                                    <option value="">Seleccionar...</option>
+                                    <option value="" disabled>
+                                        Seleccionar...
+                                    </option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>
                                             {cat.name}
@@ -297,10 +322,12 @@ export default function EditProductPage() {
                                         name="subCategoryId"
                                         value={formData.subCategoryId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                         required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <option value="" disabled>
+                                            Seleccionar...
+                                        </option>
                                         {filteredSubCategories.map((sub) => (
                                             <option key={sub.id} value={sub.id}>
                                                 {sub.name}
@@ -316,10 +343,12 @@ export default function EditProductPage() {
                                         name="brandId"
                                         value={formData.brandId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                         required
                                     >
-                                        <option value="">Seleccionar...</option>
+                                        <option value="" disabled>
+                                            Seleccionar...
+                                        </option>
                                         {brands.map((brand) => (
                                             <option
                                                 key={brand.id}
@@ -353,6 +382,7 @@ export default function EditProductPage() {
                                     <input
                                         type="text"
                                         name="price"
+                                        autoComplete="off"
                                         value={priceInput}
                                         onChange={handlePriceChange}
                                         onBlur={handlePriceBlur}
@@ -372,7 +402,6 @@ export default function EditProductPage() {
                                     onChange={handleChange}
                                     className="w-4 h-4 md:w-5! md:h-5! rounded border-gray-500 text-indigo-500 focus:ring-indigo-400 bg-slate-700 cursor-pointer"
                                 />
-
                                 <label
                                     htmlFor="showInCatalog"
                                     className="text-sm  text-slate-300 cursor-pointer"
@@ -383,10 +412,7 @@ export default function EditProductPage() {
                         </div>
 
                         {/* Botones de acción */}
-                        <div
-                            className="flex flex-row items-stretch gap-3 mt-6 w-full
-                        border-t border-white/10 pt-4"
-                        >
+                        <div className="flex flex-row items-stretch gap-3 mt-6 w-full border-t border-white/10 pt-4">
                             <button
                                 type="button"
                                 onClick={() => navigate("/management/products")}
@@ -409,6 +435,7 @@ export default function EditProductPage() {
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Guardar cambios"
+                    variant="success"
                     message={
                         <>
                             ¿Seguro que querés guardar los cambios de{" "}

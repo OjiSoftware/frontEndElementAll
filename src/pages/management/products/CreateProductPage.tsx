@@ -50,8 +50,10 @@ export default function CreateProductPage() {
         try {
             await submitFormData(undefined, {
                 ...formData,
+                name: formData.name.trim(), // Limpiamos espacios accidentales
                 price: Math.max(0, formData.price),
-                stock: formData.stock < 0 ? 0 : formData.stock,
+                // Blindaje de stock: aseguramos que sea entero y no negativo
+                stock: Math.max(0, Math.floor(Number(formData.stock) || 0)),
             });
 
             toast.success("¡Producto creado con éxito!", { id: loadingToast });
@@ -129,14 +131,19 @@ export default function CreateProductPage() {
                             price,
                             name,
                         } = formData;
+
+                        // Validaciones reforzadas
                         if (!name.trim())
                             return toast.error("El nombre es obligatorio");
-                        if (!categoryId || !subCategoryId || !brandId)
-                            return toast.error(
-                                "Selecciona Categoría, Subcategoría y Marca",
-                            );
+                        if (!categoryId)
+                            return toast.error("Selecciona una Categoría");
+                        if (!subCategoryId)
+                            return toast.error("Selecciona una Subcategoría");
+                        if (!brandId)
+                            return toast.error("Selecciona una Marca");
                         if (price <= 0)
                             return toast.error("El precio debe ser mayor a 0");
+
                         setShowConfirmModal(true);
                     }}
                     className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
@@ -154,6 +161,7 @@ export default function CreateProductPage() {
                             <input
                                 type="text"
                                 name="name"
+                                autoComplete="off" // Evita sugerencias de nombres de personas
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Teclado Mecánico RGB"
@@ -169,6 +177,7 @@ export default function CreateProductPage() {
                             <input
                                 type="text"
                                 name="unit"
+                                autoComplete="off"
                                 value={formData.unit}
                                 onChange={handleChange}
                                 placeholder="Ej: 24 unidades"
@@ -199,6 +208,7 @@ export default function CreateProductPage() {
                             <input
                                 type="url"
                                 name="imageUrl"
+                                autoComplete="off"
                                 value={formData.imageUrl}
                                 onChange={handleChange}
                                 placeholder="Pegar URL"
@@ -222,10 +232,10 @@ export default function CreateProductPage() {
                                     name="categoryId"
                                     value={formData.categoryId || ""}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                    className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                     required
                                 >
-                                    <option value="" className="text-gray-500">
+                                    <option value="" disabled>
                                         Seleccionar...
                                     </option>
                                     {categories.map((cat) => (
@@ -245,13 +255,10 @@ export default function CreateProductPage() {
                                         name="subCategoryId"
                                         value={formData.subCategoryId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                         required
                                     >
-                                        <option
-                                            value=""
-                                            className="text-gray-500"
-                                        >
+                                        <option value="" disabled>
                                             Seleccionar...
                                         </option>
                                         {filteredSubCategories.map((sub) => (
@@ -269,13 +276,10 @@ export default function CreateProductPage() {
                                         name="brandId"
                                         value={formData.brandId || ""}
                                         onChange={handleChange}
-                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer placeholder:text-gray-400"
+                                        className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all cursor-pointer"
                                         required
                                     >
-                                        <option
-                                            value=""
-                                            className="text-gray-500"
-                                        >
+                                        <option value="" disabled>
                                             Seleccionar...
                                         </option>
                                         {brands.map((brand) => (
@@ -298,6 +302,7 @@ export default function CreateProductPage() {
                                     <input
                                         type="number"
                                         name="stock"
+                                        step="1"
                                         value={formData.stock}
                                         onChange={handleChange}
                                         className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
@@ -311,6 +316,7 @@ export default function CreateProductPage() {
                                     <input
                                         type="text"
                                         name="price"
+                                        autoComplete="off"
                                         value={priceInput}
                                         onChange={handlePriceChange}
                                         onBlur={handlePriceBlur}
@@ -367,6 +373,7 @@ export default function CreateProductPage() {
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Crear producto"
+                    variant="success"
                     message={
                         <>
                             ¿Seguro que querés crear el producto{" "}

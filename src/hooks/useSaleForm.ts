@@ -88,7 +88,7 @@ export const useSaleForm = () => {
 
   const updateProductQuantity = (productId: number, quantity: number) => {
     setFormData((prev) => {
-      if (quantity < 1) return prev;
+      if (quantity < 0) return prev;
 
       const newDetails = prev.details.map(d => {
         if (d.productId === productId) {

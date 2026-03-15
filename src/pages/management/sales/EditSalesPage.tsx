@@ -3,13 +3,8 @@ import { useSaleEdit } from "@/hooks/useSaleEdit";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useState } from "react";
-import {
-    ShoppingCart,
-    Trash2,
-    ChevronDown,
-    ChevronUp,
-    UserPlus,
-} from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronUp, UserPlus } from "lucide-react";
+import { TrashIcon } from "@heroicons/react/20/solid";
 import ProductSelector from "@/components/ProductsSelector";
 import { saleApi } from "@/services/SaleService";
 import { clientApi } from "@/services/ClientService";
@@ -38,7 +33,7 @@ export default function EditSalesPage() {
         if (!itemToRemove) return;
 
         const newTotal =
-            formData.total - itemToRemove.price * itemToRemove.quantity;
+            formData.total - Number(itemToRemove.price) * itemToRemove.quantity;
         setFormData({
             ...formData,
             details: formData.details.filter((d) => d.productId !== productId),
@@ -46,36 +41,36 @@ export default function EditSalesPage() {
         });
     };
 
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const dniRegex = /^\d{7,8}$/;
+        if (!dniRegex.test(formData.dni)) {
+            alert("El DNI debe tener entre 7 y 8 números sin puntos.");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert("Por favor, ingresa un correo electrónico válido.");
+            return;
+        }
+
+        if (formData.details.length === 0) {
+            alert("Por favor, agrega al menos un producto a la venta.");
+            return;
+        }
+
+        if (formData.status === "") {
+            alert("Por favor, selecciona un estado para la venta.");
+            return;
+        }
+
+        setShowConfirmModal(true);
+    };
+
     const handleConfirmSubmit = async () => {
         try {
-            if (
-                formData.name === "" ||
-                formData.surname === "" ||
-                formData.dni === "" ||
-                formData.phoneNumber === "" ||
-                formData.email === ""
-            ) {
-                alert("Por favor, completa todos los datos del cliente.");
-                return;
-            }
-
-            const dniRegex = /^\d{7,8}$/;
-            if (!dniRegex.test(formData.dni)) {
-                alert("El DNI debe tener entre 7 y 8 números sin puntos.");
-                return;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(formData.email)) {
-                alert("Por favor, ingresa un correo electrónico válido.");
-                return;
-            }
-
-            if (formData.details.length === 0) {
-                alert("Por favor, agrega al menos un producto a la venta.");
-                return;
-            }
-
             if (clientId) {
                 const clientPayload = {
                     name: formData.name,
@@ -92,6 +87,8 @@ export default function EditSalesPage() {
                         apartment: formData.apartment || undefined,
                         locality: formData.city,
                         province: formData.province,
+                        postalCode: formData.postalCode,
+                        country: formData.country,
                         reference: formData.reference || undefined,
                     },
                 };
@@ -133,8 +130,12 @@ export default function EditSalesPage() {
             <DashboardLayout>
                 <div className="flex h-full flex-col items-center justify-center text-white gap-4 min-h-[60vh]">
                     <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md text-center space-y-4">
-                        <h2 className="text-2xl font-bold text-rose-400">Venta Cancelada</h2>
-                        <p className="text-gray-300">Esta venta está cancelada y no puede ser editada.</p>
+                        <h2 className="text-2xl font-bold text-rose-400">
+                            Venta Cancelada
+                        </h2>
+                        <p className="text-gray-300">
+                            Esta venta está cancelada y no puede ser editada.
+                        </p>
                         <button
                             onClick={() => navigate("/management/sales")}
                             className="px-6 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:opacity-90 transition cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)]"
@@ -149,8 +150,8 @@ export default function EditSalesPage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center py-6">
-                <div className="flex justify-between items-end mb-4">
+            <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
+                <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-end mb-4">
                     <div>
                         <button
                             onClick={() => navigate(-1)}
@@ -163,19 +164,19 @@ export default function EditSalesPage() {
                                 className="text-indigo-400"
                                 size={24}
                             />
-                            Editar Venta #{id}
+                            Editar venta #{id}
                         </h1>
                     </div>
 
-                    <div className="flex flex-col items-end">
+                    <div className="flex flex-col items-start md:items-end">
                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                            Estado de la Venta
+                            Estado
                         </label>
                         <select
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
-                            className="bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer min-w-[150px]"
+                            className="bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none cursor-pointer w-full md:w-auto md:min-w-[160px]"
                         >
                             <option value="PENDING">Pendiente</option>
                             <option value="IN_PROGRESS">En progreso</option>
@@ -184,7 +185,10 @@ export default function EditSalesPage() {
                     </div>
                 </div>
 
-                <div className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6">
+                <form
+                    onSubmit={handleFormSubmit}
+                    className="bg-slate-800/80 border border-white/20 p-4 md:p-6 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-6"
+                >
                     <div className="border border-white/10 rounded-xl overflow-hidden bg-slate-800/50">
                         <button
                             type="button"
@@ -196,8 +200,8 @@ export default function EditSalesPage() {
                                     className="text-indigo-400"
                                     size={20}
                                 />
-                                <h2 className="text-base font-semibold text-white">
-                                    Datos del Cliente y Facturación
+                                <h2 className="text-sm md:text-base font-semibold text-white">
+                                    Datos del cliente y facturación
                                 </h2>
                             </div>
                             {isClientOpen ? (
@@ -216,7 +220,7 @@ export default function EditSalesPage() {
                         {isClientOpen && (
                             <div className="p-4 border-t border-white/5 space-y-4 shadow-inner">
                                 <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1">
-                                    Información Personal
+                                    Información personal
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                                     <div>
@@ -229,8 +233,9 @@ export default function EditSalesPage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="given-name"
                                             placeholder="Ej: Juan"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -243,8 +248,9 @@ export default function EditSalesPage() {
                                             value={formData.surname}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="family-name"
                                             placeholder="Ej: Pérez"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -257,8 +263,9 @@ export default function EditSalesPage() {
                                             value={formData.dni}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="off"
                                             placeholder="Sin puntos"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -271,13 +278,14 @@ export default function EditSalesPage() {
                                             value={formData.phoneNumber}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="tel"
                                             placeholder="+54 9 11..."
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Correo Electrónico
+                                            Correo electrónico
                                         </label>
                                         <input
                                             type="email"
@@ -285,14 +293,15 @@ export default function EditSalesPage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="email"
                                             placeholder="correo@ejemplo.com"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                 </div>
 
                                 <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mt-6">
-                                    Dirección de Facturación
+                                    Dirección de facturación
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4">
                                     <div className="md:col-span-2">
@@ -305,8 +314,9 @@ export default function EditSalesPage() {
                                             value={formData.street}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="address-line1"
                                             placeholder="Ej: Av. Rivadavia"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -319,8 +329,9 @@ export default function EditSalesPage() {
                                             value={formData.number}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="address-line2"
                                             placeholder="Altura"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -333,25 +344,26 @@ export default function EditSalesPage() {
                                                 name="floor"
                                                 value={formData.floor}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                                autoComplete="address-line3"
                                                 placeholder="Opc."
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-medium text-gray-300 mb-1">
-                                                Dpto.
+                                                Depto.
                                             </label>
                                             <input
                                                 type="text"
                                                 name="apartment"
                                                 value={formData.apartment}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                                autoComplete="address-line4"
                                                 placeholder="Opc."
+                                                className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                             />
                                         </div>
                                     </div>
-
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
                                             Ciudad / Localidad
@@ -362,8 +374,9 @@ export default function EditSalesPage() {
                                             value={formData.city}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="address-level2"
                                             placeholder="Ciudad"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
@@ -376,21 +389,24 @@ export default function EditSalesPage() {
                                             value={formData.province}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="address-level1"
                                             placeholder="Provincia"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            CP
+                                            Código Postal
                                         </label>
                                         <input
                                             type="text"
                                             name="postalCode"
                                             value={formData.postalCode}
                                             onChange={handleChange}
+                                            required
+                                            autoComplete="postal-code"
+                                            placeholder="Ej: 1000"
                                             className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
-                                            placeholder="1000"
                                         />
                                     </div>
                                     <div>
@@ -402,8 +418,10 @@ export default function EditSalesPage() {
                                             name="country"
                                             value={formData.country}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            required
+                                            autoComplete="country-name"
                                             placeholder="País"
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div className="md:col-span-4">
@@ -415,8 +433,9 @@ export default function EditSalesPage() {
                                             name="reference"
                                             value={formData.reference}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
+                                            autoComplete="off"
                                             placeholder="Ej: Esquina con pared azul..."
+                                            className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                         />
                                     </div>
                                 </div>
@@ -426,7 +445,7 @@ export default function EditSalesPage() {
 
                     <div>
                         <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4">
-                            Productos de la Venta
+                            Productos de la venta
                         </h3>
                         <ProductSelector
                             products={products}
@@ -434,68 +453,357 @@ export default function EditSalesPage() {
                         />
                     </div>
 
-                    <div className="overflow-x-auto bg-slate-800/50 rounded-xl border border-white/10">
-                        <table className="w-full text-left text-gray-300 text-sm">
+                    {/* MOBILE cards */}
+                    <div className="md:hidden space-y-3">
+                        {formData.details.map((item) => (
+                            <div
+                                key={item.productId}
+                                className="bg-slate-800/60 border border-white/10 rounded-xl p-4 space-y-3"
+                            >
+                                <div className="flex justify-between items-start">
+                                    <div className="font-semibold text-white">
+                                        {item.name}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="text-red-500 hover:text-red-400 transition cursor-pointer"
+                                        onClick={() =>
+                                            removeItem(item.productId)
+                                        }
+                                    >
+                                        <TrashIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-xs text-slate-400">
+                                        Cantidad
+                                    </span>
+
+                                    <div className="flex items-center bg-slate-700 border border-gray-500 rounded-lg h-8 shadow-sm transition-all focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 overflow-hidden w-fit">
+                                        <button
+                                            type="button"
+                                            className="w-8 h-full flex items-center justify-center text-gray-400 hover:bg-slate-600 hover:text-red-400 transition-colors cursor-pointer active:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            onClick={() =>
+                                                updateProductQuantity(
+                                                    item.productId,
+                                                    Math.max(
+                                                        1,
+                                                        item.quantity - 1,
+                                                    ),
+                                                )
+                                            }
+                                            disabled={item.quantity <= 1}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={3}
+                                                stroke="currentColor"
+                                                className="w-3.5 h-3.5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M19.5 12h-15"
+                                                />
+                                            </svg>
+                                        </button>
+
+                                        <input
+                                            type="number"
+                                            value={
+                                                item.quantity === 0
+                                                    ? ""
+                                                    : item.quantity
+                                            }
+                                            onChange={(e) => {
+                                                const rawValue = e.target.value;
+                                                if (rawValue === "") {
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        0,
+                                                    );
+                                                    return;
+                                                }
+                                                const val = parseInt(
+                                                    rawValue,
+                                                    10,
+                                                );
+                                                if (!isNaN(val)) {
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        Math.min(
+                                                            Math.max(1, val),
+                                                            item.stock ??
+                                                                Infinity,
+                                                        ),
+                                                    );
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                if (item.quantity < 1)
+                                                    updateProductQuantity(
+                                                        item.productId,
+                                                        1,
+                                                    );
+                                            }}
+                                            className="w-10 h-full text-center bg-transparent border-none font-bold text-white text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            disabled={
+                                                item.stock !== undefined &&
+                                                item.quantity >= item.stock
+                                            }
+                                            className={`w-8 h-full flex items-center justify-center transition-colors ${
+                                                item.stock !== undefined &&
+                                                item.quantity >= item.stock
+                                                    ? "text-gray-500 bg-slate-800 cursor-not-allowed"
+                                                    : "text-gray-400 hover:bg-slate-600 hover:text-green-400 cursor-pointer active:bg-slate-500"
+                                            }`}
+                                            onClick={() =>
+                                                updateProductQuantity(
+                                                    item.productId,
+                                                    Math.min(
+                                                        item.stock ?? Infinity,
+                                                        item.quantity + 1,
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={3}
+                                                stroke="currentColor"
+                                                className="w-3.5 h-3.5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 4.5v15m7.5-7.5h-15"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-slate-400">
+                                        Precio
+                                    </span>
+                                    <span className="text-gray-300">
+                                        {Number(item.price).toLocaleString(
+                                            "es-AR",
+                                            {
+                                                style: "currency",
+                                                currency: "ARS",
+                                            },
+                                        )}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between font-bold">
+                                    <span className="text-slate-400">
+                                        Subtotal
+                                    </span>
+                                    <span className="text-indigo-300">
+                                        {(
+                                            Number(item.price) * item.quantity
+                                        ).toLocaleString("es-AR", {
+                                            style: "currency",
+                                            currency: "ARS",
+                                        })}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                        {formData.details.length === 0 && (
+                            <div className="text-center py-6 text-slate-500 italic bg-slate-800/50 rounded-xl border border-white/10">
+                                No hay productos añadidos aún
+                            </div>
+                        )}
+                    </div>
+
+                    {/* DESKTOP Table */}
+                    <div className="hidden md:block overflow-x-auto bg-slate-800/50 rounded-xl border border-white/10">
+                        <table className="w-full text-center text-gray-300 text-sm">
                             <thead className="text-xs uppercase bg-slate-700/50 text-slate-400">
                                 <tr>
-                                    <th className="px-4 py-3">Producto</th>
-                                    <th className="px-4 py-3 text-center">
-                                        Cant.
+                                    <th className="px-4 py-3 text-left w-12">
+                                        #
                                     </th>
-                                    <th className="px-4 py-3 text-right">
-                                        Precio
+                                    <th className="px-4 py-3 text-left">
+                                        Producto
                                     </th>
-                                    <th className="px-4 py-3 text-right">
-                                        Subtotal
-                                    </th>
-                                    <th className="px-4 py-3 text-center">
-                                        Acción
-                                    </th>
+                                    <th className="px-4 py-3">Cantidad</th>
+                                    <th className="px-4 py-3">Precio</th>
+                                    <th className="px-4 py-3">Subtotal</th>
+                                    <th className="px-4 py-3">Acción</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {formData.details.map((item) => (
-                                    <tr
-                                        key={item.productId}
-                                        className="hover:bg-white/5 transition-colors"
-                                    >
-                                        <td className="px-4 py-3 font-medium text-white">
+                                {formData.details.map((item, index) => (
+                                    <tr key={item.productId}>
+                                        <td className="px-4 py-3 text-left text-gray-500 font-medium">
+                                            {index + 1}
+                                        </td>
+                                        <td className="px-4 py-3 text-left font-medium text-white">
                                             {item.name}
                                         </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max={item.stock ?? undefined}
-                                                value={item.quantity}
-                                                onChange={(e) =>
-                                                    updateProductQuantity(
-                                                        item.productId,
-                                                        parseInt(
-                                                            e.target.value,
-                                                        ) || 1,
-                                                    )
-                                                }
-                                                className="w-16 bg-slate-700/90 border border-gray-500 rounded-lg px-2 py-1 text-sm text-center text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
-                                            />
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center mx-auto bg-slate-700 border border-gray-500 rounded-lg h-8 shadow-sm transition-all focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 overflow-hidden w-fit">
+                                                <button
+                                                    type="button"
+                                                    className="w-8 h-full flex items-center justify-center text-gray-400 hover:bg-slate-600 hover:text-red-400 transition-colors cursor-pointer active:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    onClick={() =>
+                                                        updateProductQuantity(
+                                                            item.productId,
+                                                            Math.max(
+                                                                1,
+                                                                item.quantity -
+                                                                    1,
+                                                            ),
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        item.quantity <= 1
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={3}
+                                                        stroke="currentColor"
+                                                        className="w-3.5 h-3.5"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M19.5 12h-15"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                <input
+                                                    type="number"
+                                                    value={
+                                                        item.quantity === 0
+                                                            ? ""
+                                                            : item.quantity
+                                                    }
+                                                    onChange={(e) => {
+                                                        const rawValue =
+                                                            e.target.value;
+                                                        if (rawValue === "") {
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                0,
+                                                            );
+                                                            return;
+                                                        }
+                                                        const val = parseInt(
+                                                            rawValue,
+                                                            10,
+                                                        );
+                                                        if (!isNaN(val)) {
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                Math.min(
+                                                                    Math.max(
+                                                                        1,
+                                                                        val,
+                                                                    ),
+                                                                    item.stock ??
+                                                                        Infinity,
+                                                                ),
+                                                            );
+                                                        }
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (item.quantity < 1)
+                                                            updateProductQuantity(
+                                                                item.productId,
+                                                                1,
+                                                            );
+                                                    }}
+                                                    className="w-10 h-full text-center bg-transparent border-none font-bold text-white text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    disabled={
+                                                        item.stock !==
+                                                            undefined &&
+                                                        item.quantity >=
+                                                            item.stock
+                                                    }
+                                                    className={`w-8 h-full flex items-center justify-center transition-colors ${
+                                                        item.stock !==
+                                                            undefined &&
+                                                        item.quantity >=
+                                                            item.stock
+                                                            ? "text-gray-500 bg-slate-800 cursor-not-allowed"
+                                                            : "text-gray-400 hover:bg-slate-600 hover:text-green-400 cursor-pointer active:bg-slate-500"
+                                                    }`}
+                                                    onClick={() =>
+                                                        updateProductQuantity(
+                                                            item.productId,
+                                                            Math.min(
+                                                                item.stock ??
+                                                                    Infinity,
+                                                                item.quantity +
+                                                                    1,
+                                                            ),
+                                                        )
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={3}
+                                                        stroke="currentColor"
+                                                        className="w-3.5 h-3.5"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M12 4.5v15m7.5-7.5h-15"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </td>
-                                        <td className="px-4 py-3 text-right">
-                                            ${item.price.toLocaleString()}
+                                        <td className="px-4 py-3">
+                                            {Number(item.price).toLocaleString(
+                                                "es-AR",
+                                                {
+                                                    style: "currency",
+                                                    currency: "ARS",
+                                                },
+                                            )}
                                         </td>
-                                        <td className="px-4 py-3 text-right font-bold text-indigo-300">
-                                            $
+                                        <td className="px-4 py-3 font-bold text-indigo-300">
                                             {(
-                                                item.price * item.quantity
-                                            ).toLocaleString()}
+                                                Number(item.price) *
+                                                item.quantity
+                                            ).toLocaleString("es-AR", {
+                                                style: "currency",
+                                                currency: "ARS",
+                                            })}
                                         </td>
-                                        <td className="px-4 py-3 text-center">
+                                        <td className="px-4 py-3">
                                             <button
+                                                type="button"
+                                                className="text-red-500 hover:text-red-400 transition cursor-pointer mx-auto flex"
                                                 onClick={() =>
                                                     removeItem(item.productId)
                                                 }
-                                                className="text-red-400 hover:text-red-300 p-1 cursor-pointer transition-colors"
                                             >
-                                                <Trash2 size={16} />
+                                                <TrashIcon className="w-5 h-5" />
                                             </button>
                                         </td>
                                     </tr>
@@ -503,7 +811,7 @@ export default function EditSalesPage() {
                                 {formData.details.length === 0 && (
                                     <tr>
                                         <td
-                                            colSpan={5}
+                                            colSpan={6}
                                             className="px-4 py-8 text-center text-slate-500 italic"
                                         >
                                             No hay productos añadidos aún
@@ -514,44 +822,56 @@ export default function EditSalesPage() {
                         </table>
                     </div>
 
-                    <div className="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-white/10 gap-4">
-                        <div className="text-xl font-bold text-white">
+                    <div className="flex flex-col md:flex-row justify-between items-end md:items-center pt-4 border-t border-white/10 gap-4">
+                        <div className="text-xl font-bold text-white self-end md:self-auto">
                             Total:{" "}
                             <span className="text-green-400">
-                                ${formData.total}
+                                {Number(formData.total).toLocaleString(
+                                    "es-AR",
+                                    {
+                                        style: "currency",
+                                        currency: "ARS",
+                                    },
+                                )}
                             </span>
                         </div>
-
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 type="button"
                                 onClick={() => navigate("/management/sales")}
-                                className="flex-1 md:flex-none px-6 py-2 rounded-lg border border-slate-500 text-white hover:bg-slate-700 hover:text-white transition cursor-pointer text-sm"
+                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
                             >
                                 Cancelar
                             </button>
                             <button
-                                onClick={() => setShowConfirmModal(true)}
+                                type="submit"
                                 disabled={
                                     formData.details.length === 0 || isLoading
                                 }
-                                className="flex-1 md:flex-none px-6 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
+                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
                             >
-                                Guardar Cambios
+                                Guardar cambios
                             </button>
                         </div>
                     </div>
-                </div>
+                </form>
 
                 <ConfirmModal
                     isOpen={showConfirmModal}
-                    title="Actualizar Venta"
+                    title="Actualizar venta"
+                    variant="success"
                     message={
                         <div className="text-slate-300 text-sm">
                             ¿Estás seguro de registrar estos cambios en la
                             venta? El total será de
                             <b className="text-white ml-1 font-bold">
-                                ${formData.total}
+                                {Number(formData.total).toLocaleString(
+                                    "es-AR",
+                                    {
+                                        style: "currency",
+                                        currency: "ARS",
+                                    },
+                                )}
                             </b>
                             .
                         </div>

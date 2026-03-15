@@ -154,7 +154,7 @@ export default function RegisterPage() {
                                 htmlFor="name"
                                 className="block text-sm font-medium text-gray-200 ml-1"
                             >
-                                Nombre completo
+                                Nombre completo *
                             </label>
                             <div className="relative group flex items-center">
                                 <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1.5px]">
@@ -190,7 +190,7 @@ export default function RegisterPage() {
                                 htmlFor="email"
                                 className="block text-sm font-medium text-gray-200 ml-1"
                             >
-                                Correo electrónico
+                                Correo electrónico *
                             </label>
                             <div className="relative group flex items-center">
                                 <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1.5px]">
@@ -226,7 +226,7 @@ export default function RegisterPage() {
                                 htmlFor="password"
                                 className="block text-sm font-medium text-gray-200 ml-1"
                             >
-                                Contraseña
+                                Contraseña *
                             </label>
                             <div className="relative group flex items-center">
                                 <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1px]">
@@ -303,7 +303,7 @@ export default function RegisterPage() {
                                 htmlFor="confirmPassword"
                                 className="block text-sm font-medium text-gray-200 ml-1"
                             >
-                                Confirmar contraseña
+                                Confirmar contraseña *
                             </label>
                             <div className="relative group flex items-center">
                                 <div className="absolute left-0 pl-3 flex items-center pointer-events-none z-20 translate-y-[1px]">
@@ -352,6 +352,11 @@ export default function RegisterPage() {
                                 </p>
                             )}
                         </div>
+
+                        <p className="text-[12px] text-gray-500 text-right pr-1 italic">
+                            <span className="font-black">*</span> Campos
+                            requeridos
+                        </p>
 
                         <div className="pt-2">
                             <button

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
@@ -15,7 +15,6 @@ export default function CheckoutPage() {
     const [saleId, setSaleId] = useState<number | null>(null);
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
-    // 🔥 ACTUALIZADO: Agregamos todos los campos del gestor
     const [formData, setFormData] = useState({
         name: "",
         surname: "",
@@ -33,8 +32,6 @@ export default function CheckoutPage() {
         reference: "",
     });
 
-
-
     useEffect(() => {
         if (cart.length === 0 && !saleId) {
             navigate("/cart");
@@ -44,7 +41,9 @@ export default function CheckoutPage() {
     useEffect(() => {
         if (timeLeft === null) return;
         if (timeLeft <= 0) {
-            alert("El tiempo para completar la compra ha expirado. Por favor, verificá el stock e intentá de nuevo.");
+            alert(
+                "El tiempo para completar la compra ha expirado. Por favor, verificá el stock e intentá de nuevo.",
+            );
             window.location.reload(); // Reiniciar todo
             return;
         }
@@ -71,10 +70,43 @@ export default function CheckoutPage() {
         setIsDataConfirmed(true);
     };
 
-    const handleOrderCreated = (id: number) => {
+    // 1. Congelamos la función para que no cambie de referencia
+    const handleOrderCreated = useCallback((id: number) => {
         setSaleId(id);
         setTimeLeft(600); // Empezar contador de 10 minutos
-    };
+    }, []);
+
+    // 2. Congelamos los items del carrito
+    const memoizedItems = useMemo(
+        () =>
+            cart.map((item) => ({
+                productId: item.product.id,
+                quantity: item.quantity,
+                price: item.product.price,
+            })),
+        [cart],
+    );
+
+    // 3. Congelamos los datos del cliente
+    const memoizedClientData = useMemo(
+        () => ({
+            ...formData,
+            addresses: {
+                street: formData.street,
+                streetNum: parseInt(formData.number, 10) || 0,
+                floor: formData.floor
+                    ? parseInt(formData.floor, 10)
+                    : undefined,
+                apartment: formData.apartment || undefined,
+                locality: formData.city,
+                province: formData.province,
+                postalCode: formData.postalCode,
+                country: formData.country,
+                reference: formData.reference || undefined,
+            },
+        }),
+        [formData],
+    );
 
     if (cart.length === 0 && !saleId) return null;
 
@@ -94,7 +126,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <h1 className="text-[1.1rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight pb-4 px-1">
-                    Finalizar Compra
+                    Finalizar compra
                 </h1>
 
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -108,7 +140,7 @@ export default function CheckoutPage() {
                                 {/* SECCIÓN 1: Datos Personales */}
                                 <div>
                                     <h2 className="text-lg font-bold text-gray-800 mb-1 border-b border-gray-100 pb-2">
-                                        Datos Personales
+                                        Datos personales
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                         <div className="flex flex-col gap-1.5">
@@ -189,7 +221,7 @@ export default function CheckoutPage() {
                                 {/* SECCIÓN 2: Dirección de Envío/Facturación */}
                                 <div>
                                     <h2 className="text-lg font-bold text-gray-800 mb-1 border-b border-gray-100 pb-2">
-                                        Dirección de Envío
+                                        Dirección de envío
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                                         <div className="flex flex-col gap-1.5 md:col-span-2">
@@ -276,6 +308,36 @@ export default function CheckoutPage() {
                                                 placeholder="Provincia"
                                             />
                                         </div>
+                                        <div className="grid grid-cols-2 gap-4 md:col-span-4">
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-sm font-bold text-gray-700">
+                                                    Código Postal *
+                                                </label>
+                                                <input
+                                                    required
+                                                    type="text"
+                                                    name="postalCode"
+                                                    value={formData.postalCode}
+                                                    onChange={handleChange}
+                                                    className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
+                                                    placeholder="Ej: 5000"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-sm font-bold text-gray-700">
+                                                    País *
+                                                </label>
+                                                <input
+                                                    required
+                                                    type="text"
+                                                    name="country"
+                                                    value={formData.country}
+                                                    onChange={handleChange}
+                                                    className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
+                                                    placeholder="Ej: Argentina"
+                                                />
+                                            </div>
+                                        </div>
                                         <div className="flex flex-col gap-1.5 md:col-span-4">
                                             <label className="text-sm font-bold text-gray-700">
                                                 Referencia
@@ -301,14 +363,24 @@ export default function CheckoutPage() {
                             </form>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-10 px-4 animate-in fade-in duration-500">
-                                <CheckCircleIcon className={`w-16 h-16 ${saleId ? 'text-[#16a34a]' : 'text-blue-500'} mb-4`} />
+                                <CheckCircleIcon
+                                    className={`w-16 h-16 ${saleId ? "text-[#16a34a]" : "text-blue-500"} mb-4`}
+                                />
                                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                                    {saleId ? '¡Stock Reservado!' : 'Datos confirmados'}
+                                    {saleId
+                                        ? "¡Stock reservado!"
+                                        : "¡Datos confirmados!"}
                                 </h2>
                                 <p className="text-gray-500 text-center mb-8 max-w-sm">
                                     {saleId ? (
                                         <>
-                                            Tu pedido <span className="font-bold text-gray-700">#{saleId}</span> ya está registrado y el stock reservado. Completá el pago antes de que expire el tiempo.
+                                            Tu pedido{" "}
+                                            <span className="font-bold text-gray-700">
+                                                #{saleId}
+                                            </span>{" "}
+                                            ya está registrado y el stock
+                                            reservado. Completá el pago antes de
+                                            que expire el tiempo.
                                         </>
                                     ) : (
                                         "Hacé clic en el botón de abajo para verificar stock y proceder al pago seguro."
@@ -327,32 +399,19 @@ export default function CheckoutPage() {
                                 )}
 
                                 <div className="w-full max-w-md">
-                                    <CheckoutButton 
-                                        saleId={saleId} 
-                                        clientData={{
-                                            ...formData,
-                                            addresses: {
-                                                street: formData.street,
-                                                streetNum: parseInt(formData.number, 10) || 0,
-                                                floor: formData.floor ? parseInt(formData.floor, 10) : undefined,
-                                                apartment: formData.apartment || undefined,
-                                                locality: formData.city,
-                                                province: formData.province,
-                                                reference: formData.reference || undefined,
-                                            },
-                                        }}
-                                        items={cart.map((item) => ({
-                                            productId: item.product.id,
-                                            quantity: item.quantity,
-                                            price: item.product.price,
-                                        }))}
+                                    <CheckoutButton
+                                        saleId={saleId}
+                                        clientData={memoizedClientData}
+                                        items={memoizedItems}
                                         total={totalPrice}
                                         onOrderCreated={handleOrderCreated}
                                     />
                                     {!saleId && (
-                                        <button 
-                                            onClick={() => setIsDataConfirmed(false)}
-                                            className="w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600 transition underline underline-offset-4"
+                                        <button
+                                            onClick={() =>
+                                                setIsDataConfirmed(false)
+                                            }
+                                            className="w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
                                         >
                                             Editar mis datos
                                         </button>

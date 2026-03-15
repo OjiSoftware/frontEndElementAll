@@ -101,11 +101,12 @@ export default function SalesPage() {
                     <ConfirmModal
                         isOpen={true}
                         title="Confirmar cancelación"
+                        variant="danger"
                         message={
                             <span>
                                 ¿Estás seguro de que querés cancelar la{" "}
-                                <b>Venta #{saleToDelete.id}</b>? Esta acción
-                                no se puede deshacer.
+                                <b>Venta #{saleToDelete.id}</b>? Esta acción no
+                                se puede deshacer.
                             </span>
                         }
                         isLoading={loading}

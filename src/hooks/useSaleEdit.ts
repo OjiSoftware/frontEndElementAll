@@ -58,23 +58,23 @@ export const useSaleEdit = (saleId: string | undefined) => {
           });
 
           setFormData({
-            status: saleData.status || "PENDING",
-            total: Number(saleData.total) || 0,
-            details: mappedDetails,
-            name: saleData.client?.name || "",
-            surname: saleData.client?.surname || "",
-            dni: saleData.client?.dni || "",
-            phoneNumber: saleData.client?.phoneNumber || "",
-            email: saleData.client?.email || "",
-            street: address.street || "",
-            number: address.streetNum ? address.streetNum.toString() : "",
-            city: address.locality || "",
-            province: address.province || "",
-            postalCode: "", // Dejado por UI compliance
-            country: "",
-            floor: address.floor ? address.floor.toString() : "",
-            apartment: address.apartment || "",
-            reference: address.reference || "",
+              status: saleData.status || "PENDING",
+              total: Number(saleData.total) || 0,
+              details: mappedDetails,
+              name: saleData.client?.name || "",
+              surname: saleData.client?.surname || "",
+              dni: saleData.client?.dni || "",
+              phoneNumber: saleData.client?.phoneNumber || "",
+              email: saleData.client?.email || "",
+              street: address.street || "",
+              number: address.streetNum ? address.streetNum.toString() : "",
+              city: address.locality || "",
+              province: address.province || "",
+              postalCode: address.postalCode || "",
+              country: address.country || "",
+              floor: address.floor ? address.floor.toString() : "",
+              apartment: address.apartment || "",
+              reference: address.reference || "",
           });
         }
       } catch (error) {

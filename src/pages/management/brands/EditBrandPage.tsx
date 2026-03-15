@@ -93,6 +93,7 @@ export default function EditBrandPage() {
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Guardar cambios"
+                    variant="success"
                     message={
                         <>
                             ¿Seguro que querés guardar los cambios de{" "}

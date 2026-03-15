@@ -116,6 +116,7 @@ export default function CreateBrandPage() {
                 <ConfirmModal
                     isOpen={showConfirmModal}
                     title="Crear marca"
+                    variant="success"
                     message={
                         <>
                             ¿Seguro que querés crear la marca{" "}

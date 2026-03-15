@@ -9,6 +9,7 @@ interface ConfirmModalProps {
     confirmText?: string;
     cancelText?: string;
     isLoading?: boolean;
+    variant?: "danger" | "success" | "primary";
 }
 
 export function ConfirmModal({
@@ -20,7 +21,14 @@ export function ConfirmModal({
     confirmText = "Confirmar",
     cancelText = "Cancelar",
     isLoading = false,
+    variant = "primary",
 }: ConfirmModalProps) {
+    const variantClasses = {
+        primary: "bg-indigo-600 hover:bg-indigo-700",
+        success: "bg-green-500 hover:bg-green-600",
+        danger: "bg-red-500 hover:bg-red-600",
+    };
+
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen) onCancel();
@@ -55,11 +63,11 @@ export function ConfirmModal({
                         {cancelText}
                     </button>
                     <button
-                        className="px-4 py-2 bg-green-500/90 text-white rounded hover:bg-green-600 transition cursor-pointer"
+                        className={`px-4 py-2 text-white rounded transition cursor-pointer disabled:opacity-50 ${variantClasses[variant]}`}
                         onClick={onConfirm}
                         disabled={isLoading}
                     >
-                        {confirmText}
+                        {isLoading ? "Cargando..." : confirmText}
                     </button>
                 </div>
             </div>
