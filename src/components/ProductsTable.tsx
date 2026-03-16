@@ -267,12 +267,14 @@ export function ProductsTable({
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
                                     <Link
+                                        title="Editar producto"
                                         to={ROUTES.products.edit(product.id)}
                                         className="text-blue-500 hover:text-blue-400 transition active:scale-95"
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
+                                        title="Eliminar producto"
                                         onClick={() => onDelete(product)}
                                         className="text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
                                     >

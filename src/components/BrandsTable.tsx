@@ -106,12 +106,14 @@ export function BrandsTable({
                             <TableCell>
                                 <div className="flex items-center justify-center gap-3">
                                     <Link
+                                        title="Editar marca"
                                         to={ROUTES.brands.edit(brand.id)}
                                         className="text-blue-500 hover:text-blue-400 transition active:scale-95"
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
+                                        title="Eliminar marca"
                                         onClick={() => onDelete(brand)}
                                         className="text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
                                     >

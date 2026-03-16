@@ -245,6 +245,7 @@ export function SalesTable({
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
                                     <Link
+                                        title="Editar venta"
                                         to={ROUTES.sales.edit(sale.id)}
                                         className={
                                             sale.status === "CANCELLED"
@@ -255,6 +256,7 @@ export function SalesTable({
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
+                                        title="Cancelar venta"
                                         className={
                                             sale.status === "CANCELLED"
                                                 ? "text-gray-400 cursor-not-allowed"

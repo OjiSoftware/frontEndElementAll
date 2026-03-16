@@ -453,6 +453,7 @@ export default function CreateSalePage() {
                                     </div>
                                     <button
                                         type="button"
+                                        title="Eliminar producto"
                                         className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                         onClick={() =>
                                             removeItem(item.productId)
@@ -792,6 +793,7 @@ export default function CreateSalePage() {
                                         <td className="px-4 py-3">
                                             <button
                                                 type="button"
+                                                title="Eliminar producto"
                                                 className="text-red-500 hover:text-red-400 transition cursor-pointer mx-auto flex"
                                                 onClick={() =>
                                                     removeItem(item.productId)
