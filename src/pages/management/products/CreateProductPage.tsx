@@ -4,6 +4,7 @@ import { PackagePlus, Image as ImageIcon } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import toast from "react-hot-toast";
 import { useProductForm } from "@/hooks/useProductForm";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreateProductPage() {
     const {
@@ -19,6 +20,7 @@ export default function CreateProductPage() {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [priceInput, setPriceInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     // ---------------- Handlers ----------------
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +70,16 @@ export default function CreateProductPage() {
         }
     };
 
+    const isFormInvalid =
+        !formData.name.trim() ||
+        !formData.unit.trim() ||
+        !formData.description.trim() ||
+        !formData.categoryId ||
+        !formData.subCategoryId ||
+        !formData.brandId ||
+        formData.price <= 0 ||
+        isLoading;
+
     return (
         <DashboardLayout>
             <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
@@ -75,8 +87,8 @@ export default function CreateProductPage() {
                     <div>
                         <div className="mb-2">
                             <button
-                                onClick={() => window.history.back()}
-                                className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer"
+                                onClick={() => navigate("/management/products")}
+                                className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
                             >
                                 ← Volver
                             </button>
@@ -156,7 +168,8 @@ export default function CreateProductPage() {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Nombre del producto
+                                Nombre del producto{" "}
+                                <span className="font-bold">*</span>
                             </label>
                             <input
                                 type="text"
@@ -172,7 +185,8 @@ export default function CreateProductPage() {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Unidad por bulto
+                                Unidad por bulto{" "}
+                                <span className="font-bold">*</span>
                             </label>
                             <input
                                 type="text"
@@ -188,7 +202,7 @@ export default function CreateProductPage() {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Descripción
+                                Descripción <span className="font-bold">*</span>
                             </label>
                             <textarea
                                 name="description"
@@ -226,7 +240,8 @@ export default function CreateProductPage() {
                         <div className="space-y-4 grow">
                             <div>
                                 <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                    Categoría
+                                    Categoría{" "}
+                                    <span className="font-bold">*</span>
                                 </label>
                                 <select
                                     name="categoryId"
@@ -249,7 +264,8 @@ export default function CreateProductPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                        Subcategoría
+                                        Subcategoría{" "}
+                                        <span className="font-bold">*</span>
                                     </label>
                                     <select
                                         name="subCategoryId"
@@ -270,7 +286,8 @@ export default function CreateProductPage() {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                        Marca
+                                        Marca{" "}
+                                        <span className="font-bold">*</span>
                                     </label>
                                     <select
                                         name="brandId"
@@ -297,7 +314,8 @@ export default function CreateProductPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="col-span-1">
                                     <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                        Stock
+                                        Stock{" "}
+                                        <span className="font-bold">*</span>
                                     </label>
                                     <input
                                         type="number"
@@ -311,7 +329,8 @@ export default function CreateProductPage() {
                                 </div>
                                 <div className="col-span-1">
                                     <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                        Precio ($)
+                                        Precio ($){" "}
+                                        <span className="font-bold">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -347,25 +366,39 @@ export default function CreateProductPage() {
                         </div>
 
                         {/* Botones de acción */}
-                        <div
-                            className="flex flex-row items-stretch gap-3 mt-6 w-full
-                        border-t border-white/10 pt-4"
-                        >
-                            <button
-                                type="button"
-                                onClick={() => window.history.back()}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
-                            >
-                                Cancelar
-                            </button>
+                        <div className="flex flex-col items-end w-full">
+                            <div className="flex flex-row items-stretch gap-3
+                            mt-6 md:mt-7! w-full border-t border-white/10 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate("/management/products")
+                                    }
+                                    className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-600 text-slate-300 bg-transparent transition-all duration-300 cursor-pointer hover:bg-slate-500/20 hover:text-white hover:border-slate-400"
+                                >
+                                    Cancelar
+                                </button>
 
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                            >
-                                {isLoading ? "Creando..." : "Guardar producto"}
-                            </button>
+                                <button
+                                    type="submit"
+                                    disabled={isFormInvalid}
+                                    className={`flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg transition-all duration-300
+                                      ${
+                                          isFormInvalid
+                                              ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
+                                              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                      }`}
+                                >
+                                    Crear producto
+                                </button>
+                            </div>
+
+                            {isFormInvalid && !isLoading && (
+                                <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
+                                    * Complete todos los campos requeridos para
+                                    guardar
+                                </p>
+                            )}
                         </div>
                     </div>
                 </form>

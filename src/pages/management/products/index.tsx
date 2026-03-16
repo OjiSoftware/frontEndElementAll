@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, X, PlusIcon } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -24,6 +24,12 @@ export default function ProductsPage() {
         null,
     );
 
+    // ---------------- Estados de Ordenamiento ----------------
+    const [sortColumn, setSortColumn] = useState<string | null>(null);
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(
+        null,
+    );
+
     // ---------------- Estados del Toast ----------------
     const [showWelcome, setShowWelcome] = useState(false);
     const [userName, setUserName] = useState("");
@@ -31,20 +37,87 @@ export default function ProductsPage() {
     const itemsPerPage = useItemsPerpage();
     const { disableProduct, loading } = useDisableProduct(setProducts);
 
-    // ---------------- Filtrado con .trim() ----------------
-    const filteredProducts = products.filter((p) => {
+    // ---------------- Lógica de Filtrado y Ordenamiento ----------------
+    const filteredProducts = useMemo(() => {
         const searchTerm = query.trim().toLowerCase();
-        const matchesQuery = p.name.toLowerCase().includes(searchTerm);
-        const isActive = p.status;
-        return matchesQuery && isActive;
-    });
+
+        // 1. Filtrar
+        const filtered = products.filter((p) => {
+            const matchesQuery = p.name.toLowerCase().includes(searchTerm);
+            return p.status && matchesQuery;
+        });
+
+        // 2. Asignar posición original (para que el número de fila "viaje" con el objeto)
+        const productsWithIndex = filtered.map((product, index) => ({
+            ...product,
+            originalIndex: index + 1,
+        }));
+
+        // Si no hay ordenamiento activo, devolvemos la lista con los índices
+        if (!sortColumn || !sortDirection) {
+            return productsWithIndex;
+        }
+
+        // 3. Ordenar
+        return [...productsWithIndex].sort((a, b) => {
+            let aVal: any;
+            let bVal: any;
+
+            if (sortColumn === "rowNum") {
+                aVal = (a as any).originalIndex;
+                bVal = (b as any).originalIndex;
+            } else if (sortColumn === "brand.name") {
+                aVal = a.brand?.name || "";
+                bVal = b.brand?.name || "";
+            } else if (sortColumn === "subCategory.category.name") {
+                aVal = a.subCategory?.category?.name || "";
+                bVal = b.subCategory?.category?.name || "";
+            } else {
+                aVal = a[sortColumn as keyof Product] ?? "";
+                bVal = b[sortColumn as keyof Product] ?? "";
+            }
+
+            // Comparación Numérica
+            if (
+                sortColumn === "rowNum" ||
+                sortColumn === "id" ||
+                sortColumn === "stock" ||
+                sortColumn === "price" ||
+                typeof aVal === "number"
+            ) {
+                return sortDirection === "asc"
+                    ? Number(aVal) - Number(bVal)
+                    : Number(bVal) - Number(aVal);
+            }
+
+            // Comparación de Strings (o booleanos convertidos a string)
+            return sortDirection === "asc"
+                ? String(aVal).localeCompare(String(bVal))
+                : String(bVal).localeCompare(String(aVal));
+        });
+    }, [products, query, sortColumn, sortDirection]);
 
     // ---------------- Paginación ----------------
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
 
-    // ---------------- Toast de Bienvenida ----------------
+    // ---------------- Funciones ----------------
+    const handleSort = (col: string) => {
+        if (sortColumn === col) {
+            if (sortDirection === "asc") {
+                setSortDirection("desc");
+            } else if (sortDirection === "desc") {
+                setSortColumn(null);
+                setSortDirection(null);
+            }
+        } else {
+            setSortColumn(col);
+            setSortDirection("asc");
+        }
+    };
+
+    // ---------------- Efectos ----------------
     useEffect(() => {
         if (location.state?.welcome) {
             setUserName(location.state.userName || "Usuario");
@@ -55,7 +128,6 @@ export default function ProductsPage() {
         }
     }, [location]);
 
-    // ---------------- Fetch ----------------
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -72,7 +144,7 @@ export default function ProductsPage() {
 
     return (
         <>
-            {/* TOAST DE BIENVENIDA - Estilo ElementAll */}
+            {/* TOAST DE BIENVENIDA */}
             <div
                 className={`fixed top-6 right-6 z-[100] transition-all duration-500 transform ${
                     showWelcome
@@ -136,9 +208,13 @@ export default function ProductsPage() {
                     <ProductsTable
                         products={currentProducts}
                         onDelete={(product) => setProductToDelete(product)}
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        onSort={handleSort}
+                        currentSortColumn={sortColumn}
+                        currentSortDirection={sortDirection}
                     />
 
-                    {/* PAGINATION */}
                     <Pagination
                         totalItems={filteredProducts.length}
                         itemsPerPage={itemsPerPage}
@@ -146,7 +222,6 @@ export default function ProductsPage() {
                         onPageChange={setCurrentPage}
                     />
 
-                    {/* MODAL DE CONFIRMACIÓN */}
                     {productToDelete && (
                         <ConfirmDeleteModal
                             isOpen={true}
