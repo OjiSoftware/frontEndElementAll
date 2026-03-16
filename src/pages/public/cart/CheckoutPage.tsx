@@ -110,6 +110,22 @@ export default function CheckoutPage() {
 
     if (cart.length === 0 && !saleId) return null;
 
+    const isFormInvalid = useMemo(() => {
+        return (
+            !formData.name.trim() ||
+            !formData.surname.trim() ||
+            !formData.email.trim() ||
+            !formData.dni.trim() ||
+            !formData.phone.trim() ||
+            !formData.street.trim() ||
+            !formData.number.trim() ||
+            !formData.city.trim() ||
+            !formData.province.trim() ||
+            !formData.postalCode.trim() ||
+            !formData.country.trim()
+        );
+    }, [formData]);
+
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5] border-b border-gray-200">
             <Navbar search={search} setSearch={setSearch} />
@@ -118,7 +134,7 @@ export default function CheckoutPage() {
                 <div className="mb-2">
                     <button
                         onClick={() => navigate("/cart")}
-                        className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
+                        className="text-sm px-2 py-1 -ml-2 mb-3 font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                         <ChevronLeftIcon className="w-4 h-4" />
                         Volver al carrito
@@ -268,7 +284,7 @@ export default function CheckoutPage() {
                                             </div>
                                             <div className="flex flex-col gap-1.5">
                                                 <label className="text-sm font-bold text-gray-700">
-                                                    Depto
+                                                    Depto.
                                                 </label>
                                                 <input
                                                     type="text"
@@ -354,12 +370,30 @@ export default function CheckoutPage() {
                                     </div>
                                 </div>
 
-                                <button
-                                    type="submit"
-                                    className="w-full mt-4 py-3.5 bg-[#2f3027] text-white text-[0.95rem] font-bold rounded-xl hover:bg-black transition shadow-sm cursor-pointer flex justify-center items-center"
-                                >
-                                    Confirmar Datos
-                                </button>
+                                <div className="flex flex-col items-end w-full">
+                                    <button
+                                        type="submit"
+                                        disabled={isFormInvalid}
+                                        className={`w-full mt-4 py-3.5 text-[0.95rem] font-bold rounded-xl transition-all duration-300 flex justify-center items-center
+                                            ${
+                                                isFormInvalid
+                                                    ? "bg-[#16a34a]/50 text-white/80 cursor-not-allowed"
+                                                    : "bg-[#16a34a] text-white hover:bg-[#15803d] cursor-pointer shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_25px_rgba(22,163,74,0.4)] active:scale-[0.98]"
+                                            }`}
+                                    >
+                                        Confirmar datos
+                                    </button>
+
+                                    {/* Contenedor del mensaje para que no empuje el diseño */}
+                                    <div className="h-5 relative w-full mt-2">
+                                        {isFormInvalid && (
+                                            <p className="absolute top-3 right-0 text-gray-400 text-[10px] text-right uppercase tracking-wide font-bold whitespace-nowrap">
+                                                * Complete todos los campos
+                                                requeridos para continuar
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
                             </form>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-10 px-4 animate-in fade-in duration-500">
