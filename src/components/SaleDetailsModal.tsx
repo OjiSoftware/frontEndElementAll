@@ -96,15 +96,12 @@ export function SaleDetailsModal({
                 className="bg-slate-800 border-t md:border border-slate-700 rounded-t-3xl md:rounded-xl p-4 md:p-6 w-full max-w-4xl shadow-2xl text-left transform transition-all duration-300 animate-slide-up md:animate-fade-in flex flex-col h-[90vh] md:h-auto md:min-h-[600px] md:max-h-[90vh]"
                 onClick={(e) => e.stopPropagation()}
             >
-
                 {/* Cabecera */}
                 <div className="flex justify-between items-center mb-4 md:mb-6 border-b border-slate-700 pb-3 md:pb-4 shrink-0">
                     <h2 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
                         <ShoppingCart className="text-indigo-400" size={20} />
                         Detalles de la venta
-                        <span className="tracking-wider">
-                            #{sale.id}
-                        </span>
+                        <span className="tracking-wider">#{sale.id}</span>
                     </h2>
                     <button
                         onClick={onClose}
@@ -125,7 +122,7 @@ export function SaleDetailsModal({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             {/* Info Venta COMPLETA */}
                             <div className="bg-slate-700/30 p-3 md:p-4 rounded-lg border border-slate-600/50">
-                                <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider">
+                                <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider border-b border-white/10 pb-1">
                                     Detalle del Comprobante
                                 </h3>
                                 <div className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-gray-300">
@@ -189,7 +186,7 @@ export function SaleDetailsModal({
 
                             {/* Datos del Cliente COMPLETOS */}
                             <div className="bg-slate-700/30 p-3 md:p-4 rounded-lg border border-slate-600/50">
-                                <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider">
+                                <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider border-b border-white/10 pb-1">
                                     Datos del Cliente
                                 </h3>
                                 {client ? (
@@ -265,7 +262,7 @@ export function SaleDetailsModal({
 
                         {/* Tabla Estilo Desktop Centrada */}
                         <div>
-                            <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider">
+                            <h3 className="text-xs md:text-sm font-semibold text-indigo-400 mb-2 md:mb-3 uppercase tracking-wider border-b border-white/10 pb-1">
                                 Productos
                             </h3>
                             <div className="overflow-x-auto bg-slate-800/50 rounded-xl border border-slate-600/50">
