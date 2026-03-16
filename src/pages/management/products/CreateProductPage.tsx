@@ -88,7 +88,7 @@ export default function CreateProductPage() {
                         <div className="mb-2">
                             <button
                                 onClick={() => navigate("/management/products")}
-                                className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                                className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
                             >
                                 ← Volver
                             </button>
@@ -162,7 +162,7 @@ export default function CreateProductPage() {
                 >
                     {/* COLUMNA IZQUIERDA */}
                     <div className="space-y-4">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 uppercase">
                             Información básica
                         </h3>
 
@@ -233,7 +233,7 @@ export default function CreateProductPage() {
 
                     {/* COLUMNA DERECHA */}
                     <div className="flex flex-col mt-2 md:mt-0">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 mb-4">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 mb-4 uppercase">
                             Categorización y precio
                         </h3>
 
