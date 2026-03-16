@@ -15,7 +15,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo_elementAll.png";
 import { useAuth } from "../hooks/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navigation = [
     { name: "Productos", href: "/management/products" },
@@ -50,6 +50,14 @@ export default function DashboardLayout({
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+    useEffect(() => {
+        document.body.classList.add("bg-gray-900");
+
+        return () => {
+            document.body.classList.remove("bg-gray-900");
+        };
+    }, []);
+    
     const handleLogout = async (e: React.MouseEvent) => {
         e.preventDefault();
         setIsLoggingOut(true);

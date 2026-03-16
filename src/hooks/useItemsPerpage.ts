@@ -4,15 +4,12 @@ export const useItemsPerpage = () => {
     const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const updateItems = () => {
-        const actualWidth = window.innerWidth;
+        const height = window.innerHeight;
+        const availableHeight = height - 300;
+        const rowHeight = window.innerWidth < 640 ? 90 : 65;
+        const calculated = Math.floor(availableHeight / rowHeight);
 
-        if (actualWidth < 640) {
-            setItemsPerPage(3);
-        } else if (actualWidth < 1024) {
-            setItemsPerPage(5);
-        } else {
-            setItemsPerPage(6);
-        }
+        setItemsPerPage(calculated > 4 ? calculated : 4);
     };
 
     useEffect(() => {

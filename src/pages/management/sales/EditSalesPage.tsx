@@ -148,14 +148,26 @@ export default function EditSalesPage() {
         );
     }
 
+    const isFormInvalid =
+        !formData.name.trim() ||
+        !formData.surname.trim() ||
+        !formData.dni.trim() ||
+        !formData.email.trim() ||
+        !formData.street.trim() ||
+        !formData.number.trim() ||
+        !formData.city.trim() ||
+        !formData.province.trim() ||
+        formData.details.length === 0 ||
+        isLoading;
+
     return (
         <DashboardLayout>
             <div className="max-w-5xl mx-auto px-4 h-full flex flex-col justify-center">
                 <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-end mb-4">
                     <div>
                         <button
-                            onClick={() => navigate(-1)}
-                            className="text-xs text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                            onClick={() => navigate("/management/sales")}
+                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
                         >
                             ← Volver
                         </button>
@@ -225,7 +237,8 @@ export default function EditSalesPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Nombre
+                                            NombreNombre{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -240,7 +253,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Apellido
+                                            Apellido{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -255,7 +269,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            DNI
+                                            DNI{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -270,7 +285,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Teléfono
+                                            Teléfono{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -285,7 +301,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Correo electrónico
+                                            Correo electrónico{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -301,12 +318,14 @@ export default function EditSalesPage() {
                                 </div>
 
                                 <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mt-6">
-                                    Dirección de facturación
+                                    Dirección de facturación{" "}
+                                    <span className="font-bold">*</span>
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4">
                                     <div className="md:col-span-2">
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Calle
+                                            Calle{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -321,7 +340,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Número
+                                            Número{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -366,7 +386,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Ciudad / Localidad
+                                            Ciudad / Localidad{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -381,7 +402,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Provincia
+                                            Provincia{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -396,7 +418,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            Código Postal
+                                            Código Postal{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -411,7 +434,8 @@ export default function EditSalesPage() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            País
+                                            País{" "}
+                                            <span className="font-bold">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -822,7 +846,7 @@ export default function EditSalesPage() {
                         </table>
                     </div>
 
-                    <div className="flex flex-col md:flex-row justify-between items-end md:items-center pt-4 border-t border-white/10 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start pt-4 border-t border-white/10 gap-4 mt-4">
                         <div className="text-xl font-bold text-white self-end md:self-auto">
                             Total:{" "}
                             <span className="text-green-400">
@@ -835,23 +859,40 @@ export default function EditSalesPage() {
                                 )}
                             </span>
                         </div>
-                        <div className="flex gap-3 w-full md:w-auto">
-                            <button
-                                type="button"
-                                onClick={() => navigate("/management/sales")}
-                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={
-                                    formData.details.length === 0 || isLoading
-                                }
-                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                            >
-                                Guardar cambios
-                            </button>
+
+                        <div className="flex flex-col items-end w-full md:w-auto">
+                            <div className="flex flex-row gap-3 w-full md:w-auto">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate("/management/sales")
+                                    }
+                                    className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-600 text-slate-300 bg-transparent transition-all duration-300 cursor-pointer hover:bg-slate-500/20 hover:text-white hover:border-slate-400"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isFormInvalid}
+                                    className={`flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg transition-all duration-300
+                                      ${
+                                          isFormInvalid
+                                              ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
+                                              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                      }`}
+                                >
+                                    Finalizar venta
+                                </button>
+                            </div>
+
+                            <div className="h-5 relative w-full">
+                                {isFormInvalid && !isLoading && (
+                                    <p className="absolute top-4 right-0 text-slate-500 text-[10px] text-right uppercase tracking-wide font-medium whitespace-nowrap">
+                                        * Complete todos los campos requeridos
+                                        para guardar
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </form>

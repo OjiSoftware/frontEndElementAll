@@ -18,11 +18,18 @@ import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { SaleDetailsModal } from "@/components/SaleDetailsModal";
 
-type SortColumn = keyof Sale | "client.name";
+// Actualizamos el tipo para incluir rowNum (la posición visual)
+type SortColumn = keyof Sale | "client.name" | "rowNum";
 
 interface SalesTableProps {
     sales: Sale[];
     onDelete: (Sale: Sale) => void;
+    currentPage: number;
+    itemsPerPage: number;
+    // Props actualizadas para aceptar null (Estado Neutral)
+    onSort: (column: string) => void;
+    currentSortColumn: string | null;
+    currentSortDirection: "asc" | "desc" | null;
 }
 
 const SALE_STATUS_MAP: Record<string, { label: string; style: string }> = {
@@ -44,9 +51,15 @@ const SALE_STATUS_MAP: Record<string, { label: string; style: string }> = {
     },
 };
 
-export function SalesTable({ sales, onDelete }: SalesTableProps) {
-    const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+export function SalesTable({
+    sales,
+    onDelete,
+    currentPage,
+    itemsPerPage,
+    onSort,
+    currentSortColumn,
+    currentSortDirection,
+}: SalesTableProps) {
     const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
@@ -70,67 +83,29 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
         setSelectedSale(null);
     };
 
+    // Ahora solo avisamos al padre qué columna se clickeó
     const handleSort = (column: SortColumn) => {
-        if (sortColumn !== column) {
-            setSortColumn(column);
-            setSortDirection("asc");
-        } else if (sortDirection === "asc") {
-            setSortDirection("desc");
-        } else {
-            setSortColumn(null);
-            setSortDirection("asc");
-        }
+        onSort(column as string);
     };
 
     const renderSortArrow = (column: SortColumn) => {
-        const isActive = sortColumn === column;
+        const isActive = currentSortColumn === column;
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 ms-1 transition-all duration-150 ${isActive
-                        ? sortDirection === "desc"
+                className={`w-3 h-3 ms-1 transition-all duration-150 ${
+                    isActive && currentSortDirection
+                        ? currentSortDirection === "desc"
                             ? "rotate-180 opacity-100"
                             : "opacity-100"
                         : "opacity-0"
-                    }`}
+                }`}
             />
         );
     };
 
-    const sortedSales = useMemo(() => {
-        if (!sortColumn) return sales;
-
-        return [...sales].sort((a, b) => {
-            let aValue: any;
-            let bValue: any;
-
-            if (sortColumn === "status") {
-                aValue = SALE_STATUS_MAP[a.status]?.label || a.status;
-                bValue = SALE_STATUS_MAP[b.status]?.label || b.status;
-            } else if (sortColumn === "total") {
-                aValue = a.total ?? 0;
-                bValue = b.total ?? 0;
-            } else if (sortColumn === "client.name") {
-                aValue = a.client?.name || "";
-                bValue = b.client?.name || "";
-            } else {
-                aValue = a[sortColumn as keyof Sale];
-                bValue = b[sortColumn as keyof Sale];
-            }
-
-            if (sortColumn === "id" || typeof aValue === "number") {
-                return sortDirection === "asc"
-                    ? Number(aValue) - Number(bValue)
-                    : Number(bValue) - Number(aValue);
-            }
-
-            const aStr = String(aValue).toLowerCase();
-            const bStr = String(bValue).toLowerCase();
-
-            if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
-            if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
-            return 0;
-        });
-    }, [sales, sortColumn, sortDirection]);
+    const displaySales = useMemo(() => {
+        return sales;
+    }, [sales]);
 
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
@@ -139,56 +114,57 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                     <TableRow>
                         <TableHeadCell
                             className="px-4 w-14 cursor-pointer select-none"
-                            onClick={() => handleSort("id")}
+                            // Cambiado a rowNum para que el orden visual sea correcto
+                            onClick={() => handleSort("rowNum")}
                         >
                             <div className="flex items-center">
-                                # {renderSortArrow("id")}
+                                # {renderSortArrow("rowNum")}
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none"
+                            className="hidden md:table-cell! cursor-pointer select-none text-center"
                             onClick={() => handleSort("createdAt")}
                         >
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative inline-flex items-center justify-center">
                                 <span>Fecha</span>
-                                <div className="absolute translate-x-8">
+                                <div className="absolute -right-6">
                                     {renderSortArrow("createdAt")}
                                 </div>
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="cursor-pointer select-none"
+                            className="cursor-pointer select-none text-center"
                             onClick={() => handleSort("status")}
                         >
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative inline-flex items-center justify-center">
                                 <span>Estado</span>
-                                <div className="absolute translate-x-8">
+                                <div className="absolute -right-6">
                                     {renderSortArrow("status")}
                                 </div>
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none"
+                            className="hidden md:table-cell! cursor-pointer select-none text-center"
                             onClick={() => handleSort("total")}
                         >
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative inline-flex items-center justify-center">
                                 <span>Monto</span>
-                                <div className="absolute translate-x-8">
+                                <div className="absolute -right-6">
                                     {renderSortArrow("total")}
                                 </div>
                             </div>
                         </TableHeadCell>
 
                         <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none"
+                            className="hidden md:table-cell! cursor-pointer select-none text-center"
                             onClick={() => handleSort("client.name")}
                         >
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative inline-flex items-center justify-center">
                                 <span>Cliente</span>
-                                <div className="absolute translate-x-8">
+                                <div className="absolute -right-6">
                                     {renderSortArrow("client.name")}
                                 </div>
                             </div>
@@ -201,24 +177,33 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                 </TableHead>
 
                 <TableBody className="divide-y">
-                    {sortedSales.map((sale, index) => (
+                    {displaySales.map((sale) => (
                         <TableRow
                             key={sale.id}
                             className="bg-white dark:border-gray-700 dark:bg-gray-800 text-sm md:text-base"
                         >
-                            <TableCell className="px-4 text-gray-500 font-medium">
-                                {index + 1}
+                            <TableCell className="px-4 md:font-bold align-top py-4 lg:align-middle">
+                                <div className="flex flex-col">
+                                    <span className="text-gray-900 dark:text-white">
+                                        {(sale as any).originalIndex}
+                                    </span>
+                                    <span className="sm:hidden text-[10px] font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                                        {formatARS.format(
+                                            Number(sale.total) ?? 0,
+                                        )}
+                                    </span>
+                                </div>
                             </TableCell>
 
-                            <TableCell className="hidden md:table-cell! text-center text-gray-600 dark:text-gray-400">
+                            <TableCell className="hidden md:table-cell! text-center text-gray-600 dark:text-gray-400 align-top py-4 lg:align-middle">
                                 {sale.createdAt
                                     ? new Date(
-                                        sale.createdAt,
-                                    ).toLocaleDateString("es-AR")
+                                          sale.createdAt,
+                                      ).toLocaleDateString("es-AR")
                                     : "---"}
                             </TableCell>
 
-                            <TableCell className="text-center">
+                            <TableCell className="text-center align-middle md:align-top py-4 lg:align-middle">
                                 {(() => {
                                     const statusInfo = SALE_STATUS_MAP[
                                         sale.status
@@ -227,40 +212,27 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                         style: "bg-gray-500/10 text-gray-400 border-gray-500/20",
                                     };
                                     return (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <span
-                                                className={`px-2.5 py-1 rounded-md text-xs font-bold border ${statusInfo.style}`}
-                                            >
-                                                {statusInfo.label}
-                                            </span>
-                                            {sale.transaction?.paymentMethod && (
-                                                <span className="text-[10px] uppercase font-bold text-gray-400">
-                                                    {sale.transaction.paymentMethod}
-                                                </span>
-                                            )}
-                                        </div>
+                                        <span
+                                            className={`px-2.5 py-1 rounded-md text-[10px] md:text-xs font-bold border inline-block uppercase tracking-wider ${statusInfo.style}`}
+                                        >
+                                            {statusInfo.label}
+                                        </span>
                                     );
                                 })()}
                             </TableCell>
 
-                            {/* Monto: Alineado a la derecha con padding derecho */}
-                            <TableCell className="hidden md:table-cell! text-right font-mono text-gray-900 dark:text-white">
-                                <div className="xl:pr-20!">
-                                    {formatARS.format(sale.total ?? 0)}
-                                </div>
+                            <TableCell className="hidden md:table-cell! text-center font-mono text-gray-900 dark:text-white align-top py-4 lg:align-middle">
+                                {formatARS.format(Number(sale.total) ?? 0)}
                             </TableCell>
 
-                            {/* Cliente: Alineado a la izquierda con padding izquierdo */}
-                            <TableCell className="hidden md:table-cell! text-left">
-                                <div className="xl:pl-20!">
-                                    {sale.client ? (
-                                        `${sale.client.surname}, ${sale.client.name}`
-                                    ) : (
-                                        <span className="text-gray-400 italic text-xs">
-                                            Sin cliente
-                                        </span>
-                                    )}
-                                </div>
+                            <TableCell className="hidden md:table-cell! text-gray-600 dark:text-gray-400 align-top py-4">
+                                {sale.client ? (
+                                    `${sale.client.surname}, ${sale.client.name}`
+                                ) : (
+                                    <span className="text-gray-400 italic text-xs">
+                                        Sin cliente
+                                    </span>
+                                )}
                             </TableCell>
 
                             <TableCell>
@@ -272,32 +244,22 @@ export function SalesTable({ sales, onDelete }: SalesTableProps) {
                                     >
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
-                                    {sale.status !== "CANCELLED" ? (
-                                        <Link
-                                            to={ROUTES.sales.edit(sale.id)}
-                                            title="Editar venta"
-                                            className="text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
-                                        >
-                                            <PencilIcon className="w-5 h-5" />
-                                        </Link>
-                                    ) : (
-                                        <div
-                                            title="No se puede editar una venta cancelada"
-                                            className="text-gray-400 cursor-not-allowed"
-                                        >
-                                            <PencilIcon className="w-5 h-5" />
-                                        </div>
-                                    )}
-                                    <button
-                                        title={
+                                    <Link
+                                        to={ROUTES.sales.edit(sale.id)}
+                                        className={
                                             sale.status === "CANCELLED"
-                                                ? "Venta ya cancelada"
-                                                : "Cancelar venta"
+                                                ? "text-gray-400 cursor-not-allowed pointer-events-none"
+                                                : "text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
                                         }
-                                        className={`${sale.status === "CANCELLED"
+                                    >
+                                        <PencilIcon className="w-5 h-5" />
+                                    </Link>
+                                    <button
+                                        className={
+                                            sale.status === "CANCELLED"
                                                 ? "text-gray-400 cursor-not-allowed"
                                                 : "text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
-                                            }`}
+                                        }
                                         onClick={() =>
                                             sale.status !== "CANCELLED" &&
                                             onDelete(sale)
