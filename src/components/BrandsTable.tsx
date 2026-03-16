@@ -1,4 +1,3 @@
-import { useState, useMemo } from "react";
 import {
     Table,
     TableBody,
@@ -12,37 +11,36 @@ import { Brand } from "@/types/brand.types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 
-type SortColumn = keyof Brand | "subCategory.name";
+// Extendemos Brand para TS
+type BrandWithIndex = Brand & { originalIndex?: number };
 
 interface BrandsTableProps {
-    brands: Brand[];
+    brands: BrandWithIndex[];
     onDelete: (brand: Brand) => void;
+    currentPage: number;
+    itemsPerPage: number;
+    // Nuevas props
+    onSort: (column: string) => void;
+    currentSortColumn: string | null;
+    currentSortDirection: "asc" | "desc" | null;
 }
 
-export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
-    const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-
-    // ---------------- Sort Logic ----------------
-    const handleSort = (column: SortColumn) => {
-        if (sortColumn !== column) {
-            setSortColumn(column);
-            setSortDirection("asc");
-        } else if (sortDirection === "asc") {
-            setSortDirection("desc");
-        } else {
-            setSortColumn(null);
-            setSortDirection("asc");
-        }
-    };
-
-    const renderSortArrow = (column: SortColumn) => {
-        const isActive = sortColumn === column;
+export function BrandsTable({
+    brands,
+    onDelete,
+    currentPage,
+    itemsPerPage,
+    onSort,
+    currentSortColumn,
+    currentSortDirection,
+}: BrandsTableProps) {
+    const renderSortArrow = (column: string) => {
+        const isActive = currentSortColumn === column;
         return (
             <ArrowUpIcon
                 className={`w-3 h-3 transition-all duration-150 ${
-                    isActive
-                        ? sortDirection === "desc"
+                    isActive && currentSortDirection
+                        ? currentSortDirection === "desc"
                             ? "rotate-180 opacity-100"
                             : "opacity-100"
                         : "opacity-0"
@@ -51,111 +49,71 @@ export function BrandsTable({ brands, onDelete }: BrandsTableProps) {
         );
     };
 
-    const sortedBrands = useMemo(() => {
-        if (!sortColumn) return brands;
-
-        return [...brands].sort((a, b) => {
-            let aValue = a[sortColumn as keyof Brand];
-            let bValue = b[sortColumn as keyof Brand];
-
-            if (sortColumn === "id" || typeof aValue === "number") {
-                return sortDirection === "asc"
-                    ? Number(aValue) - Number(bValue)
-                    : Number(bValue) - Number(aValue);
-            }
-
-            const aStr = String(aValue).toLowerCase();
-            const bStr = String(bValue).toLowerCase();
-
-            if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
-            if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
-            return 0;
-        });
-    }, [brands, sortColumn, sortDirection]);
-
-    // ---------------- Style Constants ----------------
-    const thClasses = "px-2 py-3 md:px-4 select-none";
-    const tdBase = "px-2 py-3 md:px-4";
-
-    // Clases para que la columna de acciones quede pegada a la derecha
-    const stickyActionsTh = "sticky right-0 bg-gray-50 dark:bg-gray-700 z-10";
-    const stickyActionsTd = "sticky right-0 bg-white dark:bg-gray-800 z-10";
-
-    const colWidths = {
-        id: "w-1/5 md:w-1/6! lg:w-1/12!",
-        name: "w-1/2 md:w-3/4!", // El nombre ocupa el resto para empujar las acciones
-        actions: "w-24 md:w-28!",
-    };
-
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 relative">
-            <Table hoverable className="table-fixed min-w-full">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 relative w-full">
+            <Table hoverable className="w-full border-collapse">
                 <TableHead>
                     <TableRow>
+                        {/* 1. ROW NUM (Cambiamos el onClick de id a rowNum) */}
                         <TableHeadCell
-                            className={`${thClasses} ${colWidths.id} cursor-pointer`}
-                            onClick={() => handleSort("id")}
+                            className="w-16 md:w-24 px-4 cursor-pointer select-none text-center"
+                            onClick={() => onSort("rowNum")}
                         >
-                            <div className="flex items-center">
-                                # {renderSortArrow("id")}
+                            <div className="flex items-center justify-start">
+                                # {renderSortArrow("rowNum")}
                             </div>
                         </TableHeadCell>
 
+                        {/* 2. Nombre */}
                         <TableHeadCell
-                            className={`${thClasses} ${colWidths.name} cursor-pointer`}
-                            onClick={() => handleSort("name")}
+                            className="cursor-pointer select-none text-left"
+                            onClick={() => onSort("name")}
                         >
-                            <div className="relative flex items-center justify-start">
+                            <div className="relative inline-flex items-center">
                                 <span>Nombre</span>
-                                <div className="absolute translate-x-16">
+                                <div className="absolute -right-6">
                                     {renderSortArrow("name")}
                                 </div>
                             </div>
                         </TableHeadCell>
 
-                        {/* ACCIONES: Sticky a la derecha */}
-                        <TableHeadCell
-                            className={`${thClasses} ${colWidths.actions} ${stickyActionsTh} text-center`}
-                        >
+                        {/* 3. Acciones */}
+                        <TableHeadCell className="w-24 md:w-32 select-none text-center">
                             Acciones
                         </TableHeadCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody className="divide-y">
-                    {sortedBrands.map((brand, index) => (
+                    {brands.map((brand) => (
                         <TableRow
                             key={brand.id}
-                            className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                            className="bg-white dark:border-gray-700 dark:bg-gray-800 group"
                         >
-                            <TableCell
-                                className={`${tdBase} ${colWidths.id} text-gray-500`}
-                            >
-                                {index + 1}
+                            <TableCell className="px-4 md:font-bold text-gray-900 dark:text-white">
+                                {brand.originalIndex}
                             </TableCell>
 
-                            <TableCell
-                                className={`${tdBase} ${colWidths.name} text-gray-900 dark:text-white`}
-                            >
-                                {brand.name}
+                            <TableCell className="text-left">
+                                <span
+                                    className="text-xs md:text-sm md:font-bold text-gray-900 dark:text-white truncate block max-w-[200px] md:max-w-none"
+                                    title={brand.name}
+                                >
+                                    {brand.name}
+                                </span>
                             </TableCell>
 
-                            {/* CELDA DE ACCIONES: Sticky a la derecha */}
-                            <TableCell
-                                className={`${tdBase} ${colWidths.actions} ${stickyActionsTd}`}
-                            >
-                                <div className="flex justify-center items-center gap-3">
+                            <TableCell>
+                                <div className="flex items-center justify-center gap-3">
                                     <Link
                                         to={ROUTES.brands.edit(brand.id)}
-                                        title="Editar marca"
                                         className="text-blue-500 hover:text-blue-400 transition active:scale-95"
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
-                                        title="Eliminar marca"
-                                        className="text-red-500 hover:text-red-400 transition cursor-pointer active:scale-95"
                                         onClick={() => onDelete(brand)}
+                                        className="text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
                                     >
                                         <TrashIcon className="w-5 h-5" />
                                     </button>

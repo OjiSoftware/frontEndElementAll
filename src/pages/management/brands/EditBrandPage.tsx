@@ -13,15 +13,16 @@ export default function EditBrandPage() {
 
     if (!id) return null;
 
+    const isFormInvalid = !name.trim() || loading;
+
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto px-4 h-full flex flex-col justify-center">
-                {/* Volver y header */}
                 <div className="flex justify-between items-end mb-4">
                     <div>
                         <button
-                            onClick={() => navigate(-1)}
-                            className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer mb-2"
+                            onClick={() => navigate("/management/brands")}
+                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
                         >
                             ← Volver
                         </button>
@@ -58,7 +59,8 @@ export default function EditBrandPage() {
                     {/* Nombre */}
                     <div>
                         <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                            Nombre de la marca
+                            Nombre de la marca{" "}
+                            <span className="font-bold">*</span>
                         </label>
                         <input
                             type="text"
@@ -70,23 +72,36 @@ export default function EditBrandPage() {
                         />
                     </div>
 
-                    {/* Botones */}
-                    <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/management/brands")}
-                            className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
-                        >
-                            Cancelar
-                        </button>
+                    <div className="flex flex-col items-end w-full">
+                        <div className="flex flex-row items-stretch gap-3 mt-2 w-full border-t border-white/10 pt-4">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/management/brands")}
+                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-600 text-slate-300 bg-transparent transition-all duration-300 cursor-pointer hover:bg-slate-500/20 hover:text-white hover:border-slate-400"
+                            >
+                                Cancelar
+                            </button>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                        >
-                            {loading ? "Guardando..." : "Guardar cambios"}
-                        </button>
+                            <button
+                                type="submit"
+                                disabled={isFormInvalid}
+                                className={`flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg transition-all duration-300
+                                      ${
+                                          isFormInvalid
+                                              ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
+                                              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                      }`}
+                            >
+                                Crear marca
+                            </button>
+                        </div>
+
+                        {isFormInvalid && !loading && (
+                            <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
+                                * Complete todos los campos requeridos para
+                                guardar
+                            </p>
+                        )}
                     </div>
                 </form>
 

@@ -4,6 +4,7 @@ import { PackagePlus } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import toast from "react-hot-toast";
 import { useCreateBrand } from "@/hooks/useBrandForm";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateBrandPage() {
     const {
@@ -15,6 +16,7 @@ export default function CreateBrandPage() {
         handleSubmit,
     } = useCreateBrand();
 
+    const navigate = useNavigate();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     const handleConfirm = async () => {
@@ -22,15 +24,16 @@ export default function CreateBrandPage() {
         await handleSubmit();
     };
 
+    const isFormInvalid = !formData.name.trim() || isLoading;
+
     return (
         <DashboardLayout>
             <div className="max-w-3xl mx-auto px-4 h-full flex flex-col justify-center">
-                {/* Volver y header */}
                 <div className="flex justify-between items-end mb-4">
                     <div>
                         <button
-                            onClick={() => window.history.back()}
-                            className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer mb-2"
+                            onClick={() => navigate("/management/brands")}
+                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
                         >
                             ← Volver
                         </button>
@@ -77,7 +80,8 @@ export default function CreateBrandPage() {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                                Nombre de la marca
+                                Nombre de la marca{" "}
+                                <span className="font-bold">*</span>
                             </label>
                             <input
                                 type="text"
@@ -85,31 +89,42 @@ export default function CreateBrandPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Samsung"
-                                // 👇 Se agregó la clase para el color del placeholder
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                 required
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-4 md:col-span-2">
-                        {/* Botones */}
-                        <div className="flex gap-3 mt-6 pt-4 border-t border-white/10">
+                    <div className="flex flex-col items-end w-full">
+                        <div className="flex flex-row items-stretch gap-3 mt-2 w-full border-t border-white/10 pt-4">
                             <button
                                 type="button"
-                                onClick={() => window.history.back()}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg border border-slate-500 text-white bg-transparent transition-all duration-300 cursor-pointer hover:bg-red-600 hover:border-red-600"
+                                onClick={() => navigate("/management/brands")}
+                                className="flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg border border-slate-600 text-slate-300 bg-transparent transition-all duration-300 cursor-pointer hover:bg-slate-500/20 hover:text-white hover:border-slate-400"
                             >
                                 Cancelar
                             </button>
+
                             <button
                                 type="submit"
-                                disabled={isLoading}
-                                className="flex-1 px-4 py-3 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 cursor-pointer disabled:opacity-50 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                                disabled={isFormInvalid}
+                                className={`flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg transition-all duration-300
+                                      ${
+                                          isFormInvalid
+                                              ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
+                                              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                      }`}
                             >
-                                {isLoading ? "Creando..." : "Crear marca"}
+                                Crear marca
                             </button>
                         </div>
+
+                        {isFormInvalid && !isLoading && (
+                            <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
+                                * Complete todos los campos requeridos para
+                                guardar
+                            </p>
+                        )}
                     </div>
                 </form>
 
