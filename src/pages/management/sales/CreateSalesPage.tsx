@@ -118,6 +118,8 @@ export default function CreateSalePage() {
         !formData.street.trim() ||
         !formData.number.trim() ||
         !formData.city.trim() ||
+        !formData.postalCode.trim() ||
+        !formData.country.trim() ||
         !formData.province.trim() ||
         formData.details.length === 0 ||
         isLoading;

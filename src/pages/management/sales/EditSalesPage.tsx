@@ -156,6 +156,8 @@ export default function EditSalesPage() {
         !formData.street.trim() ||
         !formData.number.trim() ||
         !formData.city.trim() ||
+        !formData.postalCode.trim() ||
+        !formData.country.trim() ||
         !formData.province.trim() ||
         formData.details.length === 0 ||
         isLoading;
@@ -881,7 +883,7 @@ export default function EditSalesPage() {
                                               : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
                                       }`}
                                 >
-                                    Finalizar venta
+                                    Guardar cambios
                                 </button>
                             </div>
 
