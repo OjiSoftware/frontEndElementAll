@@ -6,7 +6,7 @@ import { ConfirmDeleteModal } from "@/components/ConfirmDeleteModal";
 import { BrandsTable } from "@/components/BrandsTable";
 import { Brand } from "@/types/brand.types";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
-import { useDisableBrand } from "@/hooks/useDisableBrand";
+import { useDeleteBrand } from "@/hooks/useDeleteBrand";
 import { brandApi } from "@/services/BrandService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
@@ -26,7 +26,7 @@ export default function BrandsPage() {
 
     const navigate = useNavigate();
     const itemsPerPage = useItemsPerpage();
-    const { disableBrand, loading } = useDisableBrand(setBrands);
+    const { deleteBrand, loading } = useDeleteBrand(setBrands);
 
     // ---------------- Filtrado y Ordenamiento Combinados ----------------
     const filteredBrands = useMemo(() => {
@@ -34,9 +34,8 @@ export default function BrandsPage() {
 
         // 1. Filtrar
         const filtered = brands.filter((b) => {
-            const isActive = b.status !== false;
             const matchesQuery = b.name.toLowerCase().includes(searchTerm);
-            return isActive && matchesQuery;
+            return matchesQuery;
         });
 
         // 2. Inyectar originalIndex
@@ -171,7 +170,7 @@ export default function BrandsPage() {
                         isLoading={loading}
                         onCancel={() => setBrandToDelete(null)}
                         onConfirm={async () => {
-                            await disableBrand(brandToDelete.id);
+                            await deleteBrand(brandToDelete.id);
 
                             // Ajustamos página si la última marca desaparece de la vista
                             if (currentBrands.length === 1 && currentPage > 1) {
