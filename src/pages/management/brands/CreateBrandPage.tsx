@@ -84,9 +84,11 @@ export default function CreateBrandPage() {
                             </label>
                             <input
                                 type="text"
+                                name="name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Samsung"
+                                autoComplete="off"
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                 required
                             />
