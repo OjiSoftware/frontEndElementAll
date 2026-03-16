@@ -367,8 +367,10 @@ export default function CreateProductPage() {
 
                         {/* Botones de acción */}
                         <div className="flex flex-col items-end w-full">
-                            <div className="flex flex-row items-stretch gap-3
-                            mt-6 md:mt-7! w-full border-t border-white/10 pt-4">
+                            <div
+                                className="flex flex-row items-stretch gap-3
+                            mt-6 md:mt-7! w-full border-t border-white/10 pt-4"
+                            >
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -393,12 +395,15 @@ export default function CreateProductPage() {
                                 </button>
                             </div>
 
-                            {isFormInvalid && !isLoading && (
-                                <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
-                                    * Complete todos los campos requeridos para
-                                    guardar
-                                </p>
-                            )}
+                            <div className="relative h-6 w-full">
+                                {" "}
+                                {isFormInvalid && !isLoading && (
+                                    <p className="absolute top-4 right-0 text-slate-500 text-[10px] text-right uppercase tracking-wide font-medium">
+                                        * Complete todos los campos requeridos
+                                        para guardar
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </form>

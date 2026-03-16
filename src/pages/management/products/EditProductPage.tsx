@@ -454,12 +454,15 @@ export default function EditProductPage() {
                                 </button>
                             </div>
 
-                            {isFormInvalid && !isLoading && (
-                                <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
-                                    * Complete todos los campos requeridos para
-                                    guardar
-                                </p>
-                            )}
+                            <div className="relative h-6 w-full">
+                                {" "}
+                                {isFormInvalid && !isLoading && (
+                                    <p className="absolute top-4 right-0 text-slate-500 text-[10px] text-right uppercase tracking-wide font-medium">
+                                        * Complete todos los campos requeridos
+                                        para guardar
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </form>
