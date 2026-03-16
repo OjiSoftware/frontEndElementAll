@@ -140,7 +140,7 @@ export function ProductDetailsModal({
                                 <span className="text-[10px] md:text-xs text-gray-400 uppercase block font-medium">
                                     Marca
                                 </span>
-                                <span className="text-xs md:text-sm font-semibold text-gray-200 italic">
+                                <span className="text-xs md:text-sm font-semibold text-gray-200">
                                     {product.brand?.name || "Sin Marca"}
                                 </span>
                             </div>

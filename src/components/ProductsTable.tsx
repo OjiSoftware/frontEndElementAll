@@ -223,7 +223,7 @@ export function ProductsTable({
                             </TableCell>
 
                             <TableCell
-                                className={`${hideOnTablet} text-center italic text-gray-600 dark:text-gray-400`}
+                                className={`${hideOnTablet} text-center text-gray-600 dark:text-gray-400`}
                             >
                                 {product.brand?.name || "Sin marca"}
                             </TableCell>
