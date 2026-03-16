@@ -92,16 +92,19 @@ export default function EditBrandPage() {
                                               : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
                                       }`}
                             >
-                                Crear marca
+                                Guardar cambios
                             </button>
                         </div>
 
-                        {isFormInvalid && !loading && (
-                            <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
-                                * Complete todos los campos requeridos para
-                                guardar
-                            </p>
-                        )}
+                        <div className="relative h-6 w-full">
+                            {" "}
+                            {isFormInvalid && !loading && (
+                                <p className="absolute top-4 right-0 text-slate-500 text-[10px] text-right uppercase tracking-wide font-medium">
+                                    * Complete todos los campos requeridos para
+                                    guardar
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </form>
 

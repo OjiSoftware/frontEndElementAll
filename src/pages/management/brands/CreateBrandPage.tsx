@@ -70,10 +70,9 @@ export default function CreateBrandPage() {
                             return toast.error("El nombre es obligatorio");
                         setShowConfirmModal(true);
                     }}
-                    className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
+                    className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 gap-6"
                 >
-                    {/* Columna izquierda: Información básica */}
-                    <div className="space-y-4 md:col-span-2">
+                    <div className="space-y-4">
                         <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
                             Información básica
                         </h3>
@@ -119,12 +118,15 @@ export default function CreateBrandPage() {
                             </button>
                         </div>
 
-                        {isFormInvalid && !isLoading && (
-                            <p className="text-slate-500 text-[10px] text-right mt-4 uppercase tracking-wide font-medium">
-                                * Complete todos los campos requeridos para
-                                guardar
-                            </p>
-                        )}
+                        <div className="relative h-6 w-full">
+                            {" "}
+                            {isFormInvalid && !isLoading && (
+                                <p className="absolute top-4 right-0 text-slate-500 text-[10px] text-right uppercase tracking-wide font-medium">
+                                    * Complete todos los campos requeridos para
+                                    guardar
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </form>
 
