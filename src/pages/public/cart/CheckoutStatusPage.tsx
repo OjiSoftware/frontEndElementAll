@@ -8,6 +8,7 @@ import {
     XCircleIcon,
     ClockIcon,
     UserIcon,
+    ExclamationTriangleIcon, // Agregamos este icono para el pago abandonado
 } from "@heroicons/react/24/outline";
 
 export default function CheckoutStatus() {
@@ -20,8 +21,9 @@ export default function CheckoutStatus() {
     const status = searchParams.get("status");
     const paymentId = searchParams.get("payment_id");
     const externalReference = searchParams.get("external_reference");
+    const reason = searchParams.get("reason");
 
-    // 1. PROTECCIÓN DE RUTA: Si no hay status ni paymentId, redirigir al Home
+    // 1. PROTECCIÓN DE RUTA
     useEffect(() => {
         if (!status && !paymentId) {
             navigate("/", { replace: true });
@@ -31,26 +33,67 @@ export default function CheckoutStatus() {
     useEffect(() => {
         if (status === "approved" && clearCart) {
             clearCart();
-            console.log("Pago aprobado: Carrito vaciado.");
+            // Limpiamos también el timer si el pago fue un éxito
+            sessionStorage.removeItem("currentSaleId");
+            sessionStorage.removeItem("saleExpiresAt");
+            console.log("Pago aprobado: Carrito vaciado y sesión limpia.");
         }
     }, [status, clearCart]);
 
-    // Lógica de UI basada en el estado
+    // 2. LÓGICA DE UI BASADA EN EL ESTADO DE MERCADO PAGO
     let StatusIcon = CheckCircleIcon;
     let iconColor = "text-green-500";
     let title = "¡Pago exitoso!";
-    let message = "Tu orden ha sido registrada y el pago se procesó correctamente.";
+    let message =
+        "Tu orden ha sido registrada y el pago se procesó correctamente.";
 
-    if (status === "rejected" || status === "null") {
+    if (status === "rejected") {
         StatusIcon = XCircleIcon;
         iconColor = "text-red-500";
-        title = "El pago fue rechazado";
-        message = "Hubo un problema al procesar tu pago. Por favor, intentá con otro medio.";
+
+        if (reason === "expired") {
+            title = "Reserva expirada";
+            message =
+                "El tiempo de 10 minutos para completar el pago ha terminado y el stock ha sido liberado. Por favor, armá tu carrito nuevamente.";
+        } else {
+            title = "El pago fue rechazado";
+            message =
+                "Hubo un problema al procesar el cobro con tu tarjeta. Por favor, intentá con otro medio de pago.";
+        }
+    } else if (status === "null") {
+        StatusIcon = ExclamationTriangleIcon;
+        iconColor = "text-orange-500";
+        title = "Pago incompleto";
+        message =
+            "Cancelaste el proceso de pago. Podés volver al checkout e intentarlo de nuevo (tu reserva sigue activa hasta que expire el tiempo).";
     } else if (status === "pending" || status === "in_process") {
         StatusIcon = ClockIcon;
         iconColor = "text-yellow-500";
         title = "Pago pendiente";
-        message = "Estamos esperando la confirmación de Mercado Pago.";
+        message =
+            "Estamos esperando la confirmación de Mercado Pago. Te avisaremos cuando se acredite.";
+    }
+
+    let nextStepsTitle = "Siguientes pasos";
+    let nextStepsMessage =
+        "Te enviaremos la confirmación de tu compra y las actualizaciones de envío al correo electrónico que ingresaste.";
+
+    if (
+        status === "rejected" ||
+        reason === "expired" ||
+        reason === "admin_cancel"
+    ) {
+        nextStepsTitle = "Atención con tu reserva";
+        nextStepsMessage =
+            "Los productos han vuelto al inventario general. Para asegurar tu compra, por favor iniciá el proceso de pago nuevamente desde el carrito.";
+    } else if (status === "null") {
+        nextStepsTitle = "¿Tuviste algún problema?";
+        nextStepsMessage =
+            "Tu reserva sigue activa por unos minutos. Podés intentar completar el pago con otro medio o revisar tus datos de facturación.";
+    } else if (status === "pending") {
+        nextStepsTitle = "Confirmación en camino";
+        nextStepsMessage =
+            "En cuanto Mercado Pago nos notifique la acreditación, te enviaremos el comprobante por correo.";
     }
 
     return (
@@ -91,7 +134,7 @@ export default function CheckoutStatus() {
                                         </span>
                                     </div>
                                 )}
-                                {paymentId && (
+                                {paymentId && paymentId !== "null" && (
                                     <div className="flex justify-between">
                                         <span className="text-gray-500">
                                             Comprobante MP:
@@ -103,17 +146,15 @@ export default function CheckoutStatus() {
                                 )}
                             </div>
 
-                            {/* Info del Cliente (Simulada o desde Contexto si la tenés) */}
+                            {/* Info de Entrega - TEXTO CORREGIDO */}
                             <div className="pt-3 border-t border-gray-200">
                                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                    Información de Entrega
+                                    {nextStepsTitle}
                                 </h3>
                                 <div className="flex items-start gap-3">
-                                    <UserIcon className="w-5 h-5 text-gray-400 mt-0.5" />
+                                    <UserIcon className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                                     <div className="text-gray-600 italic">
-                                        Los detalles del envío han sido enviados
-                                        al correo registrado en tu cuenta de
-                                        Mercado Pago.
+                                        {nextStepsMessage}
                                     </div>
                                 </div>
                             </div>
@@ -123,14 +164,14 @@ export default function CheckoutStatus() {
                     <div className="flex flex-col sm:flex-row gap-3">
                         {(status === "rejected" || status === "null") && (
                             <button
-                                onClick={() => navigate("/cart")}
+                                onClick={() => navigate("/checkout")}
                                 className="flex-1 py-3 px-4 bg-[#2f3027] text-white font-bold rounded-xl hover:bg-black transition cursor-pointer"
                             >
-                                Volver a intentar
+                                Volver al checkout
                             </button>
                         )}
                         <button
-                            onClick={() => (window.location.href = "/")} // Forzamos recarga total si querés que "limpie" todo
+                            onClick={() => (window.location.href = "/")}
                             className={`flex-1 py-3 px-4 font-bold rounded-xl transition shadow-sm cursor-pointer ${
                                 status === "rejected" || status === "null"
                                     ? "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"

@@ -61,16 +61,18 @@ export default function CheckoutPage() {
             const difference = expiresAt - now;
 
             if (difference <= 0) {
+                clearCart();
+
                 sessionStorage.removeItem("currentSaleId");
                 sessionStorage.removeItem("saleExpiresAt");
-                setTimeLeft(0);
 
-                alert(
-                    "El tiempo de 10 minutos para completar el pago ha expirado. La reserva de stock se ha cancelado.",
+                setTimeLeft(0);
+                setSaleId(null);
+
+                navigate(
+                    `/checkout/status?status=rejected&reason=expired&external_reference=${saleId}`,
                 );
 
-                clearCart();
-                navigate("/");
                 return null;
             }
 
@@ -95,30 +97,38 @@ export default function CheckoutPage() {
             try {
                 const API_URL =
                     import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
                 const res = await fetch(`${API_URL}/sales/${saleId}`);
 
                 if (res.ok) {
                     const saleData = await res.json();
 
                     if (saleData.status === "CANCELLED") {
+                        // 1. Obtenemos la hora de expiración para comparar
+                        const expiresAtStr =
+                            sessionStorage.getItem("saleExpiresAt");
+                        const now = Date.now();
+                        const isExpired =
+                            expiresAtStr &&
+                            new Date(expiresAtStr).getTime() < now;
+
+                        // 2. Limpieza total de sesión y estados
                         sessionStorage.removeItem("currentSaleId");
                         sessionStorage.removeItem("saleExpiresAt");
-
                         setSaleId(null);
                         setTimeLeft(null);
                         setIsDataConfirmed(false);
 
-                        alert(
-                            "Tu reserva fue cancelada administrativamente o el stock ya no está disponible. Por favor, armá tu carrito nuevamente.",
+                        // 3. UN SOLO NAVIGATE con el motivo correcto
+                        // Si el tiempo ya pasó, mandamos 'expired'. Si todavía quedaba tiempo, fue 'admin_cancel'.
+                        const reason = isExpired ? "expired" : "admin_cancel";
+
+                        navigate(
+                            `/checkout/status?status=rejected&reason=${reason}&external_reference=${saleId}`,
                         );
                     }
                 }
             } catch (error) {
-                console.error(
-                    "Error verificando el estado de la orden en segundo plano",
-                    error,
-                );
+                console.error("Error verificando el estado de la orden", error);
             }
         };
 
@@ -126,7 +136,7 @@ export default function CheckoutPage() {
         const interval = setInterval(checkOrderStatus, 15000);
 
         return () => clearInterval(interval);
-    }, [saleId]);
+    }, [saleId, navigate]);
 
     const formatTime = (seconds: number | null) => {
         if (seconds === null) return "00:00";
@@ -608,8 +618,16 @@ export default function CheckoutPage() {
                                             onClick={() =>
                                                 setIsDataConfirmed(false)
                                             }
-                                            className="w-full text-center text-sm text-gray-500 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
+                                            className="w-full mt-6 py-3 px-4 text-[0.95rem] font-bold text-gray-600 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300 transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer active:scale-[0.98]"
                                         >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                                className="w-4 h-4 text-gray-400 group-hover:text-gray-500"
+                                            >
+                                                <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+                                            </svg>
                                             Editar mis datos
                                         </button>
                                     ) : (
@@ -647,7 +665,7 @@ export default function CheckoutPage() {
 
                         <div className="flex flex-col gap-2 pb-3 border-b border-gray-100">
                             <div className="flex justify-between items-center text-sm text-gray-600">
-                                <span>Subtotal ({totalItems} artículos)</span>
+                                <span>Subtotal ({totalItems} artículos):</span>
                                 <span>
                                     $
                                     {totalPrice.toLocaleString("es-AR", {
@@ -660,7 +678,7 @@ export default function CheckoutPage() {
                         <div className="flex flex-col gap-1 mb-2 mt-1">
                             <div className="flex justify-between items-center">
                                 <span className="font-bold text-gray-800 text-base">
-                                    Total Final
+                                    Total Final:
                                 </span>
                                 <span className="font-black text-xl text-[#16a34a]">
                                     $

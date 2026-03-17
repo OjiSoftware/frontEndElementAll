@@ -68,7 +68,7 @@ export default function CartPage() {
                     <div className="flex-[0_0_100%] lg:flex-[1_1_30%] bg-white rounded-2xl max-sm:rounded-none shadow-sm border border-gray-200 max-sm:border-x-0 p-5 sticky top-8 flex flex-col gap-3 font-lato w-full">
                         <div className="flex flex-col gap-2 pb-3 border-b border-gray-100">
                             <div className="flex justify-between items-center text-sm text-gray-600">
-                                <span>Subtotal ({totalItems} artículos)</span>
+                                <span>Subtotal ({totalItems} artículos):</span>
                                 <span>
                                     $
                                     {totalPrice.toLocaleString("es-AR", {
@@ -93,7 +93,7 @@ export default function CartPage() {
                         <div className="flex flex-col gap-1 mb-2 mt-1">
                             <div className="flex justify-between items-center">
                                 <span className="font-bold text-gray-800 text-base">
-                                    Total Final
+                                    Total Final:
                                 </span>
                                 <span className="font-black text-xl text-[#16a34a]">
                                     $
