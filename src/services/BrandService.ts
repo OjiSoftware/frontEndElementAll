@@ -19,7 +19,7 @@ export const brandApi = {
         return response.json();
     },
 
-    // Actualizar una marca (ahora incluye status opcional)
+    // Actualizar una marca 
     update: async (
         id: string | number,
         data: { name: string; /* subCategoryId?: number; *//*  status?: boolean  */ },
@@ -30,6 +30,15 @@ export const brandApi = {
             body: JSON.stringify(data),
         });
         if (!response.ok) throw new Error("Error al actualizar marca");
+        return response.json();
+    },
+
+    // Eliminar una marca
+    delete: async (id: string | number) => {
+        const response = await fetch(`${BASE_URL}/brands/${id}`, {
+            method: "DELETE",
+        });
+        if (!response.ok) throw new Error("Error al eliminar marca");
         return response.json();
     },
 

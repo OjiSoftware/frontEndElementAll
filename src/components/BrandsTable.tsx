@@ -38,13 +38,12 @@ export function BrandsTable({
         const isActive = currentSortColumn === column;
         return (
             <ArrowUpIcon
-                className={`w-3 h-3 transition-all duration-150 ${
-                    isActive && currentSortDirection
+                className={`w-3 h-3 transition-all duration-150 ${isActive && currentSortDirection
                         ? currentSortDirection === "desc"
                             ? "rotate-180 opacity-100"
                             : "opacity-100"
                         : "opacity-0"
-                }`}
+                    }`}
             />
         );
     };
