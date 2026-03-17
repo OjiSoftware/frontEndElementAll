@@ -59,42 +59,61 @@ export default function CheckoutStatus() {
 
             <div className="flex-grow flex items-center justify-center p-4">
                 <div className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-200 max-w-lg w-full text-center font-lato animate-in fade-in zoom-in duration-500">
-
                     <div className="flex justify-center mb-6">
-                        <StatusIcon className={`w-24 h-24 ${iconColor}`} strokeWidth={1.5} />
+                        <StatusIcon
+                            className={`w-24 h-24 ${iconColor}`}
+                            strokeWidth={1.5}
+                        />
                     </div>
 
-                    <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
-                    <p className="text-gray-600 text-[1.05rem] mb-8 leading-relaxed">{message}</p>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                        {title}
+                    </h1>
+                    <p className="text-gray-600 text-[1.05rem] mb-8 leading-relaxed">
+                        {message}
+                    </p>
 
                     {/* SECCIÓN DE DATOS DEL PAGO Y CLIENTE */}
                     {(paymentId || externalReference) && (
                         <div className="bg-gray-50 border border-gray-100 rounded-xl p-5 mb-8 text-left text-sm space-y-4">
-
                             {/* Datos de la Orden */}
                             <div className="space-y-2">
-                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Detalles de la Operación</h3>
+                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    Detalles de la Operación
+                                </h3>
                                 {externalReference && (
                                     <div className="flex justify-between">
-                                        <span className="text-gray-500">Orden:</span>
-                                        <span className="font-mono font-bold text-gray-700">#{externalReference}</span>
+                                        <span className="text-gray-500">
+                                            Orden:
+                                        </span>
+                                        <span className="font-mono font-bold text-gray-700">
+                                            #{externalReference}
+                                        </span>
                                     </div>
                                 )}
                                 {paymentId && (
                                     <div className="flex justify-between">
-                                        <span className="text-gray-500">Comprobante MP:</span>
-                                        <span className="font-mono text-gray-700">{paymentId}</span>
+                                        <span className="text-gray-500">
+                                            Comprobante MP:
+                                        </span>
+                                        <span className="font-mono text-gray-700">
+                                            {paymentId}
+                                        </span>
                                     </div>
                                 )}
                             </div>
 
                             {/* Info del Cliente (Simulada o desde Contexto si la tenés) */}
                             <div className="pt-3 border-t border-gray-200">
-                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Información de Entrega</h3>
+                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                                    Información de Entrega
+                                </h3>
                                 <div className="flex items-start gap-3">
                                     <UserIcon className="w-5 h-5 text-gray-400 mt-0.5" />
                                     <div className="text-gray-600 italic">
-                                        Los detalles del envío han sido enviados al correo registrado en tu cuenta de Mercado Pago.
+                                        Los detalles del envío han sido enviados
+                                        al correo registrado en tu cuenta de
+                                        Mercado Pago.
                                     </div>
                                 </div>
                             </div>
@@ -111,11 +130,12 @@ export default function CheckoutStatus() {
                             </button>
                         )}
                         <button
-                            onClick={() => window.location.href = "/"} // Forzamos recarga total si querés que "limpie" todo
-                            className={`flex-1 py-3 px-4 font-bold rounded-xl transition shadow-sm cursor-pointer ${status === "rejected" || status === "null"
+                            onClick={() => (window.location.href = "/")} // Forzamos recarga total si querés que "limpie" todo
+                            className={`flex-1 py-3 px-4 font-bold rounded-xl transition shadow-sm cursor-pointer ${
+                                status === "rejected" || status === "null"
                                     ? "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                                    : "bg-[#16a34a] text-white hover:bg-[#15803d]"
-                                }`}
+                                    : "bg-[#16a34a] text-white hover:bg-[#15803d] shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_25px_rgba(22,163,74,0.4)] active:scale-[0.98]"
+                            }`}
                         >
                             Volver a la tienda
                         </button>

@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
-import { Loader2, CreditCard } from "lucide-react";
+import { Loader2, CreditCard, LockKeyhole } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: "es-AR" });
@@ -11,12 +11,14 @@ function CheckoutButton({
     items,
     total,
     onOrderCreated,
+    disabled = false,
 }: {
     saleId: number | null;
     clientData?: any;
     items?: any[];
     total?: number;
     onOrderCreated?: (id: number) => void;
+    disabled?: boolean;
 }) {
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -29,9 +31,10 @@ function CheckoutButton({
         e.preventDefault();
         e.stopPropagation();
 
+        if (disabled) return; // Validación extra de seguridad
+
         setLoading(true);
         try {
-            // Enviamos el saleId existente O los datos para crear uno nuevo
             const payload = currentSaleId
                 ? { saleId: currentSaleId }
                 : { clientData, items, total };
@@ -84,7 +87,6 @@ function CheckoutButton({
             if (data.preferenceId) {
                 setPreferenceId(data.preferenceId);
 
-                // Si acabamos de crear la venta, notificamos al padre
                 if (data.saleId && !currentSaleId) {
                     setCurrentSaleId(data.saleId);
                     onOrderCreated?.(data.saleId);
@@ -110,14 +112,26 @@ function CheckoutButton({
             {!preferenceId ? (
                 <button
                     onClick={handleGeneratePayment}
-                    disabled={loading}
+                    // --- USAMOS EL DISABLED DE LAS PROPS ---
+                    disabled={loading || disabled}
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold py-3.5 px-6 rounded-xl shadow-sm transition-all active:scale-[0.98] disabled:opacity-70 cursor-pointer"
+                    className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 px-6 rounded-xl shadow-sm transition-all
+                        ${
+                            loading || disabled
+                                ? "bg-gray-400 text-white opacity-70 cursor-not-allowed"
+                                : "bg-[#16a34a] hover:bg-[#15803d] text-white cursor-pointer shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_25px_rgba(22,163,74,0.4)] active:scale-[0.98]"
+                        }
+                    `}
                 >
                     {loading ? (
                         <>
                             <Loader2 className="animate-spin h-5 w-5" />
                             <span>Verificando disponibilidad...</span>
+                        </>
+                    ) : disabled ? (
+                        <>
+                            <LockKeyhole className="w-5 h-5" />
+                            <span>Tiempo de reserva expirado</span>
                         </>
                     ) : (
                         <>
@@ -128,10 +142,19 @@ function CheckoutButton({
                 </button>
             ) : (
                 <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500 bg-gray-50/50 p-4 rounded-xl border border-gray-200">
-                    <p className="text-sm text-gray-500 text-center mb-3 font-lato">
-                        Elegí tu método de pago preferido
-                    </p>
-                    <Wallet initialization={{ preferenceId }} />
+                    {disabled ? (
+                        <div className="text-center py-4 text-gray-500 font-lato">
+                            <LockKeyhole className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                            <p>El tiempo para pagar ha expirado.</p>
+                        </div>
+                    ) : (
+                        <>
+                            <p className="text-sm text-gray-500 text-center mb-3 font-lato">
+                                Elegí tu método de pago preferido
+                            </p>
+                            <Wallet initialization={{ preferenceId }} />
+                        </>
+                    )}
                 </div>
             )}
         </div>
