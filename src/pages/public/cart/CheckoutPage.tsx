@@ -46,7 +46,6 @@ export default function CheckoutPage() {
         }
     }, [cart, navigate, saleId]);
 
-    // 2. Lógica del Timer resiliente (Basado en Fechas, anti-F5)
     useEffect(() => {
         const expiresAtStr = sessionStorage.getItem("saleExpiresAt");
 
@@ -87,7 +86,47 @@ export default function CheckoutPage() {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [navigate, clearCart]);
+    }, [navigate, clearCart, saleId]);
+
+    useEffect(() => {
+        if (!saleId) return;
+
+        const checkOrderStatus = async () => {
+            try {
+                const API_URL =
+                    import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+                const res = await fetch(`${API_URL}/sales/${saleId}`);
+
+                if (res.ok) {
+                    const saleData = await res.json();
+
+                    if (saleData.status === "CANCELLED") {
+                        sessionStorage.removeItem("currentSaleId");
+                        sessionStorage.removeItem("saleExpiresAt");
+
+                        setSaleId(null);
+                        setTimeLeft(null);
+                        setIsDataConfirmed(false);
+
+                        alert(
+                            "Tu reserva fue cancelada administrativamente o el stock ya no está disponible. Por favor, armá tu carrito nuevamente.",
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error(
+                    "Error verificando el estado de la orden en segundo plano",
+                    error,
+                );
+            }
+        };
+
+        checkOrderStatus();
+        const interval = setInterval(checkOrderStatus, 15000);
+
+        return () => clearInterval(interval);
+    }, [saleId]);
 
     const formatTime = (seconds: number | null) => {
         if (seconds === null) return "00:00";
@@ -107,15 +146,47 @@ export default function CheckoutPage() {
 
     // 3. Manejo de la creación de la orden y seteo del timer
     const handleOrderCreated = useCallback((id: number) => {
-        setSaleId(id);
-
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-
         sessionStorage.setItem("currentSaleId", id.toString());
         sessionStorage.setItem("saleExpiresAt", expiresAt);
 
+        setSaleId(id);
         setTimeLeft(600);
     }, []);
+
+    // 4. Función para cancelar la reserva manualmente y liberar stock
+    const handleCancelCheckout = useCallback(async () => {
+        if (saleId) {
+            try {
+                const API_URL =
+                    import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+                await fetch(`${API_URL}/sales/${saleId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        status: "CANCELLED",
+                    }),
+                });
+            } catch (error) {
+                console.error(
+                    "Error al cancelar la orden en el backend:",
+                    error,
+                );
+            }
+        }
+
+        sessionStorage.removeItem("currentSaleId");
+        sessionStorage.removeItem("saleExpiresAt");
+
+        setSaleId(null);
+        setTimeLeft(null);
+        setIsDataConfirmed(false);
+
+        navigate("/cart");
+    }, [navigate, saleId]);
 
     const memoizedItems = useMemo(
         () =>
@@ -193,6 +264,7 @@ export default function CheckoutPage() {
     };
 
     const timerTheme = getTimerTheme(timeLeft);
+
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5] border-b border-gray-200">
             <Navbar search={search} setSearch={setSearch} />
@@ -530,7 +602,8 @@ export default function CheckoutPage() {
                                             timeLeft !== null && timeLeft <= 0
                                         }
                                     />
-                                    {!saleId && (
+
+                                    {!saleId ? (
                                         <button
                                             onClick={() =>
                                                 setIsDataConfirmed(false)
@@ -538,6 +611,13 @@ export default function CheckoutPage() {
                                             className="w-full text-center text-sm text-gray-500 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
                                         >
                                             Editar mis datos
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleCancelCheckout}
+                                            className="w-full text-center text-sm text-rose-500 mt-4 hover:text-rose-600 font-bold transition underline underline-offset-4 cursor-pointer"
+                                        >
+                                            Cancelar reserva y modificar carrito
                                         </button>
                                     )}
                                 </div>
