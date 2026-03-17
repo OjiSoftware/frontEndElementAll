@@ -112,7 +112,7 @@ export default function CartPage() {
 
                         {/* BOTÓN HACIA CHECKOUT: Aquí es donde cambiamos la lógica */}
                         <button
-                            className="w-full py-3 bg-[#16a34a] text-white text-[0.95rem] font-bold rounded-lg hover:bg-[#15803d] transition shadow-md flex items-center justify-center gap-2 mt-2 cursor-pointer"
+                            className="w-full py-3 bg-[#16a34a] text-white text-[0.95rem] font-bold rounded-lg hover:bg-[#15803d] transition shadow-md flex items-center justify-center gap-2 mt-2 cursor-pointer shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_25px_rgba(22,163,74,0.4)] active:scale-[0.98]"
                             onClick={() => navigate("/checkout")}
                         >
                             Finalizar compra

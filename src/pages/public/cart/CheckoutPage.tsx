@@ -445,7 +445,7 @@ export default function CheckoutPage() {
                                             onClick={() =>
                                                 setIsDataConfirmed(false)
                                             }
-                                            className="w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
+                                            className="w-full text-center text-sm text-gray-500 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
                                         >
                                             Editar mis datos
                                         </button>

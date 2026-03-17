@@ -119,7 +119,7 @@ export default function BrandsPage() {
             actions={
                 <button
                     onClick={() => navigate(ROUTES.brands.create)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
+                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-500 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-400 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
                 >
                     <PlusIcon size={18} />
                     <span className="hidden md:inline">Nueva marca</span>

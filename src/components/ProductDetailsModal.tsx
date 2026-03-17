@@ -184,11 +184,11 @@ export function ProductDetailsModal({
                         className={`p-2 md:p-3 rounded-lg border flex items-center justify-center gap-2 text-[10px] md:text-xs font-bold tracking-widest uppercase ${
                             product.showingInCatalog
                                 ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
-                                : "bg-slate-700/50 border-slate-600 text-gray-500"
+                                : "bg-slate-700/50 border-slate-600 text-gray-400"
                         }`}
                     >
                         <div
-                            className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${product.showingInCatalog ? "bg-emerald-400 animate-pulse" : "bg-gray-500"}`}
+                            className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${product.showingInCatalog ? "bg-emerald-400 animate-pulse" : "bg-gray-400"}`}
                         ></div>
                         {product.showingInCatalog
                             ? "Visible en Catálogo"
@@ -206,7 +206,7 @@ export function ProductDetailsModal({
                     </button>
                     <Link
                         to={ROUTES.products.edit(product.id)}
-                        className="px-4 md:px-6 py-3 md:py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-500 transition cursor-pointer text-xs md:text-sm shadow-[0_0_15px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 flex-1 md:flex-none"
+                        className="px-4 md:px-6 py-3 md:py-2 bg-indigo-500 text-white font-bold rounded-lg hover:bg-indigo-400 transition cursor-pointer text-xs md:text-sm shadow-[0_0_15px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 flex-1 md:flex-none"
                     >
                         <PencilIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         Editar
