@@ -53,7 +53,7 @@ export default function CatalogPage() {
                 const matchName = p.name.toLowerCase().includes(searchLower);
                 const matchSubCategory = p.subCategory?.name.toLowerCase().includes(searchLower) ?? false;
                 const matchCategory = p.subCategory?.category?.name.toLowerCase().includes(searchLower) ?? false;
-                
+
                 return matchName || matchSubCategory || matchCategory;
             });
         }
@@ -127,9 +127,9 @@ export default function CatalogPage() {
                     )}
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex max-lg:flex-col lg:flex-row gap-8">
                     {/* SIDEBAR */}
-                    <div className="w-full md:w-64 shrink-0">
+                    <div className="max-lg:w-full lg:w-64 shrink-0">
                         <CategorySidebar
                             onSelectSubCategory={handleSelectSubCategory}
                             onSelectBrand={handleSelectBrand}

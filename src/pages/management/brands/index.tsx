@@ -6,7 +6,7 @@ import { ConfirmDeleteModal } from "@/components/ConfirmDeleteModal";
 import { BrandsTable } from "@/components/BrandsTable";
 import { Brand } from "@/types/brand.types";
 import { useItemsPerpage } from "@/hooks/useItemsPerpage";
-import { useDisableBrand } from "@/hooks/useDisableBrand";
+import { useDeleteBrand } from "@/hooks/useDeleteBrand";
 import { brandApi } from "@/services/BrandService";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
@@ -26,7 +26,7 @@ export default function BrandsPage() {
 
     const navigate = useNavigate();
     const itemsPerPage = useItemsPerpage();
-    const { disableBrand, loading } = useDisableBrand(setBrands);
+    const { deleteBrand, loading } = useDeleteBrand(setBrands);
 
     // ---------------- Filtrado y Ordenamiento Combinados ----------------
     const filteredBrands = useMemo(() => {
@@ -34,9 +34,8 @@ export default function BrandsPage() {
 
         // 1. Filtrar
         const filtered = brands.filter((b) => {
-            const isActive = b.status !== false;
             const matchesQuery = b.name.toLowerCase().includes(searchTerm);
-            return isActive && matchesQuery;
+            return matchesQuery;
         });
 
         // 2. Inyectar originalIndex
@@ -119,7 +118,7 @@ export default function BrandsPage() {
             actions={
                 <button
                     onClick={() => navigate(ROUTES.brands.create)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
+                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-indigo-500 text-white font-bold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:bg-indigo-400 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
                 >
                     <PlusIcon size={18} />
                     <span className="hidden md:inline">Nueva marca</span>
@@ -171,7 +170,7 @@ export default function BrandsPage() {
                         isLoading={loading}
                         onCancel={() => setBrandToDelete(null)}
                         onConfirm={async () => {
-                            await disableBrand(brandToDelete.id);
+                            await deleteBrand(brandToDelete.id);
 
                             // Ajustamos página si la última marca desaparece de la vista
                             if (currentBrands.length === 1 && currentPage > 1) {

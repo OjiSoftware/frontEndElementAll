@@ -250,26 +250,26 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                             />
                         </svg>
 
-                        {/* Toast al lado del carrito */}
-                        {showEmptyToast && cartRef.current && (
+                        {/* Toast en esquina superior derecha */}
+                        {showEmptyToast && (
                             <div
                                 className="flex items-center gap-1.5"
                                 style={{
-                                    position: "absolute",
-                                    top: -2,
-                                    left: cartRef.current.offsetWidth + 20,
-                                    background: "rgba(139, 0, 0, 0.7)", // Bordó semitransparente
+                                    position: "fixed",
+                                    top: 16,
+                                    right: 16,
+                                    background: "rgba(139, 0, 0, 0.7)",
                                     backdropFilter: "blur(12px)",
                                     WebkitBackdropFilter: "blur(12px)",
-                                    border: "1px solid rgba(255, 100, 100, 0.3)", // Borde rojizo sutil
+                                    border: "1px solid rgba(255, 100, 100, 0.3)",
                                     color: "white",
                                     padding: "6px 14px",
                                     borderRadius: "8px",
-                                    zIndex: 50,
+                                    zIndex: 9999,
                                     whiteSpace: "nowrap",
-                                    boxShadow: "0 4px 15px rgba(139, 0, 0, 0.3)", // Sombra bordó
                                     fontWeight: "500",
                                     fontSize: "13px",
+
                                 }}
                             >
                                 <ExclamationCircleIcon className="w-5 h-5 text-red-200" strokeWidth={2} />

@@ -6,19 +6,20 @@ import {
     TableHead,
     TableHeadCell,
     TableRow,
+    Tooltip, // <-- Agregamos Tooltip de flowbite-react
 } from "flowbite-react";
 import {
     PencilIcon,
     TrashIcon,
     ArrowUpIcon,
     EyeIcon,
+    ExclamationTriangleIcon, // <-- Agregamos el icono de alerta
 } from "@heroicons/react/20/solid";
 import { Sale } from "@/types/sale.types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { SaleDetailsModal } from "@/components/SaleDetailsModal";
 
-// Actualizamos el tipo para incluir rowNum (la posición visual)
 type SortColumn = keyof Sale | "client.name" | "rowNum";
 
 interface SalesTableProps {
@@ -26,7 +27,6 @@ interface SalesTableProps {
     onDelete: (Sale: Sale) => void;
     currentPage: number;
     itemsPerPage: number;
-    // Props actualizadas para aceptar null (Estado Neutral)
     onSort: (column: string) => void;
     currentSortColumn: string | null;
     currentSortDirection: "asc" | "desc" | null;
@@ -83,7 +83,6 @@ export function SalesTable({
         setSelectedSale(null);
     };
 
-    // Ahora solo avisamos al padre qué columna se clickeó
     const handleSort = (column: SortColumn) => {
         onSort(column as string);
     };
@@ -114,7 +113,6 @@ export function SalesTable({
                     <TableRow>
                         <TableHeadCell
                             className="px-4 w-14 cursor-pointer select-none"
-                            // Cambiado a rowNum para que el orden visual sea correcto
                             onClick={() => handleSort("rowNum")}
                         >
                             <div className="flex items-center">
@@ -180,7 +178,12 @@ export function SalesTable({
                     {displaySales.map((sale) => (
                         <TableRow
                             key={sale.id}
-                            className="bg-white dark:border-gray-700 dark:bg-gray-800 text-sm md:text-base"
+                            className={`bg-white dark:border-gray-700 text-sm md:text-base transition-colors ${
+                                // Le damos un tinte de advertencia a la fila si tiene notas
+                                (sale as any).notes
+                                    ? "dark:bg-amber-900/10 bg-amber-50/50"
+                                    : "dark:bg-gray-800"
+                            }`}
                         >
                             <TableCell className="px-4 md:font-bold align-top py-4 lg:align-middle">
                                 <div className="flex flex-col">
@@ -204,21 +207,35 @@ export function SalesTable({
                             </TableCell>
 
                             <TableCell className="text-center align-middle md:align-top py-4 lg:align-middle">
-                                {(() => {
-                                    const statusInfo = SALE_STATUS_MAP[
-                                        sale.status
-                                    ] || {
-                                        label: sale.status,
-                                        style: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-                                    };
-                                    return (
-                                        <span
-                                            className={`px-2.5 py-1 rounded-md text-[10px] md:text-xs font-bold border inline-block uppercase tracking-wider ${statusInfo.style}`}
-                                        >
-                                            {statusInfo.label}
-                                        </span>
-                                    );
-                                })()}
+                                <div className="relative inline-flex items-center justify-center">
+                                    {(() => {
+                                        const statusInfo = SALE_STATUS_MAP[
+                                            sale.status
+                                        ] || {
+                                            label: sale.status,
+                                            style: "bg-gray-500/10 text-gray-400 border-gray-500/20",
+                                        };
+                                        return (
+                                            <span
+                                                className={`px-2.5 py-1 rounded-md text-[10px] md:text-xs font-bold border inline-block uppercase tracking-wider ${statusInfo.style}`}
+                                            >
+                                                {statusInfo.label}
+                                            </span>
+                                        );
+                                    })()}
+
+                                    {(sale as any).notes && (
+                                        <div className="absolute -right-8 top-1/2 -translate-y-1/2">
+                                            <Tooltip
+                                                content={(sale as any).notes}
+                                                placement="top"
+                                                className="max-w-xs text-center"
+                                            >
+                                                <ExclamationTriangleIcon className="w-5 h-5 text-amber-500 animate-pulse cursor-help" />
+                                            </Tooltip>
+                                        </div>
+                                    )}
+                                </div>
                             </TableCell>
 
                             <TableCell className="hidden md:table-cell! text-center font-mono text-gray-900 dark:text-white align-top py-4 lg:align-middle">
@@ -245,6 +262,7 @@ export function SalesTable({
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
                                     <Link
+                                        title="Editar venta"
                                         to={ROUTES.sales.edit(sale.id)}
                                         className={
                                             sale.status === "CANCELLED"
@@ -255,6 +273,7 @@ export function SalesTable({
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
+                                        title="Cancelar venta"
                                         className={
                                             sale.status === "CANCELLED"
                                                 ? "text-gray-400 cursor-not-allowed"

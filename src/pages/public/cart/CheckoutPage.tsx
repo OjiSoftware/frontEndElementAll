@@ -5,14 +5,21 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CheckoutButton from "@/components/CheckoutButton";
 import { ChevronLeftIcon, CheckCircleIcon } from "@heroicons/react/20/solid";
+import { ClockIcon } from "lucide-react";
 
 export default function CheckoutPage() {
-    const { cart, totalPrice, totalItems } = useCart();
+    const { cart, totalPrice, totalItems, clearCart } = useCart();
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
 
     const [isDataConfirmed, setIsDataConfirmed] = useState(false);
-    const [saleId, setSaleId] = useState<number | null>(null);
+
+    // Recuperamos estado inicial desde sessionStorage por si el usuario recarga la página (F5)
+    const [saleId, setSaleId] = useState<number | null>(() => {
+        const savedSaleId = sessionStorage.getItem("currentSaleId");
+        return savedSaleId ? parseInt(savedSaleId, 10) : null;
+    });
+
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     const [formData, setFormData] = useState({
@@ -32,6 +39,7 @@ export default function CheckoutPage() {
         reference: "",
     });
 
+    // 1. Redirección de seguridad
     useEffect(() => {
         if (cart.length === 0 && !saleId) {
             navigate("/cart");
@@ -39,26 +47,102 @@ export default function CheckoutPage() {
     }, [cart, navigate, saleId]);
 
     useEffect(() => {
-        if (timeLeft === null) return;
-        if (timeLeft <= 0) {
-            alert(
-                "El tiempo para completar la compra ha expirado. Por favor, verificá el stock e intentá de nuevo.",
-            );
-            window.location.reload(); // Reiniciar todo
+        const expiresAtStr = sessionStorage.getItem("saleExpiresAt");
+
+        if (!expiresAtStr) {
+            setTimeLeft(null);
             return;
         }
 
+        const expiresAt = new Date(expiresAtStr).getTime();
+
+        const calculateTimeLeft = () => {
+            const now = Date.now();
+            const difference = expiresAt - now;
+
+            if (difference <= 0) {
+                clearCart();
+
+                sessionStorage.removeItem("currentSaleId");
+                sessionStorage.removeItem("saleExpiresAt");
+
+                setTimeLeft(0);
+                setSaleId(null);
+
+                navigate(
+                    `/checkout/status?status=rejected&reason=expired&external_reference=${saleId}`,
+                );
+
+                return null;
+            }
+
+            return Math.floor(difference / 1000);
+        };
+
+        const initialTime = calculateTimeLeft();
+        if (initialTime !== null) setTimeLeft(initialTime);
+
         const timer = setInterval(() => {
-            setTimeLeft((prev) => (prev !== null ? prev - 1 : null));
+            const newTime = calculateTimeLeft();
+            if (newTime !== null) setTimeLeft(newTime);
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [navigate, clearCart, saleId]);
 
-    const formatTime = (seconds: number) => {
+    useEffect(() => {
+        if (!saleId) return;
+
+        const checkOrderStatus = async () => {
+            try {
+                const API_URL =
+                    import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+                const res = await fetch(`${API_URL}/sales/${saleId}`);
+
+                if (res.ok) {
+                    const saleData = await res.json();
+
+                    if (saleData.status === "CANCELLED") {
+                        // 1. Obtenemos la hora de expiración para comparar
+                        const expiresAtStr =
+                            sessionStorage.getItem("saleExpiresAt");
+                        const now = Date.now();
+                        const isExpired =
+                            expiresAtStr &&
+                            new Date(expiresAtStr).getTime() < now;
+
+                        // 2. Limpieza total de sesión y estados
+                        sessionStorage.removeItem("currentSaleId");
+                        sessionStorage.removeItem("saleExpiresAt");
+                        setSaleId(null);
+                        setTimeLeft(null);
+                        setIsDataConfirmed(false);
+
+                        // 3. UN SOLO NAVIGATE con el motivo correcto
+                        // Si el tiempo ya pasó, mandamos 'expired'. Si todavía quedaba tiempo, fue 'admin_cancel'.
+                        const reason = isExpired ? "expired" : "admin_cancel";
+
+                        navigate(
+                            `/checkout/status?status=rejected&reason=${reason}&external_reference=${saleId}`,
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error("Error verificando el estado de la orden", error);
+            }
+        };
+
+        checkOrderStatus();
+        const interval = setInterval(checkOrderStatus, 15000);
+
+        return () => clearInterval(interval);
+    }, [saleId, navigate]);
+
+    const formatTime = (seconds: number | null) => {
+        if (seconds === null) return "00:00";
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,13 +154,50 @@ export default function CheckoutPage() {
         setIsDataConfirmed(true);
     };
 
-    // 1. Congelamos la función para que no cambie de referencia
+    // 3. Manejo de la creación de la orden y seteo del timer
     const handleOrderCreated = useCallback((id: number) => {
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+        sessionStorage.setItem("currentSaleId", id.toString());
+        sessionStorage.setItem("saleExpiresAt", expiresAt);
+
         setSaleId(id);
-        setTimeLeft(600); // Empezar contador de 10 minutos
+        setTimeLeft(600);
     }, []);
 
-    // 2. Congelamos los items del carrito
+    // 4. Función para cancelar la reserva manualmente y liberar stock
+    const handleCancelCheckout = useCallback(async () => {
+        if (saleId) {
+            try {
+                const API_URL =
+                    import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+                await fetch(`${API_URL}/sales/${saleId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        status: "CANCELLED",
+                    }),
+                });
+            } catch (error) {
+                console.error(
+                    "Error al cancelar la orden en el backend:",
+                    error,
+                );
+            }
+        }
+
+        sessionStorage.removeItem("currentSaleId");
+        sessionStorage.removeItem("saleExpiresAt");
+
+        setSaleId(null);
+        setTimeLeft(null);
+        setIsDataConfirmed(false);
+
+        navigate("/cart");
+    }, [navigate, saleId]);
+
     const memoizedItems = useMemo(
         () =>
             cart.map((item) => ({
@@ -87,7 +208,6 @@ export default function CheckoutPage() {
         [cart],
     );
 
-    // 3. Congelamos los datos del cliente
     const memoizedClientData = useMemo(
         () => ({
             ...formData,
@@ -110,6 +230,51 @@ export default function CheckoutPage() {
 
     if (cart.length === 0 && !saleId) return null;
 
+    const isFormInvalid = useMemo(() => {
+        return (
+            !formData.name.trim() ||
+            !formData.surname.trim() ||
+            !formData.email.trim() ||
+            !formData.dni.trim() ||
+            !formData.phone.trim() ||
+            !formData.street.trim() ||
+            !formData.number.trim() ||
+            !formData.city.trim() ||
+            !formData.province.trim() ||
+            !formData.postalCode.trim() ||
+            !formData.country.trim()
+        );
+    }, [formData]);
+
+    const getTimerTheme = (seconds: number | null) => {
+        if (seconds === null) return { bg: "", text: "", bar: "", inner: "" };
+
+        if (seconds > 300) {
+            return {
+                bg: "bg-yellow-50 border-yellow-200",
+                text: "text-yellow-600",
+                bar: "bg-yellow-400",
+                inner: "border-yellow-100",
+            };
+        } else if (seconds > 60) {
+            return {
+                bg: "bg-amber-50 border-amber-200",
+                text: "text-amber-600",
+                bar: "bg-amber-400",
+                inner: "border-amber-100",
+            };
+        } else {
+            return {
+                bg: "bg-rose-50 border-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]",
+                text: "text-rose-600",
+                bar: "bg-rose-500 animate-pulse",
+                inner: "border-rose-100",
+            };
+        }
+    };
+
+    const timerTheme = getTimerTheme(timeLeft);
+
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5] border-b border-gray-200">
             <Navbar search={search} setSearch={setSearch} />
@@ -118,7 +283,7 @@ export default function CheckoutPage() {
                 <div className="mb-2">
                     <button
                         onClick={() => navigate("/cart")}
-                        className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
+                        className="text-sm px-2 py-1 -ml-2 mb-3 font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                         <ChevronLeftIcon className="w-4 h-4" />
                         Volver al carrito
@@ -153,8 +318,7 @@ export default function CheckoutPage() {
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleChange}
-                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50
-                                                placeholder:text-gray-400"
+                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
                                                 placeholder="Ej: Juan"
                                             />
                                         </div>
@@ -168,8 +332,7 @@ export default function CheckoutPage() {
                                                 name="surname"
                                                 value={formData.surname}
                                                 onChange={handleChange}
-                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50
-                                                placeholder:text-gray-400"
+                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
                                                 placeholder="Ej: Pérez"
                                             />
                                         </div>
@@ -268,7 +431,7 @@ export default function CheckoutPage() {
                                             </div>
                                             <div className="flex flex-col gap-1.5">
                                                 <label className="text-sm font-bold text-gray-700">
-                                                    Depto
+                                                    Depto.
                                                 </label>
                                                 <input
                                                     type="text"
@@ -354,12 +517,29 @@ export default function CheckoutPage() {
                                     </div>
                                 </div>
 
-                                <button
-                                    type="submit"
-                                    className="w-full mt-4 py-3.5 bg-[#2f3027] text-white text-[0.95rem] font-bold rounded-xl hover:bg-black transition shadow-sm cursor-pointer flex justify-center items-center"
-                                >
-                                    Confirmar Datos
-                                </button>
+                                <div className="flex flex-col items-end w-full">
+                                    <button
+                                        type="submit"
+                                        disabled={isFormInvalid}
+                                        className={`w-full mt-4 py-3.5 text-[0.95rem] font-bold rounded-xl transition-all duration-300 flex justify-center items-center
+                                            ${
+                                                isFormInvalid
+                                                    ? "bg-[#16a34a]/50 text-white/80 cursor-not-allowed"
+                                                    : "bg-[#16a34a] text-white hover:bg-[#15803d] cursor-pointer shadow-[0_0_20px_rgba(22,163,74,0.3)] hover:shadow-[0_0_25px_rgba(22,163,74,0.4)] active:scale-[0.98]"
+                                            }`}
+                                    >
+                                        Confirmar datos
+                                    </button>
+
+                                    <div className="h-5 relative w-full mt-2">
+                                        {isFormInvalid && (
+                                            <p className="absolute top-3 right-0 text-gray-400 text-[10px] text-right uppercase tracking-wide font-bold whitespace-nowrap">
+                                                * Complete todos los campos
+                                                requeridos para continuar
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
                             </form>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-10 px-4 animate-in fade-in duration-500">
@@ -371,7 +551,7 @@ export default function CheckoutPage() {
                                         ? "¡Stock reservado!"
                                         : "¡Datos confirmados!"}
                                 </h2>
-                                <p className="text-gray-500 text-center mb-8 max-w-sm">
+                                <p className="text-gray-500 text-center mb-6 max-w-sm leading-relaxed">
                                     {saleId ? (
                                         <>
                                             Tu pedido{" "}
@@ -387,16 +567,39 @@ export default function CheckoutPage() {
                                     )}
                                 </p>
 
-                                {timeLeft !== null && (
-                                    <div className="mb-6 flex flex-col items-center">
-                                        <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">
-                                            Reserva expira en
-                                        </p>
-                                        <div className="text-3xl font-mono font-black text-rose-500 bg-rose-50 px-4 py-2 rounded-xl border border-rose-100 shadow-inner">
-                                            {formatTime(timeLeft)}
+                                {saleId &&
+                                    timeLeft !== null &&
+                                    timeLeft > 0 && (
+                                        <div className="mb-8 w-full max-w-xs transition-colors duration-500">
+                                            <div
+                                                className={`${timerTheme.bg} rounded-2xl p-4 flex flex-col items-center shadow-sm relative overflow-hidden transition-all duration-500 border`}
+                                            >
+                                                <div
+                                                    className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ease-linear ${timerTheme.bar}`}
+                                                    style={{
+                                                        width: `${(timeLeft / 600) * 100}%`,
+                                                    }}
+                                                />
+
+                                                <p
+                                                    className={`${timerTheme.text} text-[11px] uppercase tracking-widest font-bold mb-2 flex items-center gap-1.5 transition-colors duration-500`}
+                                                >
+                                                    <ClockIcon
+                                                        className={`w-3.5 h-3.5 ${timeLeft <= 60 ? "animate-bounce" : ""}`}
+                                                    />
+                                                    Tu reserva expira en
+                                                </p>
+
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <div
+                                                        className={`bg-white px-4 py-2 rounded-xl shadow-inner border font-mono text-3xl font-black tabular-nums tracking-tight transition-colors duration-500 ${timerTheme.text} ${timerTheme.inner}`}
+                                                    >
+                                                        {formatTime(timeLeft)}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
                                 <div className="w-full max-w-md">
                                     <CheckoutButton
@@ -405,15 +608,48 @@ export default function CheckoutPage() {
                                         items={memoizedItems}
                                         total={totalPrice}
                                         onOrderCreated={handleOrderCreated}
+                                        disabled={
+                                            timeLeft !== null && timeLeft <= 0
+                                        }
                                     />
-                                    {!saleId && (
+
+                                    {!saleId ? (
                                         <button
                                             onClick={() =>
                                                 setIsDataConfirmed(false)
                                             }
-                                            className="w-full text-center text-sm text-gray-400 mt-4 hover:text-gray-600 transition underline underline-offset-4 cursor-pointer"
+                                            className="w-full mt-6 py-3 px-4 text-[0.95rem] font-bold text-gray-600 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300 transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer active:scale-[0.98]"
                                         >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                                className="w-4 h-4 text-gray-400 group-hover:text-gray-500"
+                                            >
+                                                <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+                                            </svg>
                                             Editar mis datos
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleCancelCheckout}
+                                            className="w-full mt-10 py-3 px-4 text-[0.95rem] font-bold text-rose-500 bg-white border border-rose-200 rounded-xl shadow-sm hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer active:scale-[0.98]"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={2.5}
+                                                stroke="currentColor"
+                                                className="w-4 h-4"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                            Cancelar reserva y modificar carrito
                                         </button>
                                     )}
                                 </div>
@@ -429,7 +665,7 @@ export default function CheckoutPage() {
 
                         <div className="flex flex-col gap-2 pb-3 border-b border-gray-100">
                             <div className="flex justify-between items-center text-sm text-gray-600">
-                                <span>Subtotal ({totalItems} artículos)</span>
+                                <span>Subtotal ({totalItems} artículos):</span>
                                 <span>
                                     $
                                     {totalPrice.toLocaleString("es-AR", {
@@ -442,7 +678,7 @@ export default function CheckoutPage() {
                         <div className="flex flex-col gap-1 mb-2 mt-1">
                             <div className="flex justify-between items-center">
                                 <span className="font-bold text-gray-800 text-base">
-                                    Total Final
+                                    Total Final:
                                 </span>
                                 <span className="font-black text-xl text-[#16a34a]">
                                     $

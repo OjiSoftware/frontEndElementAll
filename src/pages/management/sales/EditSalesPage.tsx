@@ -169,7 +169,7 @@ export default function EditSalesPage() {
                     <div>
                         <button
                             onClick={() => navigate("/management/sales")}
-                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
                         >
                             ← Volver
                         </button>
@@ -214,7 +214,7 @@ export default function EditSalesPage() {
                                     className="text-indigo-400"
                                     size={20}
                                 />
-                                <h2 className="text-sm md:text-base font-semibold text-white">
+                                <h2 className="text-sm md:text-base font-semibold text-white uppercase">
                                     Datos del cliente y facturación
                                 </h2>
                             </div>
@@ -233,13 +233,13 @@ export default function EditSalesPage() {
 
                         {isClientOpen && (
                             <div className="p-4 border-t border-white/5 space-y-4 shadow-inner">
-                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1">
+                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 uppercase">
                                     Información personal
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-300 mb-1">
-                                            NombreNombre{" "}
+                                            Nombre{" "}
                                             <span className="font-bold">*</span>
                                         </label>
                                         <input
@@ -319,7 +319,7 @@ export default function EditSalesPage() {
                                     </div>
                                 </div>
 
-                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mt-6">
+                                <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mt-6 uppercase">
                                     Dirección de facturación{" "}
                                     <span className="font-bold">*</span>
                                 </h3>
@@ -470,7 +470,7 @@ export default function EditSalesPage() {
                     </div>
 
                     <div>
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1 mb-4 uppercase">
                             Productos de la venta
                         </h3>
                         <ProductSelector
@@ -492,6 +492,7 @@ export default function EditSalesPage() {
                                     </div>
                                     <button
                                         type="button"
+                                        title="Eliminar producto"
                                         className="text-red-500 hover:text-red-400 transition cursor-pointer"
                                         onClick={() =>
                                             removeItem(item.productId)
@@ -824,6 +825,7 @@ export default function EditSalesPage() {
                                         <td className="px-4 py-3">
                                             <button
                                                 type="button"
+                                                title="Eliminar producto"
                                                 className="text-red-500 hover:text-red-400 transition cursor-pointer mx-auto flex"
                                                 onClick={() =>
                                                     removeItem(item.productId)

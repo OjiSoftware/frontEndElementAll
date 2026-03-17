@@ -33,7 +33,7 @@ export default function CreateBrandPage() {
                     <div>
                         <button
                             onClick={() => navigate("/management/brands")}
-                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-1 flex items-center gap-1 cursor-pointer"
+                            className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
                         >
                             ← Volver
                         </button>
@@ -73,7 +73,7 @@ export default function CreateBrandPage() {
                     className="bg-slate-800/80 border border-white/20 p-6 rounded-2xl shadow-2xl backdrop-blur-md grid grid-cols-1 gap-6"
                 >
                     <div className="space-y-4">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 uppercase">
                             Información básica
                         </h3>
 
@@ -88,6 +88,7 @@ export default function CreateBrandPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Ej: Samsung"
+                                autoComplete="off"
                                 className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
                                 required
                             />

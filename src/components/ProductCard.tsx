@@ -117,85 +117,85 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             </div>
 
             {/* Selector de Cantidad */}
-            {maxAvailable <= 0 && (
-                <div className="text-center font-bold text-xs mt-2 px-1">
-                    {quantityInCart > 0 ? (
-                        <span className="text-orange-600">Límite alcanzado</span>
+            <div className="flex flex-col items-center gap-1.5 mb-2 mt-2">
+                <div className="flex items-center justify-center bg-gray-50 border border-gray-200 rounded-lg h-8 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden min-w-[116px]">
+                    {maxAvailable <= 0 ? (
+                        <div className="text-center font-bold text-[11px] px-3 w-full">
+                            {quantityInCart > 0 ? (
+                                <span className="text-orange-600">Límite alcanzado</span>
+                            ) : (
+                                <span className="text-red-500">Sin stock</span>
+                            )}
+                        </div>
                     ) : (
-                        <span className="text-red-500">Sin stock</span>
+                        <>
+                            <button
+                                type="button"
+                                className="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer active:bg-gray-100"
+                                onClick={() =>
+                                    setProductQuantity(Math.max(minQuantity, productQuantity - 1))
+                                }
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={3}
+                                    stroke="currentColor"
+                                    className="w-3.5 h-3.5"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 12h-15"
+                                    />
+                                </svg>
+                            </button>
+
+                            <input
+                                type="number"
+                                value={productQuantity === 0 ? "" : productQuantity}
+                                onChange={(e) => {
+                                    const rawValue = e.target.value;
+                                    if (rawValue === "") {
+                                        setProductQuantity(0);
+                                        return;
+                                    }
+                                    const val = parseInt(rawValue, 10);
+                                    if (!isNaN(val)) {
+                                        // Clamp value up to max available
+                                        setProductQuantity(Math.min(Math.max(0, val), maxAvailable));
+                                    }
+                                }}
+                                onBlur={() => {
+                                    if (productQuantity < minQuantity) setProductQuantity(minQuantity);
+                                }}
+                                className="w-9 h-full text-center bg-transparent border-none font-bold text-[#3b4b5e] text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+
+                            <button
+                                type="button"
+                                disabled={productQuantity >= maxAvailable}
+                                className={`w-10 h-full flex items-center justify-center transition-colors ${productQuantity >= maxAvailable ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer active:bg-gray-100"}`}
+                                onClick={() => setProductQuantity(Math.min(maxAvailable, productQuantity + 1))}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={3}
+                                    stroke="currentColor"
+                                    className="w-3.5 h-3.5"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 4.5v15m7.5-7.5h-15"
+                                    />
+                                </svg>
+                            </button>
+                        </>
                     )}
-                </div>
-            )}
-            <div className="flex flex-col items-center gap-1.5 mb-2 mt-1">
-
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg h-8 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden">
-                    <button
-                        type="button"
-                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer active:bg-gray-100"
-                        onClick={() =>
-                            setProductQuantity(Math.max(minQuantity, productQuantity - 1))
-                        }
-                        disabled={maxAvailable <= 0}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={3}
-                            stroke="currentColor"
-                            className="w-3.5 h-3.5"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19.5 12h-15"
-                            />
-                        </svg>
-                    </button>
-
-                    <input
-                        type="number"
-                        value={productQuantity === 0 ? "" : productQuantity}
-                        onChange={(e) => {
-                            const rawValue = e.target.value;
-                            if (rawValue === "") {
-                                setProductQuantity(0);
-                                return;
-                            }
-                            const val = parseInt(rawValue, 10);
-                            if (!isNaN(val)) {
-                                // Clamp value up to max available
-                                setProductQuantity(Math.min(Math.max(0, val), maxAvailable));
-                            }
-                        }}
-                        onBlur={() => {
-                            if (productQuantity < minQuantity) setProductQuantity(minQuantity);
-                        }}
-                        className="w-9 h-full text-center bg-transparent border-none font-bold text-[#3b4b5e] text-sm focus:ring-0 p-0 leading-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        disabled={maxAvailable <= 0}
-                    />
-
-                    <button
-                        type="button"
-                        disabled={productQuantity >= maxAvailable}
-                        className={`w-10 h-full flex items-center justify-center transition-colors ${productQuantity >= maxAvailable ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer active:bg-gray-100"}`}
-                        onClick={() => setProductQuantity(Math.min(maxAvailable, productQuantity + 1))}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={3}
-                            stroke="currentColor"
-                            className="w-3.5 h-3.5"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                        </svg>
-                    </button>
                 </div>
             </div>
 

@@ -53,7 +53,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
     return (
         <div className="w-full mb-4 relative" ref={containerRef}>
             <label className="block text-sm font-medium text-gray-200 mb-2">
-                Buscar Producto
+                Buscar producto
             </label>
 
             <div className="relative group">
@@ -202,8 +202,9 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                                                 <TableCell className="text-center bg-transparent! py-3! px-3 md:px-4!">
                                                     <button
                                                         type="button"
+                                                        title="Agregar producto"
                                                         disabled={isOutOfStock}
-                                                        className={`p-1.5 rounded-lg flex items-center justify-center mx-auto ${
+                                                        className={`p-1.5 rounded-lg flex items-center justify-center mx-auto cursor-pointer ${
                                                             isOutOfStock
                                                                 ? "text-gray-700"
                                                                 : "text-indigo-400 hover:text-white"

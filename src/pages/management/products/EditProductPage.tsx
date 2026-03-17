@@ -80,13 +80,30 @@ export default function EditProductPage() {
         const raw = e.target.value;
         setPriceInput(raw);
 
-        const numericValue = parseFloat(
-            raw.replace(/\./g, "").replace(",", "."),
-        );
+        let parseableRaw = raw;
+        if (raw.includes(",") && raw.includes(".")) {
+            if (raw.lastIndexOf(",") > raw.lastIndexOf(".")) {
+                parseableRaw = raw.replace(/\./g, "").replace(",", ".");
+            } else {
+                parseableRaw = raw.replace(/,/g, ""); 
+            }
+        } else {
+            parseableRaw = raw.replace(/,/g, ".");
+        }
+
+        const numericValue = parseFloat(parseableRaw);
         setFormData((prev) => ({
             ...prev,
             price: isNaN(numericValue) ? 0 : Math.max(0, numericValue),
         }));
+    };
+
+    const handlePriceFocus = () => {
+        if (formData.price > 0) {
+            setPriceInput(formData.price.toString());
+        } else {
+            setPriceInput("");
+        }
     };
 
     const handlePriceBlur = () => {
@@ -148,7 +165,7 @@ export default function EditProductPage() {
                         <div className="mb-2">
                             <button
                                 onClick={() => navigate(-1)}
-                                className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer"
+                                className="text-sm px-2 py-1 -ml-2 text-indigo-400 hover:text-indigo-300 mb-3 flex items-center gap-1 cursor-pointer"
                             >
                                 ← Volver
                             </button>
@@ -226,7 +243,7 @@ export default function EditProductPage() {
                 >
                     {/* Columna izquierda */}
                     <div className="space-y-4">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 uppercase">
                             Información básica
                         </h3>
 
@@ -297,7 +314,7 @@ export default function EditProductPage() {
 
                     {/* Columna derecha */}
                     <div className="flex flex-col mt-2 md:mt-0">
-                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 mb-4">
+                        <h3 className="text-indigo-400 text-sm font-semibold border-b border-white/10 pb-1.5 mb-4 uppercase">
                             Categorización y precio
                         </h3>
 
@@ -401,6 +418,7 @@ export default function EditProductPage() {
                                         autoComplete="off"
                                         value={priceInput}
                                         onChange={handlePriceChange}
+                                        onFocus={handlePriceFocus}
                                         onBlur={handlePriceBlur}
                                         placeholder="0,00"
                                         className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
