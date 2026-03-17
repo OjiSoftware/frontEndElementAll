@@ -45,16 +45,23 @@ export const useSaleEdit = (saleId: string | undefined) => {
           const address = saleData.client?.addresses?.[0] || {};
 
           const mappedDetails = saleData.details.map((d: any) => {
-            const product = productsData.find((p: any) => p.id === d.productId);
+              const product = productsData.find(
+                  (p: any) => p.id === d.productId,
+              );
 
-            const price = d.unitaryPrice ? Number(d.unitaryPrice) : Number(product?.price || 0);
-            return {
-              productId: d.productId,
-              name: product?.name || "Producto desconocido",
-              price: price,
-              quantity: d.quantity,
-              stock: product?.stock
-            };
+              const price = d.unitaryPrice
+                  ? Number(d.unitaryPrice)
+                  : Number(product?.price || 0);
+
+              const actualAvailableStock = (product?.stock || 0) + d.quantity;
+
+              return {
+                  productId: d.productId,
+                  name: product?.name || "Producto desconocido",
+                  price: price,
+                  quantity: d.quantity,
+                  stock: actualAvailableStock,
+              };
           });
 
           setFormData({
@@ -130,26 +137,29 @@ export const useSaleEdit = (saleId: string | undefined) => {
     });
   };
   const updateProductQuantity = (productId: number, quantity: number) => {
-    setFormData((prev) => {
-      if (quantity < 1) return prev; // Don't allow less than 1 here
+      setFormData((prev) => {
+          const newDetails = prev.details.map((d) => {
+              if (d.productId === productId) {
+                  const maxStock = d.stock ?? Infinity;
+                  const validatedQuantity =
+                      quantity === 0 ? 0 : Math.min(quantity, maxStock);
+                  return { ...d, quantity: validatedQuantity };
+              }
+              return d;
+          });
 
-      const newDetails = prev.details.map(d => {
-        if (d.productId === productId) {
-          const maxStock = d.stock ?? Infinity;
-          return { ...d, quantity: Math.min(quantity, maxStock) };
-        }
-        return d;
+          const newTotal = newDetails.reduce(
+              (sum, item) => sum + Number(item.price) * item.quantity,
+              0,
+          );
+          const roundedTotal = Number(newTotal.toFixed(2));
+
+          return {
+              ...prev,
+              details: newDetails,
+              total: roundedTotal,
+          };
       });
-
-      const newTotal = newDetails.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
-      const roundedTotal = Number(newTotal.toFixed(2));
-
-      return {
-        ...prev,
-        details: newDetails,
-        total: roundedTotal
-      };
-    });
   };
 
   return {
