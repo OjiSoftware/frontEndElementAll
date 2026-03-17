@@ -44,13 +44,13 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
     }, []);
 
     return (
-        <aside className="w-full md:w-64 flex-shrink-0">
+        <aside className="max-lg:w-full lg:w-64 flex-shrink-0">
             {/* Contenedor principal estilo Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 md:sticky md:top-8">
 
                 {/* Encabezado Móvil (Sólo visible en pantallas pequeñas) */}
-                <div 
-                    className="md:hidden flex items-center justify-between cursor-pointer mb-4"
+                <div
+                    className="lg:hidden flex items-center justify-between cursor-pointer mb-4"
                     onClick={() => setIsMobileExpanded(!isMobileExpanded)}
                 >
                     <h2 className="text-[14px] text-darker font-bold font-lato uppercase tracking-[0.1rem]">
@@ -64,7 +64,7 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
                 </div>
 
                 {/* Contenido (oculto en móvil si no está expandido) */}
-                <div className={`${isMobileExpanded ? 'block' : 'hidden'} md:block`}>
+                <div className={`${isMobileExpanded ? 'block' : 'hidden'} lg:block`}>
                     {/* Botón "Ver Todo" integrado dentro de la card */}
                     <button
                         onClick={onClearFilters}
@@ -75,81 +75,81 @@ export function CategorySidebar({ onSelectSubCategory, onSelectBrand, onClearFil
 
                     {/* SECCIÓN DE CATEGORÍAS */}
                     <div className="mb-8">
-                        <h2 className="hidden md:block text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] mb-4">
+                        <h2 className="hidden lg:block text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem] mb-4">
                             Categorías
                         </h2>
 
                         <ul className="space-y-6">
-                        {categories.map((cat) => {
-                            const isExpanded = expandedCategories[cat.id] ?? false; // Default expanded or collapsed, adjust if needed
-                            return (
-                                <li key={cat.id}>
-                                    {/* Nombre de Línea (Hogar, Jardín, etc) */}
-                                    <div
-                                        className="flex items-center justify-between mb-3 cursor-pointer group"
-                                        onClick={() => toggleCategory(cat.id)}
-                                    >
-                                        <h3 className="text-gray-500 font-semibold text-sm font-lato group-hover:text-[#4caf50] transition-colors">
-                                            {cat.name}
-                                        </h3>
-                                        {isExpanded ? (
-                                            <ChevronUpIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
-                                        ) : (
-                                            <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
+                            {categories.map((cat) => {
+                                const isExpanded = expandedCategories[cat.id] ?? false; // Default expanded or collapsed, adjust if needed
+                                return (
+                                    <li key={cat.id}>
+                                        {/* Nombre de Línea (Hogar, Jardín, etc) */}
+                                        <div
+                                            className="flex items-center justify-between mb-3 cursor-pointer group"
+                                            onClick={() => toggleCategory(cat.id)}
+                                        >
+                                            <h3 className="text-gray-500 font-semibold text-sm font-lato group-hover:text-[#4caf50] transition-colors">
+                                                {cat.name}
+                                            </h3>
+                                            {isExpanded ? (
+                                                <ChevronUpIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
+                                            ) : (
+                                                <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-[#4caf50]" />
+                                            )}
+                                        </div>
+
+                                        {isExpanded && (
+                                            <ul className="ml-4 space-y-2 mb-6">
+                                                {cat.subCategories?.map((sub: any) => (
+                                                    <li
+                                                        key={sub.id}
+                                                        onClick={() => onSelectSubCategory(sub.id, sub.name, cat.name)}
+                                                        className={`text-sm font-lato cursor-pointer transition-all duration-200 ${selectedSubCategory === sub.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
+                                                    >
+                                                        {sub.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         )}
-                                    </div>
 
-                                    {isExpanded && (
-                                        <ul className="ml-4 space-y-2 mb-6">
-                                            {cat.subCategories?.map((sub: any) => (
-                                                <li
-                                                    key={sub.id}
-                                                    onClick={() => onSelectSubCategory(sub.id, sub.name, cat.name)}
-                                                    className={`text-sm font-lato cursor-pointer transition-all duration-200 ${selectedSubCategory === sub.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
-                                                >
-                                                    {sub.name}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
+                                        {/* Separador sutil entre líneas de categorías */}
+                                        {isExpanded && <hr className="mt-2 border-gray-50" />}
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
 
-                                    {/* Separador sutil entre líneas de categorías */}
-                                    {isExpanded && <hr className="mt-2 border-gray-50" />}
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </div>
-
-                {/* SECCIÓN DE MARCAS */}
-                <div>
-                    <div
-                        className="flex items-center justify-between mb-4 cursor-pointer group"
-                        onClick={() => setBrandsExpanded(!brandsExpanded)}
-                    >
-                        <h2 className="text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem]">
-                            Nuestras Marcas
-                        </h2>
-                        {brandsExpanded ? (
-                            <ChevronUpIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
-                        ) : (
-                            <ChevronDownIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
+                    {/* SECCIÓN DE MARCAS */}
+                    <div>
+                        <div
+                            className="flex items-center justify-between mb-4 cursor-pointer group"
+                            onClick={() => setBrandsExpanded(!brandsExpanded)}
+                        >
+                            <h2 className="text-[13px] text-darker subpixel-antialiased font-bold font-lato uppercase tracking-[0.1rem]">
+                                Nuestras Marcas
+                            </h2>
+                            {brandsExpanded ? (
+                                <ChevronUpIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
+                            ) : (
+                                <ChevronDownIcon className="h-5 w-5 text-gray-400 group-hover:text-[#4caf50]" />
+                            )}
+                        </div>
+                        {brandsExpanded && (
+                            <ul className="space-y-1">
+                                {brands.map((brand) => (
+                                    <li
+                                        key={brand.id}
+                                        onClick={() => onSelectBrand(brand.id, brand.name)}
+                                        className={`px-2 py-1 text-sm font-lato cursor-pointer transition-colors ${selectedBrand === brand.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
+                                    >
+                                        • {brand.name}
+                                    </li>
+                                ))}
+                            </ul>
                         )}
                     </div>
-                    {brandsExpanded && (
-                        <ul className="space-y-1">
-                            {brands.map((brand) => (
-                                <li
-                                    key={brand.id}
-                                    onClick={() => onSelectBrand(brand.id, brand.name)}
-                                    className={`px-2 py-1 text-sm font-lato cursor-pointer transition-colors ${selectedBrand === brand.id ? 'text-[#4caf50] font-bold' : 'text-gray-400 hover:text-[#4caf50]'}`}
-                                >
-                                    • {brand.name}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
                 </div> {/* Cierra el div condicional para móvil */}
             </div>
         </aside>

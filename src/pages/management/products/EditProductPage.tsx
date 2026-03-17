@@ -80,13 +80,30 @@ export default function EditProductPage() {
         const raw = e.target.value;
         setPriceInput(raw);
 
-        const numericValue = parseFloat(
-            raw.replace(/\./g, "").replace(",", "."),
-        );
+        let parseableRaw = raw;
+        if (raw.includes(",") && raw.includes(".")) {
+            if (raw.lastIndexOf(",") > raw.lastIndexOf(".")) {
+                parseableRaw = raw.replace(/\./g, "").replace(",", ".");
+            } else {
+                parseableRaw = raw.replace(/,/g, ""); 
+            }
+        } else {
+            parseableRaw = raw.replace(/,/g, ".");
+        }
+
+        const numericValue = parseFloat(parseableRaw);
         setFormData((prev) => ({
             ...prev,
             price: isNaN(numericValue) ? 0 : Math.max(0, numericValue),
         }));
+    };
+
+    const handlePriceFocus = () => {
+        if (formData.price > 0) {
+            setPriceInput(formData.price.toString());
+        } else {
+            setPriceInput("");
+        }
     };
 
     const handlePriceBlur = () => {
@@ -401,6 +418,7 @@ export default function EditProductPage() {
                                         autoComplete="off"
                                         value={priceInput}
                                         onChange={handlePriceChange}
+                                        onFocus={handlePriceFocus}
                                         onBlur={handlePriceBlur}
                                         placeholder="0,00"
                                         className="w-full bg-slate-700/90 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-400 outline-none transition-all placeholder:text-gray-400"
