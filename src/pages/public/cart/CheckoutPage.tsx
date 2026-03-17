@@ -615,8 +615,22 @@ export default function CheckoutPage() {
                                     ) : (
                                         <button
                                             onClick={handleCancelCheckout}
-                                            className="w-full text-center text-sm text-rose-500 mt-4 hover:text-rose-600 font-bold transition underline underline-offset-4 cursor-pointer"
+                                            className="w-full mt-10 py-3 px-4 text-[0.95rem] font-bold text-rose-500 bg-white border border-rose-200 rounded-xl shadow-sm hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer active:scale-[0.98]"
                                         >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={2.5}
+                                                stroke="currentColor"
+                                                className="w-4 h-4"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
                                             Cancelar reserva y modificar carrito
                                         </button>
                                     )}
