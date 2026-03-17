@@ -77,8 +77,10 @@ export default function RegisterPage() {
             new Promise((resolve) => setTimeout(resolve, ms));
 
         try {
+            // const [res] = await Promise.all([
+            //     fetch("http://localhost:3000/api/auth/register", {
             const [res] = await Promise.all([
-                fetch("http://localhost:3000/api/auth/register", {
+                fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/register`, {
                     method: "POST",
                     body: JSON.stringify({ name, email, password }),
                     headers: { "Content-Type": "application/json" },

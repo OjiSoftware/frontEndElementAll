@@ -28,7 +28,8 @@ export default function RecoverPasswordPage() {
         setLoading(true);
 
         try {
-            await fetch("http://localhost:3000/api/auth/recover-password", {
+            // await fetch("http://localhost:3000/api/auth/recover-password", {
+            await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/recover-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -109,7 +109,7 @@ export default function CatalogPage() {
             {/* Navbar con búsqueda */}
             <Navbar search={search} setSearch={setSearch} />
 
-            <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow">
+            <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto md:py-6 py-5 flex-grow">
                 {/* BREADCRUMBS */}
                 <div className="text-[#a0a0a0] text-sm font-lato mb-4 flex items-center gap-1.5 flex-wrap">
                     <span className="hover:text-gray-600 cursor-pointer transition-colors" onClick={handleClearFilters}>ElementAll</span>
@@ -127,7 +127,7 @@ export default function CatalogPage() {
                     )}
                 </div>
 
-                <div className="flex max-lg:flex-col lg:flex-row gap-8">
+                <div className="flex max-lg:flex-col lg:flex-row gap-4 md:gap-8">
                     {/* SIDEBAR */}
                     <div className="max-lg:w-full lg:w-64 shrink-0">
                         <CategorySidebar
@@ -149,9 +149,9 @@ export default function CatalogPage() {
                         ) : (
                             <>
                                 {/* Contenedor Blanco para los Productos */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 w-full h-fit">
+                                <div className="md:bg-white bg-transparent rounded-2xl md:shadow-sm md:border md:border-gray-100 p-0 md:p-4 lg:p-6 w-full h-fit">
                                     {/* GRID */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                         {currentProducts.map((product) => (
                                             <ProductCard
                                                 key={product.id}

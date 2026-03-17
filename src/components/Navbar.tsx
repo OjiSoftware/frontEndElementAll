@@ -117,7 +117,14 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                         <img
                             src={logo}
                             alt="Logo"
-                            className="h-20 md:h-16 object-contain my-1"
+                            className="h-16 md:hidden object-contain my-1"
+                            onClick={() => navigate("/")}
+                            style={{ cursor: "pointer" }}
+                        />
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="hidden md:block h-20 object-contain my-1"
                             onClick={() => navigate("/")}
                             style={{ cursor: "pointer" }}
                         />

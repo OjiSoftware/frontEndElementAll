@@ -16,8 +16,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const verifyAuth = async () => {
             try {
+                // const res = await fetch("http://localhost:3000/api/auth/me", {
                 const res = await fetch(
-                    "http://localhost:3000/api/auth/me",
+                    `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/me`,
                     {
                         method: "GET",
                         headers: { "Content-Type": "application/json" },
@@ -52,7 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = async () => {
         try {
-            await fetch("http://localhost:3000/api/auth/logout", {
+            // await fetch("http://localhost:3000/api/auth/logout", {
+            await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/logout`, {
                 method: "POST",
                 credentials: "include",
             });

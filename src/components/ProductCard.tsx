@@ -64,7 +64,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     return (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full max-w-full sm:max-w-60 group/card">
             {/* Imagen del Producto */}
-            <Link to={`/producto/${product.id}`} className="w-full h-45 flex items-center justify-center mb-2 cursor-pointer relative group  bg-gray-50/50 rounded-lg">
+            <Link to={`/producto/${product.id}`} className="md:w-full md:h-45 flex items-center justify-center md:mb-2 mb-0.5 cursor-pointer relative group  bg-gray-50/50 rounded-lg">
                 <img
                     src={product.imageUrl || "https://via.placeholder.com/150"}
                     alt={product.name || "Nombre del producto"}
@@ -85,16 +85,17 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             <div className="grow flex flex-col justify-start mt-1">
                 {/* Marca (Confianza) */}
                 {product.brand && (
-                    <span className="text-[10px] text-gray-400 font-lato font-extrabold uppercase tracking-widest mb-1.5">
+                    <span className="hidden md:block md:text-[10px] mt-2 text-gray-400 font-lato font-extrabold uppercase tracking-widest mb-1.5">
                         {product.brand.name}
                     </span>
+
                 )}
 
                 <Link to={`/producto/${product.id}`}>
                     <h3
                         title={product.name}
                         // El texto crece libremente, pero con mayor peso visual (Bold/Color Oscuro)
-                        className="text-[#1e293b] font-lato text-[15px] font-bold leading-snug tracking-tight hover:text-[#4caf50] transition-colors"
+                        className="text-[#1e293b] font-lato md:text-[15px] text-[13px] font-bold leading-snug tracking-tight hover:text-[#4caf50] transition-colors"
                     >
                         {product.name}
                     </h3>
@@ -110,7 +111,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
 
             {/* Precio Anclado y Gatillos de Escasez */}
             <div className="mt-4 mb-3 flex flex-col">
-                <p className="text-[#0f172a] font-lato font-black text-[22px] tracking-tighter leading-none">
+                <p className="text-[#0f172a] font-lato font-black md:text-[22px] text-[18px] tracking-tighter leading-none">
                     {formatPrice(product.price)}
                 </p>
 
@@ -118,7 +119,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
 
             {/* Selector de Cantidad */}
             <div className="flex flex-col items-center gap-1.5 mb-2 mt-2">
-                <div className="flex items-center justify-center bg-gray-50 border border-gray-200 rounded-lg h-8 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden min-w-[116px]">
+                <div className="flex items-center justify-center bg-gray-50 border border-gray-200 rounded-lg md:h-8 h-6 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-50 overflow-hidden min-w-[116px]">
                     {maxAvailable <= 0 ? (
                         <div className="text-center font-bold text-[11px] px-3 w-full">
                             {quantityInCart > 0 ? (
@@ -204,7 +205,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 className={`mt-2 relative ${isAdding
                     ? "bg-[#8bc34a]"
                     : "bg-[#4caf50] hover:bg-[#8bc34a]"
-                    } text-white py-2 px-3 rounded flex items-center justify-center text-xs font-medium transition-colors ${isAdding || maxAvailable <= 0 ? "cursor-not-allowed opacity-70" : "cursor-pointer"} overflow-hidden`}
+                    } text-white md:py-2 md:px-3 py-2 px-1 rounded flex items-center justify-center text-xs font-medium transition-colors ${isAdding || maxAvailable <= 0 ? "cursor-not-allowed opacity-70" : "cursor-pointer"} overflow-hidden`}
                 onClick={handleAddToCart}
                 disabled={isAdding || maxAvailable <= 0}
             >

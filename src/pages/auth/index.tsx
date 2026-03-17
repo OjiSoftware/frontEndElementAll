@@ -63,8 +63,10 @@ export default function LoginPage() {
             new Promise((resolve) => setTimeout(resolve, ms));
 
         try {
+            // const [res] = await Promise.all([
+            //     fetch("http://localhost:3000/api/auth/login", {
             const [res] = await Promise.all([
-                fetch("http://localhost:3000/api/auth/login", {
+                fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/login`, {
                     method: "POST",
                     body: JSON.stringify({ email, password }),
                     headers: { "Content-Type": "application/json" },

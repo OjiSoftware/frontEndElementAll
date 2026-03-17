@@ -44,8 +44,11 @@ export default function ResetPasswordPage() {
     useEffect(() => {
         const verifyToken = async () => {
             try {
+                // const response = await fetch(
+                //     `http://localhost:3000/api/auth/verify-token/${token}`,
+                // );
                 const response = await fetch(
-                    `http://localhost:3000/api/auth/verify-token/${token}`,
+                    `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/verify-token/${token}`,
                 );
                 const data = await response.json();
 
@@ -96,8 +99,11 @@ export default function ResetPasswordPage() {
 
         setLoading(true);
         try {
+            // const response = await fetch(
+            //     "http://localhost:3000/api/auth/reset-password",
+            //     {
             const response = await fetch(
-                "http://localhost:3000/api/auth/reset-password",
+                `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/reset-password`,
                 {
                     method: "POST",
                     headers: {
