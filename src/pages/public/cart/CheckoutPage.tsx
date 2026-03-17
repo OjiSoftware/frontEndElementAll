@@ -5,14 +5,21 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CheckoutButton from "@/components/CheckoutButton";
 import { ChevronLeftIcon, CheckCircleIcon } from "@heroicons/react/20/solid";
+import { ClockIcon } from "lucide-react";
 
 export default function CheckoutPage() {
-    const { cart, totalPrice, totalItems } = useCart();
+    const { cart, totalPrice, totalItems, clearCart } = useCart();
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
 
     const [isDataConfirmed, setIsDataConfirmed] = useState(false);
-    const [saleId, setSaleId] = useState<number | null>(null);
+
+    // Recuperamos estado inicial desde sessionStorage por si el usuario recarga la página (F5)
+    const [saleId, setSaleId] = useState<number | null>(() => {
+        const savedSaleId = sessionStorage.getItem("currentSaleId");
+        return savedSaleId ? parseInt(savedSaleId, 10) : null;
+    });
+
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     const [formData, setFormData] = useState({
@@ -32,33 +39,61 @@ export default function CheckoutPage() {
         reference: "",
     });
 
+    // 1. Redirección de seguridad
     useEffect(() => {
         if (cart.length === 0 && !saleId) {
             navigate("/cart");
         }
     }, [cart, navigate, saleId]);
 
+    // 2. Lógica del Timer resiliente (Basado en Fechas, anti-F5)
     useEffect(() => {
-        if (timeLeft === null) return;
-        if (timeLeft <= 0) {
-            alert(
-                "El tiempo para completar la compra ha expirado. Por favor, verificá el stock e intentá de nuevo.",
-            );
-            window.location.reload(); // Reiniciar todo
+        const expiresAtStr = sessionStorage.getItem("saleExpiresAt");
+
+        if (!expiresAtStr) {
+            setTimeLeft(null);
             return;
         }
 
+        const expiresAt = new Date(expiresAtStr).getTime();
+
+        const calculateTimeLeft = () => {
+            const now = Date.now();
+            const difference = expiresAt - now;
+
+            if (difference <= 0) {
+                sessionStorage.removeItem("currentSaleId");
+                sessionStorage.removeItem("saleExpiresAt");
+                setTimeLeft(0);
+
+                alert(
+                    "El tiempo de 10 minutos para completar el pago ha expirado. La reserva de stock se ha cancelado.",
+                );
+
+                clearCart();
+                navigate("/");
+                return null;
+            }
+
+            return Math.floor(difference / 1000);
+        };
+
+        const initialTime = calculateTimeLeft();
+        if (initialTime !== null) setTimeLeft(initialTime);
+
         const timer = setInterval(() => {
-            setTimeLeft((prev) => (prev !== null ? prev - 1 : null));
+            const newTime = calculateTimeLeft();
+            if (newTime !== null) setTimeLeft(newTime);
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [navigate, clearCart]);
 
-    const formatTime = (seconds: number) => {
+    const formatTime = (seconds: number | null) => {
+        if (seconds === null) return "00:00";
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,13 +105,18 @@ export default function CheckoutPage() {
         setIsDataConfirmed(true);
     };
 
-    // 1. Congelamos la función para que no cambie de referencia
+    // 3. Manejo de la creación de la orden y seteo del timer
     const handleOrderCreated = useCallback((id: number) => {
         setSaleId(id);
-        setTimeLeft(600); // Empezar contador de 10 minutos
+
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+        sessionStorage.setItem("currentSaleId", id.toString());
+        sessionStorage.setItem("saleExpiresAt", expiresAt);
+
+        setTimeLeft(600);
     }, []);
 
-    // 2. Congelamos los items del carrito
     const memoizedItems = useMemo(
         () =>
             cart.map((item) => ({
@@ -87,7 +127,6 @@ export default function CheckoutPage() {
         [cart],
     );
 
-    // 3. Congelamos los datos del cliente
     const memoizedClientData = useMemo(
         () => ({
             ...formData,
@@ -126,6 +165,34 @@ export default function CheckoutPage() {
         );
     }, [formData]);
 
+    const getTimerTheme = (seconds: number | null) => {
+        if (seconds === null) return { bg: "", text: "", bar: "", inner: "" };
+
+        if (seconds > 300) {
+            return {
+                bg: "bg-yellow-50 border-yellow-200",
+                text: "text-yellow-600",
+                bar: "bg-yellow-400",
+                inner: "border-yellow-100",
+            };
+        } else if (seconds > 60) {
+            return {
+                bg: "bg-amber-50 border-amber-200",
+                text: "text-amber-600",
+                bar: "bg-amber-400",
+                inner: "border-amber-100",
+            };
+        } else {
+            return {
+                bg: "bg-rose-50 border-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]",
+                text: "text-rose-600",
+                bar: "bg-rose-500 animate-pulse",
+                inner: "border-rose-100",
+            };
+        }
+    };
+
+    const timerTheme = getTimerTheme(timeLeft);
     return (
         <div className="flex flex-col min-h-screen w-full bg-[#f1f3f5] border-b border-gray-200">
             <Navbar search={search} setSearch={setSearch} />
@@ -169,8 +236,7 @@ export default function CheckoutPage() {
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleChange}
-                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50
-                                                placeholder:text-gray-400"
+                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
                                                 placeholder="Ej: Juan"
                                             />
                                         </div>
@@ -184,8 +250,7 @@ export default function CheckoutPage() {
                                                 name="surname"
                                                 value={formData.surname}
                                                 onChange={handleChange}
-                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50
-                                                placeholder:text-gray-400"
+                                                className="border border-gray-300 rounded-lg p-2.5 outline-none focus:border-[#16a34a] focus:ring-1 focus:ring-[#16a34a] bg-gray-50 placeholder:text-gray-400"
                                                 placeholder="Ej: Pérez"
                                             />
                                         </div>
@@ -384,7 +449,6 @@ export default function CheckoutPage() {
                                         Confirmar datos
                                     </button>
 
-                                    {/* Contenedor del mensaje para que no empuje el diseño */}
                                     <div className="h-5 relative w-full mt-2">
                                         {isFormInvalid && (
                                             <p className="absolute top-3 right-0 text-gray-400 text-[10px] text-right uppercase tracking-wide font-bold whitespace-nowrap">
@@ -405,7 +469,7 @@ export default function CheckoutPage() {
                                         ? "¡Stock reservado!"
                                         : "¡Datos confirmados!"}
                                 </h2>
-                                <p className="text-gray-500 text-center mb-8 max-w-sm">
+                                <p className="text-gray-500 text-center mb-6 max-w-sm leading-relaxed">
                                     {saleId ? (
                                         <>
                                             Tu pedido{" "}
@@ -421,16 +485,39 @@ export default function CheckoutPage() {
                                     )}
                                 </p>
 
-                                {timeLeft !== null && (
-                                    <div className="mb-6 flex flex-col items-center">
-                                        <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">
-                                            Reserva expira en
-                                        </p>
-                                        <div className="text-3xl font-mono font-black text-rose-500 bg-rose-50 px-4 py-2 rounded-xl border border-rose-100 shadow-inner">
-                                            {formatTime(timeLeft)}
+                                {saleId &&
+                                    timeLeft !== null &&
+                                    timeLeft > 0 && (
+                                        <div className="mb-8 w-full max-w-xs transition-colors duration-500">
+                                            <div
+                                                className={`${timerTheme.bg} rounded-2xl p-4 flex flex-col items-center shadow-sm relative overflow-hidden transition-all duration-500 border`}
+                                            >
+                                                <div
+                                                    className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ease-linear ${timerTheme.bar}`}
+                                                    style={{
+                                                        width: `${(timeLeft / 600) * 100}%`,
+                                                    }}
+                                                />
+
+                                                <p
+                                                    className={`${timerTheme.text} text-[11px] uppercase tracking-widest font-bold mb-2 flex items-center gap-1.5 transition-colors duration-500`}
+                                                >
+                                                    <ClockIcon
+                                                        className={`w-3.5 h-3.5 ${timeLeft <= 60 ? "animate-bounce" : ""}`}
+                                                    />
+                                                    Tu reserva expira en
+                                                </p>
+
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <div
+                                                        className={`bg-white px-4 py-2 rounded-xl shadow-inner border font-mono text-3xl font-black tabular-nums tracking-tight transition-colors duration-500 ${timerTheme.text} ${timerTheme.inner}`}
+                                                    >
+                                                        {formatTime(timeLeft)}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
                                 <div className="w-full max-w-md">
                                     <CheckoutButton
@@ -439,6 +526,9 @@ export default function CheckoutPage() {
                                         items={memoizedItems}
                                         total={totalPrice}
                                         onOrderCreated={handleOrderCreated}
+                                        disabled={
+                                            timeLeft !== null && timeLeft <= 0
+                                        }
                                     />
                                     {!saleId && (
                                         <button
