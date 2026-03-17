@@ -150,7 +150,7 @@ function CheckoutButton({
                     ) : (
                         <>
                             <p className="text-sm text-gray-500 text-center mb-3 font-lato">
-                                Elegí tu método de pago preferido
+                                Elegí tu método de pago preferido en:
                             </p>
                             <Wallet initialization={{ preferenceId }} />
                         </>
