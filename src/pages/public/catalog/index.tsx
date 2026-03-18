@@ -111,7 +111,7 @@ export default function CatalogPage() {
 
             <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto md:py-6 py-5 flex-grow">
                 {/* BREADCRUMBS */}
-                <div className="text-[#a0a0a0] text-sm font-lato mb-4 flex items-center gap-1.5 flex-wrap">
+                <div className="text-[#a0a0a0] md:text-sm text-[12px] font-lato mb-4 flex items-center gap-1.5 flex-wrap">
                     <span className="hover:text-gray-600 cursor-pointer transition-colors" onClick={handleClearFilters}>ElementAll</span>
                     {(selectedCatName || selectedBrandName) && <span>/</span>}
                     {selectedCatName && (
@@ -142,7 +142,7 @@ export default function CatalogPage() {
                     <div className="flex-1 flex flex-col gap-6">
                         {filteredProducts.length === 0 ? (
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex-1 flex items-center justify-center">
-                                <p className="text-gray-500 text-lg font-poppins text-center">
+                                <p className="text-gray-500 md:text-lg text-sm font-poppins text-center">
                                     No hay productos que coincidan con la selección
                                 </p>
                             </div>

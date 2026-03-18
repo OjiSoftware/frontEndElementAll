@@ -30,8 +30,8 @@ export default function ContactoPage() {
             className="absolute bottom-0 right-0 w-[61%] object-contain opacity-[0.15] pointer-events-none select-none z-0 transform translate-x-[5%] translate-y-[5%]"
           />
 
-          <div className="relative z-10 w-full flex flex-col items-start lg:block">
-            <h1 className="text-[1.8rem] md:text-[2.2rem] font-bold font-poppins mb-4 text-[#2f3027] leading-tight text-left">
+          <div className="relative z-10 w-full flex flex-col items-start lg:block [zoom:0.9] lg:[zoom:1]">
+            <h1 className="text-[1.5rem] md:text-[2.2rem] font-bold font-poppins mb-4 text-[#2f3027] leading-tight text-left">
               Contactanos
             </h1>
             <p className="text-gray-500 mb-10 text-[14px] md:text-[16px] leading-snug text-left max-w-2xl font-lato">
@@ -109,7 +109,7 @@ export default function ContactoPage() {
                     <h3 className="text-[1.2rem] font-bold font-poppins mb-2">Explorá</h3>
                     <p className="text-white/80 text-[14px] font-lato mb-4">Descubrí nuestros productos destacados con precios exclusivos para clientes.</p>
                     <a href="/catalogo" className="inline-flex items-center gap-2 bg-white text-[#3ba732] px-5 py-2.5 rounded-xl text-[14px] font-bold font-sans hover:bg-gray-50 transition-colors">
-                      Ver Catálogo Completo
+                      Ver catálogo completo
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                     </a>
                   </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import background from "@/assets/background.jpg";
 import logo from "@/assets/logo_elementAll.png";
 
@@ -20,27 +19,33 @@ const Footer: React.FC = () => {
               <img
                 src={logo}
                 alt="ElementAll Logo"
-                className="h-30 object-contain pl-0.5 pt-1"
+                className="md:hidden h-20 object-contain pl-0.5 pt-1"
               />
 
-              <p className="text-sm text-gray-200 font-medium font-lato max-w-xs mt-1">
+              <img
+                src={logo}
+                alt="ElementAll Logo"
+                className="hidden md:block h-30 object-contain pl-0.5 pt-1"
+              />
+
+              <p className="text-xs md:text-sm text-gray-200 font-medium font-lato max-w-xs mt-1">
                 Cuidamos tus espacios, potenciamos tu trabajo.
               </p>
               <a
                 href="#"
-                className="text-sm text-gray-300 font-lato underline hover:text-white transition-colors"
+                className="text-xs md:text-sm text-gray-300 font-lato underline hover:text-white transition-colors"
               >
                 Sobre nosotros
               </a>
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-lg font-bold font-poppins mb-2 md:mb-4">Contacto</h3>
+              <h3 className="text-lg font-bold font-poppins mt-3 md:mt-0 mb-2 md:mb-4">Contacto</h3>
 
-              <p className="text-sm text-gray-300 font-lato">
+              <p className="text-xs md:text-sm text-gray-300 font-lato">
                 <span className="font-bold text-white">Domicilio:</span> Av. Falsa 123, X5000, Córdoba Capital, Córdoba.
               </p>
-              <p className="text-sm text-gray-300 font-lato">
+              <p className="text-xs md:text-sm text-gray-300 font-lato">
                 <span className="font-bold text-white">Tel:</span> +54 9 351 0000000
               </p>
               <p className="text-sm text-gray-300 font-lato">
@@ -49,23 +54,23 @@ const Footer: React.FC = () => {
             </div>
 
             <div className="flex flex-col items-start">
-              <h3 className="text-lg font-bold font-poppins mb-4">Legal</h3>
+              <h3 className="text-lg font-bold font-poppins mt-3 md:mt-0 mb-2 md:mb-4">Legal</h3>
               <div className="flex flex-col gap-2">
-                <Link to="/arrepentimiento" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                <a href="/arrepentimiento" className="text-xs md:text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Botón de Arrepentimiento
-                </Link>
-                <p className="text-sm text-gray-300 font-lato">
+                </a>
+                <p className="text-xs md:text-sm text-gray-300 font-lato">
                   Defensa de las y los Consumidores. <a href="https://defensadelconsumidor.cba.gov.ar/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">Para reclamos ingrese aquí</a>
                 </p>
-                <Link to="/libro-quejas" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                <a href="/libro-quejas" className="text-xs md:text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Libro de Quejas
-                </Link>
-                <Link to="/terminos-condiciones" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                </a>
+                <a href="/terminos-condiciones" className="text-xs md:text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Términos y Condiciones
-                </Link>
-                <Link to="/politicas-privacidad" className="text-sm text-gray-300 font-lato hover:text-white transition-colors">
+                </a>
+                <a href="/politicas-privacidad" className="text-xs md:text-sm text-gray-300 font-lato hover:text-white transition-colors">
                   Políticas de Privacidad
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -82,7 +87,7 @@ const Footer: React.FC = () => {
               <img
                 src="http://www.afip.gob.ar/images/f960/DATAWEB.jpg"
                 alt="Data Fiscal AFIP"
-                className="w-10 opacity-70 group-hover:opacity-100 transition-opacity"
+                className="w-8 md:w-10 opacity-70 group-hover:opacity-100 transition-opacity"
               />
             </a>
           </div>

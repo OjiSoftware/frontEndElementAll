@@ -64,11 +64,11 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     return (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full max-w-full sm:max-w-60 group/card">
             {/* Imagen del Producto */}
-            <Link to={`/producto/${product.id}`} className="md:w-full md:h-45 flex items-center justify-center md:mb-2 mb-0.5 cursor-pointer relative group  bg-gray-50/50 rounded-lg">
+            <Link to={`/producto/${product.id}`} className="w-full aspect-square flex items-center justify-center md:mb-2 mb-0.5 cursor-pointer relative group bg-gray-50/50 rounded-lg overflow-hidden">
                 <img
                     src={product.imageUrl || "https://via.placeholder.com/150"}
                     alt={product.name || "Nombre del producto"}
-                    className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                 />
                 {/* Badge de cantidad en carrito */}
                 {quantityInCart > 0 && (
@@ -101,20 +101,31 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                     </h3>
                 </Link>
 
-                {/* Badge de empaque (Claridad de oferta B2B) */}
+                {/* Badge de empaque - mobile */}
                 {product.unit && (
-                    <div className="mt-2 text-[11px] font-bold text-green-800 bg-green-50 px-2 py-1 rounded w-fit border border-green-200 uppercase tracking-wide">
+                    <div className="md:hidden mt-2 text-[10px] font-bold text-green-800 bg-green-50 px-2 py-0.5 rounded w-fit border border-green-200 uppercase tracking-wide">
+                        {product.unit}
+                    </div>
+                )}
+                {/* Badge de empaque - desktop */}
+                {product.unit && (
+                    <div className="hidden md:block mt-2 text-[11px] font-bold text-green-800 bg-green-50 px-2 py-1 rounded w-fit border border-green-200 uppercase tracking-wide">
                         {product.unit}
                     </div>
                 )}
             </div>
 
-            {/* Precio Anclado y Gatillos de Escasez */}
-            <div className="mt-4 mb-3 flex flex-col">
-                <p className="text-[#0f172a] font-lato font-black md:text-[22px] text-[18px] tracking-tighter leading-none">
+            {/* Precio - mobile */}
+            <div className="md:hidden mt-3 mb-2 flex flex-col">
+                <p className="text-[#0f172a] font-lato font-black text-[17px] tracking-tighter leading-none">
                     {formatPrice(product.price)}
                 </p>
-
+            </div>
+            {/* Precio - desktop */}
+            <div className="hidden md:flex mt-4 mb-3 flex-col">
+                <p className="text-[#0f172a] font-lato font-black text-[22px] tracking-tighter leading-none">
+                    {formatPrice(product.price)}
+                </p>
             </div>
 
             {/* Selector de Cantidad */}

@@ -56,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
         );
 
         setSuggestions(filtered.slice(0, 5));
-        setIsDropdownOpen(filtered.length > 0);
+        setIsDropdownOpen(true);
     };
 
     const handleSearchSubmit = (value: string) => {
@@ -94,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-7 w-7"
+                            className="h-5 w-5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -117,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                         <img
                             src={logo}
                             alt="Logo"
-                            className="h-16 md:hidden object-contain my-1"
+                            className="h-12 md:hidden object-contain my-1"
                             onClick={() => navigate("/")}
                             style={{ cursor: "pointer" }}
                         />
@@ -240,9 +240,10 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                             navigate("/cart");
                         }}
                     >
+                        {/* Carrito mobile */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-7 w-7 md:h-8 md:w-8 text-white"
+                            className="md:hidden h-5 w-5 text-white"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -251,9 +252,22 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={1.5}
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293
-                                2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0
-                                100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
+                        </svg>
+                        {/* Carrito desktop */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="hidden md:block h-7 w-7 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                             />
                         </svg>
 
@@ -291,10 +305,10 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                 </div>
 
                 {/* SearchBar Mobile */}
-                <div className="mt-3 md:hidden">
+                <div className="mt-3 md:hidden relative" ref={wrapperRef}>
                     <SearchBar
                         value={search}
-                        onChange={setSearch}
+                        onChange={handleSearchChange}
                         onSubmit={handleSearchSubmit}
                         placeholder="Buscar productos..."
                         inputClassName="
@@ -304,18 +318,55 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                             border-none
                             py-2
                             h-auto
-                            text-sm
+                            text-xs
                             font-lato
                         "
                         iconClassName="text-white/80"
                     />
+                    {isDropdownOpen && (
+                        <div className="absolute top-full left-0 right-0 bg-white shadow-xl rounded-xl mt-1 max-h-64 overflow-y-auto z-20 border border-gray-100 divide-y divide-gray-50">
+                            {suggestions.slice(0, 3).map((p) => (
+                                <div
+                                    key={p.id}
+                                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors group"
+                                    onClick={() => {
+                                        setSearch(p.name);
+                                        setIsDropdownOpen(false);
+                                        navigate(`/catalogo?search=${encodeURIComponent(p.name)}`);
+                                    }}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-gray-100 p-2 rounded-full text-gray-500 group-hover:bg-green-50 group-hover:text-[#4caf50] transition-colors">
+                                            <MagnifyingGlassIcon className="w-3 h-3" />
+                                        </div>
+                                        <span className="font-medium text-gray-700 font-poppins text-[12px]">{p.name}</span>
+                                    </div>
+                                    <span className="text-xs font-bold text-[#4caf50] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Ver</span>
+                                </div>
+                            ))}
+                            {suggestions.length === 0 && (
+                                <div className="px-6 py-6 text-center text-gray-500 flex flex-col items-center">
+                                    <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p className="font-semibold text-gray-700 mb-1 font-poppins text-sm">No encontramos lo que buscás</p>
+                                    <p className="text-xs text-gray-500 font-lato">
+                                        Intentá con otras palabras o{' '}
+                                        <NavLink to="/contacto" className="text-[#4caf50] hover:text-[#f9c72a] font-semibold underline transition-colors" onClick={() => setIsDropdownOpen(false)}>
+                                            contactanos
+                                        </NavLink>
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Menú Mobile */}
             {isMenuOpen && (
-                <div className="md:hidden bg-[#4cae4c] border-t border-green-400">
-                    <div className="flex flex-col p-4 space-y-4 text-[15px] font-bold font-lato uppercase tracking-widest">
+                <div className="md:hidden bg-[#4cae4c] border-t border-[#82C355]">
+                    <div className="flex flex-col p-4 space-y-4 text-[12px] font-bold font-lato uppercase tracking-widest">
                         <NavLink
                             to="/"
                             onClick={() => setIsMenuOpen(false)}
