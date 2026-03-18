@@ -247,7 +247,7 @@ export default function DashboardLayout({
             </Disclosure>
 
             {title && (
-                <header className="bg-white shadow-sm dark:bg-gray-800 border-b border-white/10">
+                <header className="bg-white shadow-sm dark:bg-gray-800 border-b border-white/10 [zoom:0.8] md:[zoom:1]">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -264,7 +264,7 @@ export default function DashboardLayout({
                 </header>
             )}
 
-            <main>
+            <main className="[zoom:0.8] md:[zoom:1]">
                 <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     {children}
                 </div>
