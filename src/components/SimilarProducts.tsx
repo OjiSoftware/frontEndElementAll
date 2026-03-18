@@ -44,14 +44,15 @@ const SimilarProducts: React.FC<Props> = ({ currentProductId, subCategoryId }) =
   }
 
   return (
-    <div className="mt-16 w-full">
-      <h2 className="text-xl md:text-2xl font-bold font-lato text-gray-800 text-center mb-8">
+    <div className="mt-10 md:mt-16 w-full">
+
+      <h2 className="border-t border-gray-200 pt-4 text-lg md:text-2xl font-bold font-lato text-gray-800 text-center md:mb-8 mb-4">
         Otros clientes también vieron
       </h2>
 
       <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory pt-2 px-2 no-scrollbar">
         {similarProducts.map((p) => (
-          <div key={p.id} className="snap-start shrink-0 w-[240px]">
+          <div key={p.id} className="snap-start shrink-0 w-[180px] md:w-[240px]">
             <ProductCard product={p} />
           </div>
         ))}
