@@ -13,7 +13,7 @@ import {
     ArrowRightOnRectangleIcon, // Agregado para el móvil
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/OJI_logo/oji_logo_color.svg";
+import logo from "../assets/OJI_logo/oji_logo_color_v3.svg";
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect } from "react";
 

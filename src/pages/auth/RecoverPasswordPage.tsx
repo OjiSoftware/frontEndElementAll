@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 1. Importamos useNavigate
 import { Mail, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { validateEmail } from "../../helpers/email.validator";
-import logo from "../../assets/OJI_logo/oji_logo_soft_color.svg";
+import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
 
 export default function RecoverPasswordPage() {
     const navigate = useNavigate(); // 2. Inicializamos el hook
