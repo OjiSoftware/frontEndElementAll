@@ -4,7 +4,7 @@ import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from "lucide-react";
 import { LoginError } from "../../types/errors.types";
 import { validateEmail } from "../../helpers/email.validator";
 import { validatePassword } from "../../helpers/password.validator";
-import logo from "../../assets/logo_elementAll.png";
+import logo from "../../assets/OJI_logo/oji_logo_soft_color.svg";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
@@ -104,13 +104,18 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
-            <div className="w-full max-w-md flex flex-col items-center">
+        <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans ">
+            <div className="w-full max-w-md flex flex-col items-center [zoom:0.75] md:[zoom:1]">
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
-                        alt="ElementAll"
-                        className="h-14 sm:h-16 w-auto block mx-auto mb-4 object-contain"
+                        alt="OJI"
+                        className="hidden sm:block h-25  w-auto block mx-auto mb-4 object-contain"
+                    />
+                    <img
+                        src={logo}
+                        alt="OJI"
+                        className="sm:hidden h-20  w-auto block mx-auto mb-4 object-contain"
                     />
                     <p className="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-[0.2em]">
                         Gestión Empresarial Integral
