@@ -62,7 +62,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     }, [maxAvailable, minQuantity, productQuantity]);
 
     return (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full max-w-full sm:max-w-60 group/card">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col hover:shadow-xl hover:-translate-y-1 hover:border-green-200 transition-all duration-300 w-full h-full max-w-full sm:max-w-60 group/card">
             {/* Imagen del Producto */}
             <Link to={`/producto/${product.id}`} className="w-full aspect-square flex items-center justify-center md:mb-2 mb-0.5 cursor-pointer relative group bg-gray-50/50 rounded-lg overflow-hidden">
                 <img

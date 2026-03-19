@@ -85,7 +85,7 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
 
     return (
         <>
-            <nav className="w-full bg-[#4caf50] shadow-md relative z-10 border-b border-gray-400">
+            <nav className="w-full bg-[#4caf50] shadow-md relative z-30 border-b border-gray-400">
                 <div className="max-w-[1187px] mx-auto px-4 py-3 md:py-4">
                     <div className="flex items-center justify-between gap-4 md:gap-8">
                         {/* Botón Menú Móvil */}
@@ -157,7 +157,8 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                                         <div
                                             key={p.id}
                                             className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors group"
-                                            onClick={() => {
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
                                                 setSearch(p.name);
                                                 setIsDropdownOpen(false);
                                                 navigate(`/catalogo?search=${encodeURIComponent(p.name)}`);
@@ -330,7 +331,8 @@ const Navbar: React.FC<NavbarProps> = ({ search: externalSearch, setSearch: exte
                                     <div
                                         key={p.id}
                                         className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors group"
-                                        onClick={() => {
+                                        onMouseDown={(e) => {
+                                            e.preventDefault();
                                             setSearch(p.name);
                                             setIsDropdownOpen(false);
                                             navigate(`/catalogo?search=${encodeURIComponent(p.name)}`);

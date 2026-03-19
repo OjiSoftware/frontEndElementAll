@@ -50,9 +50,9 @@ const SimilarProducts: React.FC<Props> = ({ currentProductId, subCategoryId }) =
         Otros clientes también vieron
       </h2>
 
-      <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory pt-2 px-2 no-scrollbar">
+      <div className="grid grid-flow-col auto-cols-[180px] md:auto-cols-[240px] gap-4 md:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory pt-2 px-2 no-scrollbar">
         {similarProducts.map((p) => (
-          <div key={p.id} className="snap-start shrink-0 w-[180px] md:w-[240px]">
+          <div key={p.id} className="snap-start flex h-full">
             <ProductCard product={p} />
           </div>
         ))}
