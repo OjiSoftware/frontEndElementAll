@@ -49,7 +49,7 @@ export default function Pagination({
 
     return (
 
-        <div className="flex items-center justify-between border-t border-gray-300 px-4 py-4 sm:px-6">
+        <div className="flex items-center justify-between border-t border-gray-300 px-4 pt-4 sm:px-6">
 
             {/* MOBILE */}
             <div className="sm:hidden w-full flex items-center justify-center gap-4">
@@ -59,10 +59,10 @@ export default function Pagination({
                     disabled={currentPage === 1}
                     className="p-2 rounded-md text-black bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                 >
-                    <ChevronLeftIcon className="size-5" />
+                    <ChevronLeftIcon className="size-4" />
                 </button>
 
-                <span className="text-sm text-black font-medium">
+                <span className="text-[12px] text-black font-medium">
                     Página{" "}
                     <span className="font-bold">
                         {currentPage}
@@ -80,7 +80,7 @@ export default function Pagination({
                     disabled={currentPage === totalPages}
                     className="p-2 rounded-md text-black bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
                 >
-                    <ChevronRightIcon className="size-5" />
+                    <ChevronRightIcon className="size-4" />
                 </button>
 
             </div>

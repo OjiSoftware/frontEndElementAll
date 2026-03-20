@@ -117,9 +117,9 @@ export default function ProductDetailPage() {
       {/* Navbar */}
       <Navbar search="" setSearch={() => { }} />
 
-      <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-8 flex-grow">
+      <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto py-6 md:py-8 flex-grow">
         {/* BREADCRUMBS */}
-        <div className="text-[#a0a0a0] text-sm font-lato mb-6 flex items-center gap-1.5 flex-wrap">
+        <div className="text-[#a0a0a0] md:text-sm text-xs font-lato mb-6 flex items-center gap-1.5 flex-wrap">
           <span
             className="hover:text-gray-600 cursor-pointer transition-colors"
             onClick={() => navigate("/")}
@@ -140,14 +140,14 @@ export default function ProductDetailPage() {
         </div>
 
         {/* PRODUCT DETAIL CONTAINER */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 [zoom:0.8] md:[zoom:1]">
 
           {/* LEFT COLUMN: Image */}
-          <div className="w-full md:w-1/2 flex items-center justify-center rounded-xl overflow-hidden p-4 bg-gray-50 relative">
+          <div className="w-full md:w-1/2 aspect-square flex items-center justify-center rounded-xl overflow-hidden p-4 bg-gray-50 relative">
             <img
               src={product.imageUrl || "https://via.placeholder.com/400"}
               alt={product.name}
-              className="w-full h-auto object-contain"
+              className="w-full h-full object-contain mix-blend-multiply"
             />
 
             {/* IN CART BADGE */}
@@ -207,7 +207,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <hr className="my-6 border-gray-100" />
+            <hr className="my-2 border-gray-100" />
 
             {maxAvailable <= 0 && quantityInCart > 0 && (
               <div className="mb-4 p-3 bg-orange-50 text-orange-700 border border-orange-200 rounded-lg text-sm font-lato">

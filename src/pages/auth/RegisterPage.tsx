@@ -4,7 +4,7 @@ import { Mail, Lock, User, UserPlus, Loader2, Eye, EyeOff } from "lucide-react";
 import { LoginError } from "@/types/errors.types";
 import { validateEmail } from "../../helpers/email.validator";
 import { validatePassword } from "../../helpers/password.validator";
-import logo from "../../assets/logo_elementAll.png";
+import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
 
 interface RegisterError extends LoginError {
     name?: string;
@@ -77,8 +77,10 @@ export default function RegisterPage() {
             new Promise((resolve) => setTimeout(resolve, ms));
 
         try {
+            // const [res] = await Promise.all([
+            //     fetch("http://localhost:3000/api/auth/register", {
             const [res] = await Promise.all([
-                fetch("http://localhost:3000/api/auth/register", {
+                fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/register`, {
                     method: "POST",
                     body: JSON.stringify({ name, email, password }),
                     headers: { "Content-Type": "application/json" },
@@ -113,12 +115,17 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
-            <div className="w-full max-w-md flex flex-col items-center">
+            <div className="w-full max-w-md flex flex-col items-center [zoom:0.75] md:[zoom:1]">
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
-                        alt="ElementAll"
-                        className="h-14 sm:h-16 w-auto block mx-auto mb-4 object-contain"
+                        alt="OJI"
+                        className="hidden sm:block h-25  w-auto block mx-auto mb-4 object-contain"
+                    />
+                    <img
+                        src={logo}
+                        alt="OJI"
+                        className="sm:hidden h-20  w-auto block mx-auto mb-4 object-contain"
                     />
                     <p className="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-[0.2em]">
                         Gestión Empresarial Integral
@@ -277,8 +284,8 @@ export default function RegisterPage() {
                                             {strength <= 25
                                                 ? "DÉBIL"
                                                 : strength <= 50
-                                                  ? "MEDIA"
-                                                  : "FUERTE"}
+                                                    ? "MEDIA"
+                                                    : "FUERTE"}
                                         </span>
                                     </div>
                                     <div className="h-1.5 w-full bg-gray-900 rounded-full overflow-hidden border border-white/5">

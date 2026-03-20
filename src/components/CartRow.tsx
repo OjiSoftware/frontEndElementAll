@@ -56,6 +56,12 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                                     <TrashIcon className="w-5 h-5 sm:w-4 sm:h-4 stroke-2" />
                                 </button>
                             </div>
+                            {/* Unit */}
+                            {item.product.unit && (
+                                <span className="text-[12px] text-gray-400 font-lato">
+                                    {item.product.unit}
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -143,8 +149,8 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                             type="button"
                             disabled={isAtMaxStock}
                             className={`w-6 h-full flex items-center justify-center transition-colors active:bg-gray-100 ${isAtMaxStock
-                                    ? "text-gray-300 cursor-not-allowed"
-                                    : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
+                                ? "text-gray-300 cursor-not-allowed"
+                                : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
                                 }`}
                             onClick={() => {
                                 if (!isAtMaxStock) {
@@ -284,8 +290,8 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
                                 type="button"
                                 disabled={isAtMaxStock}
                                 className={`w-8 h-full flex items-center justify-center transition-colors active:bg-gray-100 ${isAtMaxStock
-                                        ? "text-gray-300 cursor-not-allowed"
-                                        : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "text-gray-500 hover:bg-white hover:text-green-600 cursor-pointer"
                                     }`}
                                 onClick={() => {
                                     if (!isAtMaxStock) {

@@ -47,14 +47,14 @@ export default function CartPage() {
                 <div className="mb-2">
                     <button
                         onClick={() => navigate("/catalogo")}
-                        className="text-sm font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
+                        className="md:text-sm text-xs font-medium text-[#16a34a] hover:text-[#15803d] flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                        <ChevronLeftIcon className="w-4 h-4" />
+                        <ChevronLeftIcon className="md:w-4 md:h-4 w-3 h-3" />
                         Volver a la tienda
                     </button>
                 </div>
 
-                <h1 className="text-[1.1rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight pb-4 px-1">
+                <h1 className="text-[0.9srem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight pb-4 px-1">
                     Tu carrito de compras
                 </h1>
 

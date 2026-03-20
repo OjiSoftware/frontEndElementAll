@@ -34,7 +34,7 @@ export default function HomePage() {
                         {/* Contenedor Flex para H1 (Izquierda) y Logo (Derecha) */}
                         <div className="w-full flex justify-between items-center">
                             <div className="w-full md:w-[38.2%]">
-                                <h1 className="text-[1.1rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight">
+                                <h1 className="text-[0.9rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight">
                                     Soluciones que protegen y potencian tu
                                     negocio.
                                 </h1>
@@ -58,16 +58,16 @@ export default function HomePage() {
 
             {/* Nueva Sección Inferior - Ocupa un mínimo del 38.2% del alto de la pantalla */}
             <div className="bg-[#f1f3f5] w-full flex flex-col items-center justify-center shadow-md relative z-10 border-t border-white ">
-                <div className="w-full h-full max-h-[380px] max-[1187px]:px-4 max-w-[1187px] mx-auto flex flex-col justify-center pt-5 pb-6">
+                <div className="w-full h-full max-h-[380px] max-[1187px]:px-4 max-w-[1187px] mx-auto flex flex-col justify-center lg:pt-5 pt-4 pb-6">
                     {/* Header de Categorias */}
                     <div className="flex justify-between items-end mb-4 pt-0">
-                        <h2 className="text-[1.1rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight">
+                        <h2 className="text-[0.9rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] text-left leading-tight">
                             Categorias destacadas
                         </h2>
                     </div>
 
                     {/* Cards de Categorias */}
-                    <div className="flex w-full stretch md:justify-between gap-3 md:gap-4 overflow-x-auto md:py-0 md:pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    <div className="flex w-full stretch md:justify-between gap-3 pb-2 md:gap-4 overflow-x-auto md:py-0 md:pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         {[
                             {
                                 id: 1,
@@ -99,16 +99,16 @@ export default function HomePage() {
                             <div
                                 key={cat.id}
                                 onClick={() => navigate(`/catalogo?search=${encodeURIComponent(cat.name)}`)}
-                                className="bg-white rounded-xl shadow-sm p-2.5 lg:p-3 flex flex-col items-center justify-between hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer aspect-[3/4] w-full min-w-[calc(50%-6px)] md:min-w-[115px] max-w-[215px] flex-auto snap-start shrink-0"
+                                className="bg-white rounded-xl shadow-sm p-2 lg:p-3 flex flex-col items-center justify-between hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer aspect-[3/4] w-full min-w-[80px] md:min-w-[80px] lg:min-w-[115px] max-w-[150px] lg:max-w-[215px] flex-auto snap-start shrink-0"
                             >
-                                <div className="w-full h-full flex items-center justify-center mb-1.5 overflow-hidden">
+                                <div className="w-full h-full flex items-center justify-center mb-1 lg:mb-1.5 overflow-hidden">
                                     <img
                                         src={cat.image}
                                         alt={cat.name}
                                         className="h-full w-full object-contain mix-blend-multiply"
                                     />
                                 </div>
-                                <h3 className="text-[#3d3d3d] font-bold text-[13px] tracking-widest uppercase font-lato text-center mb-1">
+                                <h3 className="text-[#3d3d3d] font-bold text-[9px] lg:text-[13px] tracking-widest uppercase font-lato text-center mb-0.5 lg:mb-1">
                                     {cat.name}
                                 </h3>
                             </div>
@@ -117,7 +117,7 @@ export default function HomePage() {
                 </div>
             </div>
             {/* Sección ¿Por qué elegirnos? */}
-            <div className="w-full bg-[#f1f3f5] md:bg-white py-8 md:py-16">
+            <div className="w-full bg-white py-8 md:py-16 [zoom:0.9] lg:[zoom:1]">
                 <div className="max-w-[1187px] mx-auto px-4">
                     <h2 className="text-center text-[1.1rem] lg:text-[1.2rem] font-bold font-poppins text-[#2f3027] mb-6">
                         ¿Por qué elegirnos?

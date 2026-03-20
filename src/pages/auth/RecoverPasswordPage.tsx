@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 1. Importamos useNavigate
 import { Mail, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { validateEmail } from "../../helpers/email.validator";
-import logo from "../../assets/logo_elementAll.png";
+import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
 
 export default function RecoverPasswordPage() {
     const navigate = useNavigate(); // 2. Inicializamos el hook
@@ -28,7 +28,8 @@ export default function RecoverPasswordPage() {
         setLoading(true);
 
         try {
-            await fetch("http://localhost:3000/api/auth/recover-password", {
+            // await fetch("http://localhost:3000/api/auth/recover-password", {
+            await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/recover-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -49,12 +50,17 @@ export default function RecoverPasswordPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans">
-            <div className="w-full max-w-md flex flex-col items-center">
+            <div className="w-full max-w-md flex flex-col items-center [zoom:0.75] md:[zoom:1]">
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
-                        alt="ElementAll"
-                        className="h-14 sm:h-16 w-auto block mx-auto mb-4 object-contain"
+                        alt="OJI"
+                        className="hidden sm:block h-25  w-auto block mx-auto mb-4 object-contain"
+                    />
+                    <img
+                        src={logo}
+                        alt="OJI"
+                        className="sm:hidden h-20  w-auto block mx-auto mb-4 object-contain"
                     />
                     <p className="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-[0.2em]">
                         Recuperación de Acceso
@@ -94,10 +100,9 @@ export default function RecoverPasswordPage() {
                                             }
                                             placeholder="tu@correo.com"
                                             className={`block w-full h-11 bg-gray-900/50 border rounded-lg pl-10 pr-3 text-sm outline-none transition-all
-                                                ${
-                                                    error
-                                                        ? "border-red-500/50 text-red-400 placeholder:text-red-400/60"
-                                                        : "border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                                ${error
+                                                    ? "border-red-500/50 text-red-400 placeholder:text-red-400/60"
+                                                    : "border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
                                                 }`}
                                         />
                                     </div>

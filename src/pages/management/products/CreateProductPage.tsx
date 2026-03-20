@@ -32,7 +32,7 @@ export default function CreateProductPage() {
             if (raw.lastIndexOf(",") > raw.lastIndexOf(".")) {
                 parseableRaw = raw.replace(/\./g, "").replace(",", ".");
             } else {
-                parseableRaw = raw.replace(/,/g, ""); 
+                parseableRaw = raw.replace(/,/g, "");
             }
         } else {
             parseableRaw = raw.replace(/,/g, ".");
@@ -77,6 +77,7 @@ export default function CreateProductPage() {
 
             toast.success("¡Producto creado con éxito!", { id: loadingToast });
             setPriceInput("");
+            navigate("/management/products");
         } catch (error) {
             console.error(error);
             toast.error("Hubo un error al crear el producto.", {
@@ -402,12 +403,12 @@ export default function CreateProductPage() {
                                 <button
                                     type="submit"
                                     disabled={isFormInvalid}
+
                                     className={`flex-1 md:flex-none md:min-w-35 px-4 py-3 text-sm font-bold rounded-lg transition-all duration-300
-                                      ${
-                                          isFormInvalid
-                                              ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
-                                              : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
-                                      }`}
+                                      ${isFormInvalid
+                                            ? "bg-emerald-600 text-white cursor-not-allowed opacity-50"
+                                            : "bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                        }`}
                                 >
                                     Crear producto
                                 </button>

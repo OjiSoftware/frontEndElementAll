@@ -9,7 +9,7 @@ import {
     AlertCircle,
 } from "lucide-react";
 import { validatePassword } from "../../helpers/password.validator";
-import logo from "../../assets/logo_elementAll.png";
+import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
 
 export default function ResetPasswordPage() {
     const { token } = useParams();
@@ -44,8 +44,11 @@ export default function ResetPasswordPage() {
     useEffect(() => {
         const verifyToken = async () => {
             try {
+                // const response = await fetch(
+                //     `http://localhost:3000/api/auth/verify-token/${token}`,
+                // );
                 const response = await fetch(
-                    `http://localhost:3000/api/auth/verify-token/${token}`,
+                    `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/verify-token/${token}`,
                 );
                 const data = await response.json();
 
@@ -96,8 +99,11 @@ export default function ResetPasswordPage() {
 
         setLoading(true);
         try {
+            // const response = await fetch(
+            //     "http://localhost:3000/api/auth/reset-password",
+            //     {
             const response = await fetch(
-                "http://localhost:3000/api/auth/reset-password",
+                `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/reset-password`,
                 {
                     method: "POST",
                     headers: {
@@ -124,12 +130,17 @@ export default function ResetPasswordPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center px-4 py-4 font-sans text-white">
-            <div className="w-full max-w-md flex flex-col items-center">
+            <div className="w-full max-w-md flex flex-col items-center [zoom:0.75] md:[zoom:1]">
                 <div className="w-full text-center mb-10">
                     <img
                         src={logo}
-                        alt="ElementAll"
-                        className="h-14 sm:h-16 w-auto block mx-auto mb-4 object-contain"
+                        alt="OJI"
+                        className="hidden sm:block h-25  w-auto block mx-auto mb-4 object-contain"
+                    />
+                    <img
+                        src={logo}
+                        alt="OJI"
+                        className="sm:hidden h-20  w-auto block mx-auto mb-4 object-contain"
                     />
                     <p className="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-[0.2em]">
                         Seguridad de Cuenta
@@ -237,30 +248,28 @@ export default function ResetPasswordPage() {
                                                     Seguridad
                                                 </span>
                                                 <span
-                                                    className={`text-[10px] font-bold transition-colors ${
-                                                        strength <= 25
-                                                            ? "text-red-400"
-                                                            : strength <= 50
-                                                              ? "text-yellow-400"
-                                                              : "text-green-400"
-                                                    }`}
+                                                    className={`text-[10px] font-bold transition-colors ${strength <= 25
+                                                        ? "text-red-400"
+                                                        : strength <= 50
+                                                            ? "text-yellow-400"
+                                                            : "text-green-400"
+                                                        }`}
                                                 >
                                                     {strength <= 25
                                                         ? "DÉBIL"
                                                         : strength <= 50
-                                                          ? "MEDIA"
-                                                          : "FUERTE"}
+                                                            ? "MEDIA"
+                                                            : "FUERTE"}
                                                 </span>
                                             </div>
                                             <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
                                                 <div
-                                                    className={`h-full transition-all duration-500 ease-out ${
-                                                        strength <= 25
-                                                            ? "bg-red-500"
-                                                            : strength <= 50
-                                                              ? "bg-yellow-500"
-                                                              : "bg-green-500"
-                                                    }`}
+                                                    className={`h-full transition-all duration-500 ease-out ${strength <= 25
+                                                        ? "bg-red-500"
+                                                        : strength <= 50
+                                                            ? "bg-yellow-500"
+                                                            : "bg-green-500"
+                                                        }`}
                                                     style={{
                                                         width: `${strength}%`,
                                                     }}
