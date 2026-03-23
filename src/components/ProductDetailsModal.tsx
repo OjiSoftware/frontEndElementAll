@@ -7,6 +7,8 @@ import { Package, Tag, Layers, Info, Box } from "lucide-react";
 // Heroicons para mantener consistencia con la tabla
 import { PencilIcon } from "@heroicons/react/20/solid";
 
+import { getDriveDirectLink } from "@/helpers/url.helper";
+
 interface ProductDetailsModalProps {
     isOpen: boolean;
     product: Product | null;
@@ -68,7 +70,7 @@ export function ProductDetailsModal({
                             <div className="w-48 h-48 md:w-full md:h-auto md:aspect-square rounded-xl bg-slate-700/50 border border-slate-600 flex items-center justify-center overflow-hidden shadow-inner shrink-0">
                                 {product.imageUrl ? (
                                     <img
-                                        src={product.imageUrl}
+                                        src={getDriveDirectLink(product.imageUrl)}
                                         alt={product.name}
                                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                     />

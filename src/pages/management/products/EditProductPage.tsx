@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useProductEdit } from "@/hooks/useProductEdit";
 import { SquarePen, Image as ImageIcon } from "lucide-react";
 import type { ProductEditBackend } from "@/types/product.types";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 export default function EditProductPage() {
     const {
@@ -65,7 +66,12 @@ export default function EditProductPage() {
             "subCategoryId",
             "stock",
         ].includes(name);
-        const finalValue = isNumeric ? parseInt(value) || 0 : value;
+        
+        let finalValue: string | number | boolean = isNumeric ? parseInt(value) || 0 : value;
+
+        if (name === "imageUrl") {
+            finalValue = getDriveDirectLink(value as string);
+        }
 
         setFormData((prev) => {
             const newState = { ...prev, [name]: finalValue };
@@ -186,7 +192,7 @@ export default function EditProductPage() {
                         <div className="w-full h-full rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center">
                             {formData.imageUrl ? (
                                 <img
-                                    src={formData.imageUrl}
+                                    src={getDriveDirectLink(formData.imageUrl)}
                                     alt={formData.name}
                                     className="w-full h-full object-contain"
                                 />

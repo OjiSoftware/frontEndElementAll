@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CartItem, useCart } from "@/context/CartContext";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 interface CartRowProps {
     item: CartItem;
@@ -15,7 +16,7 @@ const CartRow: React.FC<CartRowProps> = ({ item }) => {
     const isAtMaxStock = item.quantity >= maxStock;
 
     const imageUrl =
-        item.product.imageUrl ||
+        getDriveDirectLink(item.product.imageUrl) ||
         "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg";
 
     return (

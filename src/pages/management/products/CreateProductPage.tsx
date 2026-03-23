@@ -5,6 +5,7 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import toast from "react-hot-toast";
 import { useProductForm } from "@/hooks/useProductForm";
 import { useNavigate } from "react-router-dom";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 export default function CreateProductPage() {
     const {
@@ -129,7 +130,7 @@ export default function CreateProductPage() {
                         <div className="w-full h-full rounded-lg overflow-hidden bg-slate-700 flex items-center justify-center">
                             {formData.imageUrl ? (
                                 <img
-                                    src={formData.imageUrl}
+                                    src={getDriveDirectLink(formData.imageUrl)}
                                     alt={formData.name}
                                     className="w-full h-full object-contain"
                                 />

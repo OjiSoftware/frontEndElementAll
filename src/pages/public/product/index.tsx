@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SimilarProducts from "@/components/SimilarProducts";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -145,7 +146,7 @@ export default function ProductDetailPage() {
           {/* LEFT COLUMN: Image */}
           <div className="w-full md:w-1/2 aspect-square flex items-center justify-center rounded-xl overflow-hidden p-4 bg-gray-50 relative">
             <img
-              src={product.imageUrl || "https://via.placeholder.com/400"}
+              src={getDriveDirectLink(product.imageUrl) || "https://via.placeholder.com/400"}
               alt={product.name}
               className="w-full h-full object-contain mix-blend-multiply"
             />

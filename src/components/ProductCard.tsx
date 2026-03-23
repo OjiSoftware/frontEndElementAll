@@ -3,6 +3,7 @@ import type { Product } from "../types/product.types";
 import { useCart } from "@/context/CartContext";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 interface Props {
     product: Product;
@@ -66,7 +67,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             {/* Imagen del Producto */}
             <Link to={`/producto/${product.id}`} className="w-full aspect-square flex items-center justify-center md:mb-2 mb-0.5 cursor-pointer relative group bg-gray-50/50 rounded-lg overflow-hidden">
                 <img
-                    src={product.imageUrl || "https://via.placeholder.com/150"}
+                    src={getDriveDirectLink(product.imageUrl) || "https://via.placeholder.com/150"}
                     alt={product.name || "Nombre del producto"}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 mix-blend-multiply"
                 />

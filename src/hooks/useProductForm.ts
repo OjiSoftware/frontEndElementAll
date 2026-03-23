@@ -3,6 +3,7 @@ import { Brand } from "@/types/brand.types";
 import { SubCategory } from "@/types/subcategory.types";
 import { Category } from "@/types/category.types";
 import { productApi } from "@/services/ProductService";
+import { getDriveDirectLink } from "@/helpers/url.helper";
 
 export const useProductForm = () => {
     const [formData, setFormData] = useState({
@@ -78,6 +79,8 @@ export const useProductForm = () => {
             if (typeof finalValue === "number" && (name === "stock" || name === "price")) {
                 finalValue = Math.max(0, finalValue);
             }
+        } else if (name === "imageUrl") {
+            finalValue = getDriveDirectLink(value);
         }
 
         updateField(name, finalValue);
