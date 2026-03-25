@@ -7,6 +7,7 @@ export const useSaleEdit = (saleId: string | undefined) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [clientId, setClientId] = useState<number | null>(null);
+  const [initialStatus, setInitialStatus] = useState<string>("PENDING");
 
   const [formData, setFormData] = useState({
     status: "PENDING",
@@ -42,6 +43,7 @@ export const useSaleEdit = (saleId: string | undefined) => {
 
         if (saleData) {
           setClientId(saleData.clientId);
+          setInitialStatus(saleData.status || "PENDING");
           const address = saleData.client?.addresses?.[0] || {};
 
           const mappedDetails = saleData.details.map((d: any) => {
@@ -170,6 +172,7 @@ export const useSaleEdit = (saleId: string | undefined) => {
     addProductToSale,
     updateProductQuantity,
     isLoading,
-    clientId
+    clientId,
+    initialStatus
   };
 };

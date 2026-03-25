@@ -262,10 +262,14 @@ export function SalesTable({
                                         <EyeIcon className="w-5 h-5" />
                                     </button>
                                     <Link
-                                        title="Editar venta"
+                                        title={
+                                            sale.status === "CANCELLED" || sale.status === "COMPLETED"
+                                                ? "No se puede editar una venta finalizada"
+                                                : "Editar venta"
+                                        }
                                         to={ROUTES.sales.edit(sale.id)}
                                         className={
-                                            sale.status === "CANCELLED"
+                                            sale.status === "CANCELLED" || sale.status === "COMPLETED"
                                                 ? "text-gray-400 cursor-not-allowed pointer-events-none"
                                                 : "text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
                                         }
@@ -273,7 +277,11 @@ export function SalesTable({
                                         <PencilIcon className="w-5 h-5" />
                                     </Link>
                                     <button
-                                        title="Cancelar venta"
+                                        title={
+                                            sale.status === "CANCELLED"
+                                                ? "Esta venta ya ha sido cancelada"
+                                                : "Cancelar venta"
+                                        }
                                         className={
                                             sale.status === "CANCELLED"
                                                 ? "text-gray-400 cursor-not-allowed"

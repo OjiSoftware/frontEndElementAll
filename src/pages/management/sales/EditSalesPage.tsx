@@ -24,6 +24,7 @@ export default function EditSalesPage() {
         handleChange,
         isLoading,
         clientId,
+        initialStatus
     } = useSaleEdit(id);
 
     const removeItem = (productId: number) => {
@@ -125,16 +126,17 @@ export default function EditSalesPage() {
         );
     }
 
-    if (formData.status === "CANCELLED") {
+    if (initialStatus === "CANCELLED" || initialStatus === "COMPLETED") {
+        const isCancelled = initialStatus === "CANCELLED";
         return (
             <DashboardLayout>
                 <div className="flex h-full flex-col items-center justify-center text-white gap-4 min-h-[60vh]">
                     <div className="bg-slate-800/80 border border-white/20 p-8 rounded-2xl shadow-2xl backdrop-blur-md text-center space-y-4">
-                        <h2 className="text-2xl font-bold text-rose-400">
-                            Venta Cancelada
+                        <h2 className={`text-2xl font-bold ${isCancelled ? 'text-rose-400' : 'text-emerald-400'}`}>
+                            Venta {isCancelled ? 'Cancelada' : 'Completada'}
                         </h2>
                         <p className="text-gray-300">
-                            Esta venta está cancelada y no puede ser editada.
+                            Esta venta está {isCancelled ? 'cancelada' : 'completada'} y no puede ser editada.
                         </p>
                         <button
                             onClick={() => navigate("/management/sales")}

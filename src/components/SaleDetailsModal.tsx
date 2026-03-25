@@ -396,8 +396,17 @@ export function SaleDetailsModal({
                         Cerrar
                     </button>
                     <Link
+                        title={
+                            currentStatus === "CANCELLED" || currentStatus === "COMPLETED"
+                                ? "No se puede editar una venta finalizada"
+                                : "Editar venta"
+                        }
                         to={ROUTES.sales.edit(Number(sale?.id))}
-                        className="px-4 md:px-6 py-3 md:py-2 bg-indigo-500 text-white font-bold rounded-lg hover:bg-indigo-400 transition cursor-pointer text-sm shadow-[0_0_15px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 flex-1 md:flex-none"
+                        className={`px-4 md:px-6 py-3 md:py-2 font-bold rounded-lg transition text-sm flex items-center justify-center gap-2 flex-1 md:flex-none ${
+                            currentStatus === "CANCELLED" || currentStatus === "COMPLETED"
+                                ? "bg-slate-700 text-gray-400 cursor-not-allowed pointer-events-none shadow-none"
+                                : "bg-indigo-500 text-white hover:bg-indigo-400 cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)]"
+                        }`}
                     >
                         <PencilIcon className="w-4 h-4" />
                         Editar
