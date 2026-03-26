@@ -9,7 +9,7 @@ import {
     AlertCircle,
 } from "lucide-react";
 import { validatePassword } from "../../helpers/password.validator";
-import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
+import logo from "../../assets/OJI_logo/OJI_logo_soft_color_v3.svg";
 
 export default function ResetPasswordPage() {
     const { token } = useParams();

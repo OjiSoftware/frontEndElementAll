@@ -4,7 +4,7 @@ import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from "lucide-react";
 import { LoginError } from "../../types/errors.types";
 import { validateEmail } from "../../helpers/email.validator";
 import { validatePassword } from "../../helpers/password.validator";
-import logo from "../../assets/OJI_logo/oji_logo_soft_color_v3.svg";
+import logo from "../../assets/OJI_logo/OJI_logo_soft_color_v3.svg";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
