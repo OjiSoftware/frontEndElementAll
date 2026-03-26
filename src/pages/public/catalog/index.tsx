@@ -49,15 +49,18 @@ export default function CatalogPage() {
     const filteredProducts = useMemo(() => {
         let filtered = catProducts;
 
-        if (search.trim() !== "") {
-            const searchLower = search.toLowerCase();
-            filtered = filtered.filter((p) => {
-                const matchName = p.name.toLowerCase().includes(searchLower);
-                const matchSubCategory = p.subCategory?.name.toLowerCase().includes(searchLower) ?? false;
-                const matchCategory = p.subCategory?.category?.name.toLowerCase().includes(searchLower) ?? false;
+        if (search.trim() !== '') {
+          const searchTerms = search.toLowerCase().trim().split(/\s+/);
 
-                return matchName || matchSubCategory || matchCategory;
-            });
+          filtered = filtered.filter((p) => {
+            const searchableText = `
+                    ${p.name}
+                    ${p.subCategory?.name || ''}
+                    ${p.subCategory?.category?.name || ''}
+                `.toLowerCase();
+
+            return searchTerms.every((term) => searchableText.includes(term));
+          });
         }
 
         if (selectedSubCategory !== null) {
@@ -112,7 +115,6 @@ export default function CatalogPage() {
             <Navbar search={search} setSearch={setSearch} />
 
             <div className="w-full max-[1187px]:px-4 max-w-[1187px] mx-auto md:py-6 py-5 flex-grow">
-                {/* BREADCRUMBS */}
                 <div className="text-[#a0a0a0] md:text-sm text-[12px] font-lato mb-4 flex items-center gap-1.5 flex-wrap">
                     <span className="hover:text-gray-600 cursor-pointer transition-colors" onClick={handleClearFilters}>ElementAll</span>
                     {(selectedCatName || selectedBrandName) && <span>/</span>}
