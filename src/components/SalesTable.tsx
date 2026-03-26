@@ -1,312 +1,377 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeadCell,
-    TableRow,
-    Tooltip, // <-- Agregamos Tooltip de flowbite-react
-} from "flowbite-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+  Tooltip,
+} from 'flowbite-react';
 import {
-    PencilIcon,
-    TrashIcon,
-    ArrowUpIcon,
-    EyeIcon,
-    ExclamationTriangleIcon, // <-- Agregamos el icono de alerta
-} from "@heroicons/react/20/solid";
-import { Sale } from "@/types/sale.types";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@/constants/routes";
-import { SaleDetailsModal } from "@/components/SaleDetailsModal";
+  PencilIcon,
+  TrashIcon,
+  ArrowUpIcon,
+  EyeIcon,
+  ExclamationTriangleIcon,
+  ChatBubbleBottomCenterTextIcon,
+} from '@heroicons/react/20/solid';
+import { Sale } from '@/types/sale.types';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
+import { SaleDetailsModal } from '@/components/SaleDetailsModal';
+import { SaleNotesModal } from '@/components/SaleNotesModal'; // <-- Importamos el modal de notas
 
-type SortColumn = keyof Sale | "client.name" | "rowNum";
+type SortColumn = keyof Sale | 'client.name' | 'rowNum';
 
 interface SalesTableProps {
-    sales: Sale[];
-    onDelete: (Sale: Sale) => void;
-    currentPage: number;
-    itemsPerPage: number;
-    onSort: (column: string) => void;
-    currentSortColumn: string | null;
-    currentSortDirection: "asc" | "desc" | null;
+  sales: Sale[];
+  onDelete: (Sale: Sale) => void;
+  currentPage: number;
+  itemsPerPage: number;
+  onSort: (column: string) => void;
+  currentSortColumn: string | null;
+  currentSortDirection: 'asc' | 'desc' | null;
 }
 
 const SALE_STATUS_MAP: Record<string, { label: string; style: string }> = {
-    PENDING: {
-        label: "Pendiente",
-        style: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    },
-    IN_PROGRESS: {
-        label: "En curso",
-        style: "bg-slate-500/10 text-slate-500 border-slate-500/20",
-    },
-    COMPLETED: {
-        label: "Completada",
-        style: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-    },
-    CANCELLED: {
-        label: "Cancelada",
-        style: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-    },
+  PENDING: {
+    label: 'Pendiente',
+    style: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  },
+  IN_PROGRESS: {
+    label: 'En curso',
+    style: 'bg-slate-500/10 text-slate-500 border-slate-500/20',
+  },
+  COMPLETED: {
+    label: 'Completada',
+    style: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+  },
+  CANCELLED: {
+    label: 'Cancelada',
+    style: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+  },
 };
 
 export function SalesTable({
-    sales,
-    onDelete,
-    currentPage,
-    itemsPerPage,
-    onSort,
-    currentSortColumn,
-    currentSortDirection,
+  sales,
+  onDelete,
+  currentPage,
+  itemsPerPage,
+  onSort,
+  currentSortColumn,
+  currentSortDirection,
 }: SalesTableProps) {
-    const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-    const formatARS = useMemo(
-        () =>
-            new Intl.NumberFormat("es-AR", {
-                style: "currency",
-                currency: "ARS",
-                minimumFractionDigits: 2,
-            }),
-        [],
-    );
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [saleForNotes, setSaleForNotes] = useState<Sale | null>(null);
 
-    const handleOpenDetails = (sale: Sale) => {
-        setSelectedSale(sale);
-        setIsDetailsModalOpen(true);
-    };
+  const formatARS = useMemo(
+    () =>
+      new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 2,
+      }),
+    [],
+  );
 
-    const handleCloseDetails = () => {
-        setIsDetailsModalOpen(false);
-        setSelectedSale(null);
-    };
-
-    const handleSort = (column: SortColumn) => {
-        onSort(column as string);
-    };
-
-    const renderSortArrow = (column: SortColumn) => {
-        const isActive = currentSortColumn === column;
-        return (
-            <ArrowUpIcon
-                className={`w-3 h-3 ms-1 transition-all duration-150 ${
-                    isActive && currentSortDirection
-                        ? currentSortDirection === "desc"
-                            ? "rotate-180 opacity-100"
-                            : "opacity-100"
-                        : "opacity-0"
-                }`}
-            />
-        );
-    };
-
-    const displaySales = useMemo(() => {
-        return sales;
-    }, [sales]);
-
+  const isCriticalNote = (note: string) => {
+    if (!note) return false;
+    const content = note.toLowerCase();
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <Table hoverable>
-                <TableHead>
-                    <TableRow>
-                        <TableHeadCell
-                            className="px-4 w-14 cursor-pointer select-none"
-                            onClick={() => handleSort("rowNum")}
-                        >
-                            <div className="flex items-center">
-                                # {renderSortArrow("rowNum")}
-                            </div>
-                        </TableHeadCell>
-
-                        <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none text-center"
-                            onClick={() => handleSort("createdAt")}
-                        >
-                            <div className="relative inline-flex items-center justify-center">
-                                <span>Fecha</span>
-                                <div className="absolute -right-6">
-                                    {renderSortArrow("createdAt")}
-                                </div>
-                            </div>
-                        </TableHeadCell>
-
-                        <TableHeadCell
-                            className="cursor-pointer select-none text-center"
-                            onClick={() => handleSort("status")}
-                        >
-                            <div className="relative inline-flex items-center justify-center">
-                                <span>Estado</span>
-                                <div className="absolute -right-6">
-                                    {renderSortArrow("status")}
-                                </div>
-                            </div>
-                        </TableHeadCell>
-
-                        <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none text-center"
-                            onClick={() => handleSort("total")}
-                        >
-                            <div className="relative inline-flex items-center justify-center">
-                                <span>Monto</span>
-                                <div className="absolute -right-6">
-                                    {renderSortArrow("total")}
-                                </div>
-                            </div>
-                        </TableHeadCell>
-
-                        <TableHeadCell
-                            className="hidden md:table-cell! cursor-pointer select-none text-center"
-                            onClick={() => handleSort("client.name")}
-                        >
-                            <div className="relative inline-flex items-center justify-center">
-                                <span>Cliente</span>
-                                <div className="absolute -right-6">
-                                    {renderSortArrow("client.name")}
-                                </div>
-                            </div>
-                        </TableHeadCell>
-
-                        <TableHeadCell className="select-none text-center">
-                            Acciones
-                        </TableHeadCell>
-                    </TableRow>
-                </TableHead>
-
-                <TableBody className="divide-y">
-                    {displaySales.map((sale) => (
-                        <TableRow
-                            key={sale.id}
-                            className={`bg-white dark:border-gray-700 text-sm md:text-base transition-colors ${
-                                // Le damos un tinte de advertencia a la fila si tiene notas
-                                (sale as any).notes
-                                    ? "dark:bg-amber-900/10 bg-amber-50/50"
-                                    : "dark:bg-gray-800"
-                            }`}
-                        >
-                            <TableCell className="px-4 md:font-bold align-top py-4 lg:align-middle">
-                                <div className="flex flex-col">
-                                    <span className="text-gray-900 dark:text-white">
-                                        {(sale as any).originalIndex}
-                                    </span>
-                                    <span className="sm:hidden text-[10px] font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-                                        {formatARS.format(
-                                            Number(sale.total) ?? 0,
-                                        )}
-                                    </span>
-                                </div>
-                            </TableCell>
-
-                            <TableCell className="hidden md:table-cell! text-center text-gray-600 dark:text-gray-400 align-top py-4 lg:align-middle">
-                                {sale.createdAt
-                                    ? new Date(
-                                          sale.createdAt,
-                                      ).toLocaleDateString("es-AR")
-                                    : "---"}
-                            </TableCell>
-
-                            <TableCell className="text-center align-middle md:align-top py-4 lg:align-middle">
-                                <div className="relative inline-flex items-center justify-center">
-                                    {(() => {
-                                        const statusInfo = SALE_STATUS_MAP[
-                                            sale.status
-                                        ] || {
-                                            label: sale.status,
-                                            style: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-                                        };
-                                        return (
-                                            <span
-                                                className={`px-2.5 py-1 rounded-md text-[10px] md:text-xs font-bold border inline-block uppercase tracking-wider ${statusInfo.style}`}
-                                            >
-                                                {statusInfo.label}
-                                            </span>
-                                        );
-                                    })()}
-
-                                    {(sale as any).notes && (
-                                        <div className="absolute -right-8 top-1/2 -translate-y-1/2">
-                                            <Tooltip
-                                                content={(sale as any).notes}
-                                                placement="top"
-                                                className="max-w-xs text-center"
-                                            >
-                                                <ExclamationTriangleIcon className="w-5 h-5 text-amber-500 animate-pulse cursor-help" />
-                                            </Tooltip>
-                                        </div>
-                                    )}
-                                </div>
-                            </TableCell>
-
-                            <TableCell className="hidden md:table-cell! text-center font-mono text-gray-900 dark:text-white align-top py-4 lg:align-middle">
-                                {formatARS.format(Number(sale.total) ?? 0)}
-                            </TableCell>
-
-                            <TableCell className="hidden md:table-cell! text-gray-600 dark:text-gray-400 align-top py-4">
-                                {sale.client ? (
-                                    `${sale.client.surname}, ${sale.client.name}`
-                                ) : (
-                                    <span className="text-gray-400 italic text-xs">
-                                        Sin cliente
-                                    </span>
-                                )}
-                            </TableCell>
-
-                            <TableCell>
-                                <div className="flex items-center justify-center gap-3">
-                                    <button
-                                        title="Ver detalles"
-                                        className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition active:scale-95 cursor-pointer"
-                                        onClick={() => handleOpenDetails(sale)}
-                                    >
-                                        <EyeIcon className="w-5 h-5" />
-                                    </button>
-                                    <Link
-                                        title={
-                                            sale.status === "CANCELLED" || sale.status === "COMPLETED"
-                                                ? "No se puede editar una venta finalizada"
-                                                : "Editar venta"
-                                        }
-                                        to={ROUTES.sales.edit(sale.id)}
-                                        className={
-                                            sale.status === "CANCELLED" || sale.status === "COMPLETED"
-                                                ? "text-gray-400 cursor-not-allowed pointer-events-none"
-                                                : "text-blue-500 hover:text-blue-400 transition active:scale-95 cursor-pointer"
-                                        }
-                                    >
-                                        <PencilIcon className="w-5 h-5" />
-                                    </Link>
-                                    <button
-                                        title={
-                                            sale.status === "CANCELLED"
-                                                ? "Esta venta ya ha sido cancelada"
-                                                : "Cancelar venta"
-                                        }
-                                        className={
-                                            sale.status === "CANCELLED"
-                                                ? "text-gray-400 cursor-not-allowed"
-                                                : "text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer"
-                                        }
-                                        onClick={() =>
-                                            sale.status !== "CANCELLED" &&
-                                            onDelete(sale)
-                                        }
-                                        disabled={sale.status === "CANCELLED"}
-                                    >
-                                        <TrashIcon className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-
-            <SaleDetailsModal
-                isOpen={isDetailsModalOpen}
-                sale={selectedSale}
-                onClose={handleCloseDetails}
-            />
-        </div>
+      content.includes('fuera de término') ||
+      content.includes('reembolsar') ||
+      content.includes('revisar stock') ||
+      content.includes('pago mp') ||
+      content.includes('error') ||
+      content.includes('pago rechazado')
     );
+  };
+
+  const handleOpenDetails = (sale: Sale) => {
+    setSelectedSale(sale);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedSale(null);
+  };
+
+  const handleOpenNotes = (sale: Sale) => {
+    setSaleForNotes(sale);
+    setIsNotesModalOpen(true);
+  };
+
+  const handleCloseNotes = () => {
+    setIsNotesModalOpen(false);
+    setSaleForNotes(null);
+  };
+
+  const handleSort = (column: SortColumn) => {
+    onSort(column as string);
+  };
+
+  const renderSortArrow = (column: SortColumn) => {
+    const isActive = currentSortColumn === column;
+    return (
+      <ArrowUpIcon
+        className={`w-3 h-3 ms-1 transition-all duration-150 ${
+          isActive && currentSortDirection
+            ? currentSortDirection === 'desc'
+              ? 'rotate-180 opacity-100'
+              : 'opacity-100'
+            : 'opacity-0'
+        }`}
+      />
+    );
+  };
+
+  const displaySales = useMemo(() => {
+    return sales;
+  }, [sales]);
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+      <Table hoverable>
+        <TableHead>
+          <TableRow>
+            <TableHeadCell
+              className="px-4 w-14 cursor-pointer select-none"
+              onClick={() => handleSort('rowNum')}
+            >
+              <div className="flex items-center">
+                # {renderSortArrow('rowNum')}
+              </div>
+            </TableHeadCell>
+
+            <TableHeadCell
+              className="hidden md:table-cell! cursor-pointer select-none text-center"
+              onClick={() => handleSort('createdAt')}
+            >
+              <div className="relative inline-flex items-center justify-center">
+                <span>Fecha</span>
+                <div className="absolute -right-6">
+                  {renderSortArrow('createdAt')}
+                </div>
+              </div>
+            </TableHeadCell>
+
+            <TableHeadCell
+              className="cursor-pointer select-none text-center"
+              onClick={() => handleSort('status')}
+            >
+              <div className="relative inline-flex items-center justify-center">
+                <span>Estado</span>
+                <div className="absolute -right-6">
+                  {renderSortArrow('status')}
+                </div>
+              </div>
+            </TableHeadCell>
+
+            <TableHeadCell
+              className="hidden md:table-cell! cursor-pointer select-none text-center"
+              onClick={() => handleSort('total')}
+            >
+              <div className="relative inline-flex items-center justify-center">
+                <span>Monto</span>
+                <div className="absolute -right-6">
+                  {renderSortArrow('total')}
+                </div>
+              </div>
+            </TableHeadCell>
+
+            <TableHeadCell
+              className="hidden md:table-cell! cursor-pointer select-none text-center"
+              onClick={() => handleSort('client.name')}
+            >
+              <div className="relative inline-flex items-center justify-center">
+                <span>Cliente</span>
+                <div className="absolute -right-6">
+                  {renderSortArrow('client.name')}
+                </div>
+              </div>
+            </TableHeadCell>
+
+            <TableHeadCell className="select-none text-center">
+              Acciones
+            </TableHeadCell>
+          </TableRow>
+        </TableHead>
+
+        <TableBody className="divide-y">
+          {displaySales.map((sale) => (
+            <TableRow
+              key={sale.id}
+              className={`bg-white dark:border-gray-700 text-sm md:text-base transition-colors ${
+                // Le damos un tinte de advertencia a la fila si tiene notas
+                (sale as any).notes
+                  ? 'dark:bg-amber-900/10 bg-amber-50/50'
+                  : 'dark:bg-gray-800'
+              }`}
+            >
+              <TableCell className="px-4 md:font-bold align-top py-4 lg:align-middle">
+                <div className="flex flex-col">
+                  <span className="text-gray-900 dark:text-white">
+                    {(sale as any).originalIndex}
+                  </span>
+                  <span className="sm:hidden text-[10px] font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    {formatARS.format(Number(sale.total) ?? 0)}
+                  </span>
+                </div>
+              </TableCell>
+
+              <TableCell className="hidden md:table-cell! text-center text-gray-600 dark:text-gray-400 align-top py-4 lg:align-middle">
+                {sale.createdAt
+                  ? new Date(sale.createdAt).toLocaleDateString('es-AR')
+                  : '---'}
+              </TableCell>
+
+              <TableCell className="text-center align-middle md:align-top py-4 lg:align-middle">
+                <div className="relative inline-flex items-center justify-center">
+                  {(() => {
+                    const statusInfo = SALE_STATUS_MAP[sale.status] || {
+                      label: sale.status,
+                      style: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+                    };
+                    return (
+                      <span
+                        className={`px-2.5 py-1 rounded-md text-[10px] md:text-xs font-bold border inline-block uppercase tracking-wider ${statusInfo.style}`}
+                      >
+                        {statusInfo.label}
+                      </span>
+                    );
+                  })()}
+
+                  {(sale as any).notes && (
+                    <div className="absolute -right-8 top-1/2 -translate-y-1/2">
+                      <Tooltip
+                        content={(sale as any).notes}
+                        placement="top"
+                        className="max-w-xs text-center"
+                      >
+                        {isCriticalNote((sale as any).notes) ? (
+                          <ExclamationTriangleIcon className="w-5 h-5 text-amber-500 animate-pulse cursor-help" />
+                        ) : (
+                          <ChatBubbleBottomCenterTextIcon className="w-5 h-5 text-gray-300 cursor-help opacity-80" />
+                        )}
+                      </Tooltip>
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+
+              <TableCell className="hidden md:table-cell! text-center font-mono text-gray-900 dark:text-white align-top py-4 lg:align-middle">
+                {formatARS.format(Number(sale.total) ?? 0)}
+              </TableCell>
+
+              <TableCell className="hidden md:table-cell! text-gray-600 dark:text-gray-400 align-top py-4">
+                {sale.client ? (
+                  `${sale.client.surname}, ${sale.client.name}`
+                ) : (
+                  <span className="text-gray-400 italic text-xs">
+                    Sin cliente
+                  </span>
+                )}
+              </TableCell>
+
+              <TableCell>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    title="Ver detalles"
+                    className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition active:scale-95 cursor-pointer"
+                    onClick={() => handleOpenDetails(sale)}
+                  >
+                    <EyeIcon className="w-5 h-5" />
+                  </button>
+
+                  {sale.status === 'COMPLETED' ? (
+                    <button
+                      title="Agregar / Ver notas"
+                      type="button"
+                      onClick={() => handleOpenNotes(sale)}
+                      className="text-indigo-400 hover:text-indigo-300 transition active:scale-95 cursor-pointer"
+                    >
+                      <ChatBubbleBottomCenterTextIcon className="w-5 h-5" />
+                    </button>
+                  ) : (
+                    <div
+                      className={
+                        sale.status === 'CANCELLED' ? 'cursor-not-allowed' : ''
+                      }
+                      title={
+                        sale.status === 'CANCELLED'
+                          ? 'Venta cancelada'
+                          : 'Editar venta'
+                      }
+                    >
+                      <Link
+                        to={
+                          sale.status === 'CANCELLED'
+                            ? '#'
+                            : ROUTES.sales.edit(sale.id)
+                        }
+                        className={
+                          sale.status === 'CANCELLED'
+                            ? 'text-gray-500 pointer-events-none opacity-50'
+                            : 'text-indigo-400 hover:text-indigo-300 transition active:scale-95'
+                        }
+                        onClick={(e) =>
+                          sale.status === 'CANCELLED' && e.preventDefault()
+                        }
+                      >
+                        <PencilIcon className="w-5 h-5" />
+                      </Link>
+                    </div>
+                  )}
+
+                  {/* Botón Borrar */}
+                  <button
+                    title={
+                      sale.status === 'CANCELLED'
+                        ? 'Esta venta ya ha sido cancelada'
+                        : 'Cancelar venta'
+                    }
+                    className={
+                      sale.status === 'CANCELLED'
+                        ? 'text-gray-500 cursor-not-allowed opacity-50'
+                        : 'text-red-500 hover:text-red-400 transition active:scale-95 cursor-pointer'
+                    }
+                    onClick={() =>
+                      sale.status !== 'CANCELLED' && onDelete(sale)
+                    }
+                    disabled={sale.status === 'CANCELLED'}
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Modal de Detalles Original */}
+      <SaleDetailsModal
+        isOpen={isDetailsModalOpen}
+        sale={selectedSale}
+        onClose={handleCloseDetails}
+      />
+
+      {/* Nuevo Modal de Notas */}
+      <SaleNotesModal
+        isOpen={isNotesModalOpen}
+        sale={saleForNotes}
+        onClose={handleCloseNotes}
+        onSuccess={() => {
+          // Opción rápida para recargar la tabla al guardar la nota.
+          // (Si tenés una prop "onUpdate" o "refreshSales", es mejor usarla acá en vez del reload).
+          window.location.reload();
+        }}
+      />
+    </div>
+  );
 }

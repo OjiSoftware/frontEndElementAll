@@ -13,7 +13,7 @@ import {
     ArrowRightOnRectangleIcon, // Agregado para el móvil
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/OJI_logo/oji_logo_color_v3.svg";
+import logo from "../assets/OJI_logo/OJI_logo_color_v3.svg";
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect } from "react";
 
@@ -117,7 +117,7 @@ export default function DashboardLayout({
 
                         <div className="ml-4 flex items-center md:ml-6">
                             <Menu as="div" className="relative ml-3">
-                                <MenuButton className="relative flex max-w-xs items-center justify-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-shadow">
+                                <MenuButton className="relative flex max-w-xs items-center justify-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-shadow cursor-pointer">
                                     <img
                                         alt=""
                                         src={userImage}
