@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo_elementAll2.png';
 import SearchBar from '@/components/SearchBar';
 import { catalogApi } from '@/services/CatalogService';
@@ -20,6 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({
   setSearch: externalSetSearch,
 }) => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [localSearch, setLocalSearch] = useState(
     searchParams.get('search') || '',
   );
@@ -93,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <nav className="w-full bg-[#4caf50] shadow-md relative z-30 border-b border-gray-400">
-        <div className="max-w-[1187px] mx-auto px-4 py-3 md:py-5!">
+        <div className="max-w-[1187px] mx-auto px-4 py-3 md:pt-4! md:pb-4.5!">
           <div className="flex items-center md:items-start! justify-between gap-4 md:gap-8">
             {/* Botón Menú Móvil */}
             <button
@@ -132,7 +133,7 @@ const Navbar: React.FC<NavbarProps> = ({
               <img
                 src={logo}
                 alt="Logo"
-                className="hidden md:block h-20 object-contain my-1"
+                className="hidden md:block h-20 object-contain "
                 onClick={() => (window.location.href = '/')}
                 style={{ cursor: 'pointer' }}
               />
@@ -232,7 +233,7 @@ const Navbar: React.FC<NavbarProps> = ({
               <div className="flex w-full justify-between text-[13px] subpixel-antialiased font-normal font-lato uppercase tracking-[0.2rem] mt-2">
                 <a
                   href="/"
-                  className="text-white hover:text-[#f9c72a] transition-colors"
+                  className={`transition-colors ${location.pathname === '/' ? 'text-[#f9c72a]' : 'text-white hover:text-[#f9c72a]'}`}
                 >
                   Inicio
                 </a>
@@ -254,7 +255,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 </NavLink>
                 <a
                   href="/catalogo"
-                  className="text-white hover:text-[#f9c72a] transition-colors"
+                  className={`transition-colors ${location.pathname.startsWith('/catalogo') ? 'text-[#f9c72a]' : 'text-white hover:text-[#f9c72a]'}`}
                 >
                   Tienda
                 </a>
@@ -434,7 +435,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <div className="flex flex-col p-4 space-y-4 text-[12px] font-bold font-lato uppercase tracking-widest">
               <a
                 href="/"
-                className="text-white hover:text-[#f9c72a] transition-colors"
+                className={`transition-colors ${location.pathname === '/' ? 'text-[#f9c72a]' : 'text-white hover:text-[#f9c72a]'}`}
               >
                 Inicio
               </a>
@@ -458,7 +459,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </NavLink>
               <a
                 href="/catalogo"
-                className="text-white hover:text-[#f9c72a] transition-colors"
+                className={`transition-colors ${location.pathname.startsWith('/catalogo') ? 'text-[#f9c72a]' : 'text-white hover:text-[#f9c72a]'}`}
               >
                 Tienda
               </a>
